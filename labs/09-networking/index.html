@@ -1,0 +1,2488 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="스킬잇 CKA 온라인 강의 — 강의가 끝나고 따라 하며 개념을 채우는 실습 가이드">
+      
+      
+      
+        <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/09-networking/">
+      
+      
+        <link rel="prev" href="../08-storage/">
+      
+      
+        <link rel="next" href="../10-networkpolicy/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>9강 · 서비스와 내부 통신 - CKA 실습 가이드</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pretendard:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Pretendard";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#9" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../.." title="CKA 실습 가이드" class="md-header__button md-logo" aria-label="CKA 실습 가이드" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CKA 실습 가이드
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              9강 · 서비스와 내부 통신
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="다크 모드로 전환"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="라이트 모드로 전환"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/skilleat-labs/cka-labs-2026" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    skilleat-labs/cka-labs-2026
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  홈
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../start/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  시작하기
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../03-architecture/" class="md-tabs__link">
+          
+  
+  
+  강의별 실습
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CKA 실습 가이드" class="md-nav__button md-logo" aria-label="CKA 실습 가이드" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    CKA 실습 가이드
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/skilleat-labs/cka-labs-2026" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    skilleat-labs/cka-labs-2026
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    홈
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    시작하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    강의별 실습
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    강의별 실습
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3강 · 아키텍처
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-cluster-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4강 · 클러스터 구축 (VirtualBox)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-workloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6강 · 워크로드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7강 · 스케줄링
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9강 · 서비스와 내부 통신
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9강 · 서비스와 내부 통신
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습 목표
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0) 준비
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) 파드 IP 는 믿을 수 없다
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-clusterip-service-endpointslice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) ClusterIP Service 와 EndpointSlice
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2) ClusterIP Service 와 EndpointSlice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#expose-port-targetport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        expose 로 만들기 — port 와 targetPort 를 일부러 다르게
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        대상 목록은 어디에 있나
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실제로 접속하기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 ① — 파드를 셀렉터 밖으로 빼 보기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 ② — 셀렉터 오타
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-port-targetport-nodeport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) port · targetPort · nodePort — 세 포트 구분
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3) port · targetPort · nodePort — 세 포트 구분">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#targetport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — targetPort 를 틀리면
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-nodeport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) NodePort — 모든 노드의 같은 포트로 연다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4) NodePort — 모든 노드의 같은 포트로 연다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        세 노드 모두로 접속해 보기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodeport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — 이미 쓰고 있는 nodePort
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-loadbalancer-pending-headless-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) LoadBalancer 는 Pending, Headless 는 IP 가 없다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5) LoadBalancer 는 Pending, Headless 는 IP 가 없다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#loadbalancer-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LoadBalancer — 베어메탈에서는 Pending 이 정상
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#headless-clusterip-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Headless — ClusterIP 가 None
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6) DNS — 이름으로 부른다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6) DNS — 이름으로 부른다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resolvconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        파드의 resolv.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        이름 네 가지로 조회하기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#headless-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Headless 는 파드 IP 들을 돌려준다
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — CoreDNS 가 없으면
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-kube-proxy-cilium-port-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7) 누가 실제로 넘기는가 — kube-proxy / Cilium, 그리고 port-forward
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7) 누가 실제로 넘기는가 — kube-proxy / Cilium, 그리고 port-forward">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        port-forward — 내 터미널에서 잠깐 붙기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-networkpolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8) NetworkPolicy 미리 보기 — 한 번만 막아 본다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8) NetworkPolicy 미리 보기 — 한 번만 막아 본다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — 정책에 Service 포트를 적으면
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시험에서 빠르게
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        정리
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        확인 질문
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        다음 단계 — 채점 실습
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10강 · NetworkPolicy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11강 · Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-cluster-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13강 · 클러스터 구축
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-rbac/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · RBAC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15강 · 유지보수
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-node-ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16강 · 노드 운영
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-helm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17강 · Helm과 Kustomize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19강 · 트러블슈팅
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습 목표
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0) 준비
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) 파드 IP 는 믿을 수 없다
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-clusterip-service-endpointslice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) ClusterIP Service 와 EndpointSlice
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2) ClusterIP Service 와 EndpointSlice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#expose-port-targetport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        expose 로 만들기 — port 와 targetPort 를 일부러 다르게
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        대상 목록은 어디에 있나
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실제로 접속하기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 ① — 파드를 셀렉터 밖으로 빼 보기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 ② — 셀렉터 오타
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-port-targetport-nodeport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) port · targetPort · nodePort — 세 포트 구분
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3) port · targetPort · nodePort — 세 포트 구분">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#targetport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — targetPort 를 틀리면
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-nodeport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) NodePort — 모든 노드의 같은 포트로 연다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4) NodePort — 모든 노드의 같은 포트로 연다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        세 노드 모두로 접속해 보기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodeport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — 이미 쓰고 있는 nodePort
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-loadbalancer-pending-headless-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) LoadBalancer 는 Pending, Headless 는 IP 가 없다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5) LoadBalancer 는 Pending, Headless 는 IP 가 없다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#loadbalancer-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LoadBalancer — 베어메탈에서는 Pending 이 정상
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#headless-clusterip-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Headless — ClusterIP 가 None
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6) DNS — 이름으로 부른다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6) DNS — 이름으로 부른다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resolvconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        파드의 resolv.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        이름 네 가지로 조회하기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#headless-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Headless 는 파드 IP 들을 돌려준다
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — CoreDNS 가 없으면
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-kube-proxy-cilium-port-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7) 누가 실제로 넘기는가 — kube-proxy / Cilium, 그리고 port-forward
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7) 누가 실제로 넘기는가 — kube-proxy / Cilium, 그리고 port-forward">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        port-forward — 내 터미널에서 잠깐 붙기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-networkpolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8) NetworkPolicy 미리 보기 — 한 번만 막아 본다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8) NetworkPolicy 미리 보기 — 한 번만 막아 본다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — 정책에 Service 포트를 적으면
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시험에서 빠르게
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        정리
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        확인 질문
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        다음 단계 — 채점 실습
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="9">9강 · 서비스와 내부 통신<a class="headerlink" href="#9" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>영상: <strong>09강-서비스와내부통신</strong> · 이어서 풀 채점 세트: <code>09-networking</code></p>
+</blockquote>
+<h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Service 가 <strong>셀렉터 → EndpointSlice → 파드 IP</strong> 순서로 대상을 찾는다는 것을 직접 확인한다.</li>
+<li>ClusterIP · NodePort · LoadBalancer · Headless 를 모두 띄워 보고 <strong>무엇이 다른지</strong> 비교한다.</li>
+<li><code>port</code> · <code>targetPort</code> · <code>nodePort</code> 세 포트를 <strong>일부러 다르게</strong> 줘 보고, 틀렸을 때의 증상을 구분한다.</li>
+<li>파드 안에서 <strong>DNS 이름 규칙</strong>(짧은 이름 · 네임스페이스 · FQDN · Headless)을 확인한다.</li>
+<li>실제 전달을 맡는 <strong>kube-proxy / Cilium</strong> 의 흔적을 노드에서 찾아본다.</li>
+<li>NetworkPolicy 를 <strong>맛보기로</strong> 한 번 걸어 보고, 10강으로 넘어갈 준비를 한다.</li>
+</ul>
+<hr />
+<h2 id="0">0) 준비<a class="headerlink" href="#0" title="Permanent link">&para;</a></h2>
+<p>이 페이지의 모든 리소스는 <code>guide-net</code> 네임스페이스에 만듭니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>guide-net
+</span></code></pre></div>
+<p>통신 확인은 <strong>임시 파드</strong>로 합니다. 이 페이지에서는 아래 한 줄 모양을 계속 씁니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>tmp<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>--timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span>http://&lt;대상&gt;
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>옵션</th>
+<th>뜻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--rm</code></td>
+<td>명령이 끝나면 파드를 지운다</td>
+</tr>
+<tr>
+<td><code>-i</code></td>
+<td>출력을 내 터미널로 받는다 (<code>-t</code> 는 빼도 된다. 붙이면 경고가 섞일 수 있다)</td>
+</tr>
+<tr>
+<td><code>--restart=Never</code></td>
+<td>Deployment 가 아니라 <strong>파드 하나</strong>만 만든다</td>
+</tr>
+<tr>
+<td><code>--timeout=3</code></td>
+<td>막혔을 때 오래 기다리지 않는다</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">busybox 의 wget · nslookup 은 '작은 버전'입니다</p>
+<ul>
+<li><code>wget</code> 은 HTTPS 인증서 검증·헤더 옵션이 제한적입니다. HTTP 확인용으로만 씁니다.</li>
+<li><code>nslookup</code> 은 검색 도메인을 하나씩 붙여 보다가 <code>NXDOMAIN</code> 줄을 섞어 출력하기도 합니다. <strong><code>Name:</code> / <code>Address:</code> 줄만 보면 됩니다.</strong></li>
+<li>더 자세히 보고 싶으면 <code>nicolaka/netshoot</code>(dig · curl · nc 포함)이나 <code>curlimages/curl</code> 을 씁니다.</li>
+</ul>
+</div>
+<hr />
+<h2 id="1-ip">1) 파드 IP 는 믿을 수 없다<a class="headerlink" href="#1-ip" title="Permanent link">&para;</a></h2>
+<p>Deployment 를 만들고 파드 IP 를 적어 둡니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>deployment<span class="w"> </span>menu<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--image<span class="o">=</span>nginx:1.27<span class="w"> </span>--replicas<span class="o">=</span><span class="m">3</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/menu<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>menu<span class="w"> </span>-o<span class="w"> </span>wide
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>NAME                    READY   STATUS    IP          NODE
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>menu-7c9d6b8f5d-4kq2p   1/1     Running   10.0.1.23   worker-1
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>menu-7c9d6b8f5d-h8x7m   1/1     Running   10.0.2.41   worker-2
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>menu-7c9d6b8f5d-wz5tn   1/1     Running   10.0.2.57   worker-2
+</span></code></pre></div>
+<p>파드 하나를 지우고 다시 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>menu-7c9d6b8f5d-4kq2p<span class="w">     </span><span class="c1"># 내 파드 이름으로 바꾸세요</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>menu<span class="w"> </span>-o<span class="w"> </span>wide
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>NAME                    READY   STATUS    IP          NODE
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>menu-7c9d6b8f5d-h8x7m   1/1     Running   10.0.2.41   worker-2
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>menu-7c9d6b8f5d-r6j9c   1/1     Running   10.0.1.88   worker-1   ← 새 이름, 새 IP
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>menu-7c9d6b8f5d-wz5tn   1/1     Running   10.0.2.57   worker-2
+</span></code></pre></div>
+<p>관찰 포인트: 파드는 다시 생기지만 <strong>IP 는 바뀝니다</strong>. 호출하는 쪽이 파드 IP 를 적어 두는 방식은 성립하지 않습니다.
+그래서 <strong>바뀌지 않는 주소(Service)</strong> 가 필요합니다. 파드 IP 대역(<code>10.0.x.x</code>)은 Cilium 이 노드마다 나눠 준 것입니다.</p>
+<hr />
+<h2 id="2-clusterip-service-endpointslice">2) ClusterIP Service 와 EndpointSlice<a class="headerlink" href="#2-clusterip-service-endpointslice" title="Permanent link">&para;</a></h2>
+<h3 id="expose-port-targetport">expose 로 만들기 — port 와 targetPort 를 일부러 다르게<a class="headerlink" href="#expose-port-targetport" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>deployment<span class="w"> </span>menu<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--name<span class="o">=</span>menu-svc<span class="w"> </span>--port<span class="o">=</span><span class="m">8080</span><span class="w"> </span>--target-port<span class="o">=</span><span class="m">80</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>menu-svc<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>NAME       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>menu-svc   ClusterIP   10.104.62.18   &lt;none&gt;        8080/TCP   3s
+</span></code></pre></div>
+<ul>
+<li><code>--type</code> 을 안 주면 <strong>ClusterIP</strong> 입니다.</li>
+<li><code>CLUSTER-IP</code> 는 Service CIDR(<code>10.96.0.0/12</code>) 안에서 하나 받습니다. <strong>삭제할 때까지 바뀌지 않습니다.</strong></li>
+<li><code>expose</code> 는 Deployment 의 셀렉터(<code>app=menu</code>)를 그대로 복사합니다. 그래서 셀렉터 오타가 날 일이 없습니다.</li>
+</ul>
+<h3 id="_2">대상 목록은 어디에 있나<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>Service 는 트래픽을 보낼 <strong>파드 IP 목록</strong>을 따로 가지고 있습니다. 예전 형식이 Endpoints, 지금 형식이 EndpointSlice 입니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>menu-svc<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpointslices<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>-l<span class="w"> </span>kubernetes.io/service-name<span class="o">=</span>menu-svc
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>NAME       ENDPOINTS                                AGE
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>menu-svc   10.0.1.88:80,10.0.2.41:80,10.0.2.57:80   20s
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>NAME             ADDRESSTYPE   PORTS   ENDPOINTS                        AGE
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>menu-svc-8gk2x   IPv4          80      10.0.1.88,10.0.2.41,10.0.2.57    20s
+</span></code></pre></div>
+<p>관찰 포인트: 목록에 찍힌 포트는 <strong>80(targetPort)</strong> 입니다. Service 의 8080 은 "Service 가 받는 포트", 80 은 "파드로 넘기는 포트"입니다.</p>
+<p>EndpointSlice 를 YAML 로 보면 파드마다 <strong>Ready 여부</strong>와 <strong>어느 노드인지</strong>까지 들어 있습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpointslices<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>-l<span class="w"> </span>kubernetes.io/service-name<span class="o">=</span>menu-svc<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'addresses|ready|nodeName'</span><span class="w"> </span>-A1<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-12
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>  - addresses:
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    - 10.0.1.88
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    conditions:
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>      ready: true          ← readinessProbe 를 통과하지 못하면 false 가 되고 트래픽에서 빠진다
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>    ...
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    nodeName: worker-1
+</span></code></pre></div>
+<h3 id="_3">실제로 접속하기<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>tmp<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>--timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span>http://menu-svc:8080
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>&lt;!DOCTYPE html&gt;
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>&lt;html&gt;
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>&lt;head&gt;
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>...
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>pod "tmp" deleted
+</span></code></pre></div>
+<h3 id="1">실험 ① — 파드를 셀렉터 밖으로 빼 보기<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<p>파드 하나의 레이블을 바꿉니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nv">POD</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>menu<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].metadata.name}'</span><span class="k">)</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>kubectl<span class="w"> </span>label<span class="w"> </span>pod<span class="w"> </span><span class="nv">$POD</span><span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span><span class="nv">app</span><span class="o">=</span>menu-debug<span class="w"> </span>--overwrite
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>-L<span class="w"> </span>app
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>menu-svc<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>NAME                    READY   STATUS    APP
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>menu-7c9d6b8f5d-h8x7m   1/1     Running   menu-debug   ← 떨어져 나간 파드 (아직 살아 있다)
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>menu-7c9d6b8f5d-r6j9c   1/1     Running   menu
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>menu-7c9d6b8f5d-wz5tn   1/1     Running   menu
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>menu-7c9d6b8f5d-xk3v8   1/1     Running   menu         ← ReplicaSet 이 새로 만든 파드
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>NAME       ENDPOINTS                                AGE
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>menu-svc   10.0.1.88:80,10.0.2.57:80,10.0.1.94:80   2m
+</span></code></pre></div>
+<p>관찰 포인트: Service 와 ReplicaSet 은 <strong>둘 다 레이블만 봅니다</strong>. 레이블이 바뀐 파드는 Endpoints 에서 빠지고, ReplicaSet 은 수가 모자라니 새로 만듭니다.
+장애 파드를 트래픽에서만 빼고 살려 둔 채 조사할 때 실제로 쓰는 방법입니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span><span class="nv">$POD</span><span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w">      </span><span class="c1"># 확인했으면 지운다</span>
+</span></code></pre></div>
+<h3 id="2">실험 ② — 셀렉터 오타<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<p><code>menu-typo.yaml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">menu-typo</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-net</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">menus</span><span class="w">            </span><span class="c1"># ← 's' 하나가 더 붙었다. 이 레이블의 파드는 없다</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>menu-typo.yaml
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc,endpoints<span class="w"> </span>menu-typo<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>NAME                TYPE        CLUSTER-IP      PORT(S)
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>service/menu-typo   ClusterIP   10.109.14.201   8080/TCP     ← Service 는 멀쩡히 만들어진다
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>NAME                  ENDPOINTS   AGE
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>endpoints/menu-typo   &lt;none&gt;      5s                         ← 대상이 없다
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>tmp<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>--timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span>http://menu-typo:8080
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>wget: can't connect to remote host (10.109.14.201): Connection refused
+</span></code></pre></div>
+<p>관찰 포인트: <strong>에러 없이 만들어지고, 접속만 안 됩니다.</strong> Service 진단은 항상 <code>get endpoints</code> 가 비었는지부터 봅니다.</p>
+<table>
+<thead>
+<tr>
+<th>Endpoints 가 비었다</th>
+<th>원인</th>
+<th>확인</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>셀렉터 ≠ 파드 레이블</td>
+<td>오타 · 다른 키</td>
+<td><code>kubectl get pods --show-labels</code> 와 <code>describe svc</code> 의 Selector 대조</td>
+</tr>
+<tr>
+<td>파드가 Ready 가 아니다</td>
+<td>readinessProbe 실패, CrashLoop</td>
+<td><code>kubectl get pods</code> 의 READY 칸</td>
+</tr>
+<tr>
+<td>다른 네임스페이스</td>
+<td>Service 와 파드가 다른 ns</td>
+<td>Service 는 <strong>같은 네임스페이스의 파드만</strong> 고른다</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>menu-typo.yaml
+</span></code></pre></div>
+<hr />
+<h2 id="3-port-targetport-nodeport">3) port · targetPort · nodePort — 세 포트 구분<a class="headerlink" href="#3-port-targetport-nodeport" title="Permanent link">&para;</a></h2>
+<p>필드 이름이 헷갈리면 <code>kubectl explain</code> 으로 바로 확인합니다. 시험장에서도 됩니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>service.spec.ports
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>FIELDS:
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>  appProtocol   &lt;string&gt;
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>  name          &lt;string&gt;
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>  nodePort      &lt;integer&gt;
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>    The port on each node on which this service is exposed when type is
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>    NodePort or LoadBalancer. ...
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>  port          &lt;integer&gt; -required-
+</span><span id="__span-24-8"><a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>    The port that will be exposed by this service.
+</span><span id="__span-24-9"><a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a>  protocol      &lt;string&gt;
+</span><span id="__span-24-10"><a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a>  targetPort    &lt;IntOrString&gt;
+</span><span id="__span-24-11"><a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a>    Number or name of the port to access on the pods targeted by the service.
+</span><span id="__span-24-12"><a id="__codelineno-24-12" name="__codelineno-24-12" href="#__codelineno-24-12"></a>    ... If this is not specified, the value of the 'port' field is used ...
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>필드</th>
+<th>누가 여는 포트인가</th>
+<th>누가 쓰나</th>
+<th>이 페이지 값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>port</code></td>
+<td>Service (ClusterIP)</td>
+<td>클러스터 안의 클라이언트 → <code>menu-svc:8080</code></td>
+<td>8080</td>
+</tr>
+<tr>
+<td><code>targetPort</code></td>
+<td>파드 컨테이너</td>
+<td>Service → 파드 (Endpoints 에 찍히는 포트)</td>
+<td>80</td>
+</tr>
+<tr>
+<td><code>nodePort</code></td>
+<td><strong>모든 노드</strong></td>
+<td>클러스터 밖 → <code>&lt;노드IP&gt;:&lt;nodePort&gt;</code> (30000–32767)</td>
+<td>4) 에서 31234</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title"><code>targetPort</code> 를 안 적으면 <code>port</code> 와 같은 값이 됩니다</p>
+<p><code>port: 8080</code> 만 적고 <code>targetPort</code> 를 빼먹으면 파드의 8080 으로 보냅니다. nginx 는 80 을 들으니 접속이 안 됩니다.</p>
+</div>
+<h3 id="targetport">실험 — targetPort 를 틀리면<a class="headerlink" href="#targetport" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>deployment<span class="w"> </span>menu<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--name<span class="o">=</span>menu-wrongport<span class="w"> </span>--port<span class="o">=</span><span class="m">8080</span><span class="w">     </span><span class="c1"># targetPort 생략 → 8080</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>menu-wrongport<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>kubectl<span class="w"> </span>run<span class="w"> </span>tmp<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>--timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span>http://menu-wrongport:8080
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>NAME             ENDPOINTS                                      AGE
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>menu-wrongport   10.0.1.88:8080,10.0.2.57:8080,10.0.1.94:8080   3s   ← 차 있다!
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>wget: can't connect to remote host (10.97.203.5): Connection refused
+</span></code></pre></div>
+<p>관찰 포인트: 셀렉터 오타와 증상은 같지만(<strong>Connection refused</strong>) <strong>Endpoints 는 차 있습니다.</strong> 여기서 원인이 갈립니다.</p>
+<table>
+<thead>
+<tr>
+<th>Endpoints</th>
+<th>접속</th>
+<th>의심할 곳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>비어 있다</td>
+<td>실패</td>
+<td>셀렉터 · Ready · 네임스페이스</td>
+</tr>
+<tr>
+<td>차 있다</td>
+<td>refused</td>
+<td><strong>targetPort</strong> (파드가 그 포트를 안 듣는다)</td>
+</tr>
+<tr>
+<td>차 있다</td>
+<td>timeout</td>
+<td>NetworkPolicy · CNI (8) 과 10 에서)</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>svc<span class="w"> </span>menu-wrongport<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span></code></pre></div>
+<hr />
+<h2 id="4-nodeport">4) NodePort — 모든 노드의 같은 포트로 연다<a class="headerlink" href="#4-nodeport" title="Permanent link">&para;</a></h2>
+<p><code>kubectl expose</code> 는 <code>nodePort</code> <strong>번호를 정할 수 없습니다.</strong> 번호를 고정하려면 YAML 로 뽑아서 고칩니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>deployment<span class="w"> </span>menu<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--name<span class="o">=</span>menu-np<span class="w"> </span>--type<span class="o">=</span>NodePort<span class="w"> </span>--port<span class="o">=</span><span class="m">80</span><span class="w"> </span>--target-port<span class="o">=</span><span class="m">80</span><span class="w"> </span><span class="nv">$do</span><span class="w"> </span>&gt;<span class="w"> </span>menu-np.yaml
+</span></code></pre></div>
+<p><code>menu-np.yaml</code> 을 열어 <code>nodePort</code> 한 줄을 넣습니다.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">menu</span>
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">menu-np</span>
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-net</span>
+</span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodePort</span><span class="w">              </span><span class="c1"># ← 타입</span>
+</span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-29-11"><a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">menu</span>
+</span><span id="__span-29-12"><a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-29-13"><a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-29-14"><a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a><span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+</span><span id="__span-29-15"><a id="__codelineno-29-15" name="__codelineno-29-15" href="#__codelineno-29-15"></a><span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-29-16"><a id="__codelineno-29-16" name="__codelineno-29-16" href="#__codelineno-29-16"></a><span class="w">      </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">31234</span><span class="w">         </span><span class="c1"># ← 직접 추가. 30000–32767 범위, 클러스터 안에서 겹치면 거부된다</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>menu-np.yaml
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>menu-np<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>NAME      TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>menu-np   NodePort   10.110.7.66    &lt;none&gt;        80:31234/TCP   4s
+</span></code></pre></div>
+<p><code>80:31234</code> 는 "Service 포트 80, 노드 포트 31234" 라는 뜻입니다. <strong>NodePort 도 ClusterIP 를 함께 받습니다.</strong></p>
+<h3 id="_4">세 노드 모두로 접속해 보기<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>컨트롤플레인 노드에서 실행합니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="k">for</span><span class="w"> </span>ip<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">192</span>.168.56.10<span class="w"> </span><span class="m">192</span>.168.56.11<span class="w"> </span><span class="m">192</span>.168.56.12<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">"%s -&gt; "</span><span class="w"> </span><span class="nv">$ip</span><span class="p">;</span><span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code}\n'</span><span class="w"> </span>--max-time<span class="w"> </span><span class="m">3</span><span class="w"> </span>http://<span class="nv">$ip</span>:31234
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="k">done</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>192.168.56.10 -&gt; 200
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>192.168.56.11 -&gt; 200
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>192.168.56.12 -&gt; 200
+</span></code></pre></div>
+<p>관찰 포인트: menu 파드가 <strong>하나도 없는 control-plane 의 IP 로도 200</strong> 이 옵니다. 노드에 들어온 패킷을 커널 규칙이 파드가 있는 노드로 넘겨 주기 때문입니다.</p>
+<h3 id="nodeport">실험 — 이미 쓰고 있는 nodePort<a class="headerlink" href="#nodeport" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>service<span class="w"> </span>nodeport<span class="w"> </span>dup<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--tcp<span class="o">=</span><span class="m">80</span>:80<span class="w"> </span>--node-port<span class="o">=</span><span class="m">31234</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>The Service "dup" is invalid: spec.ports[0].nodePort: Invalid value: 31234: provided port is already allocated
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">시험 팁 — <code>kubectl create service nodeport</code> 에는 <code>--node-port</code> 가 있습니다</p>
+<p><code>expose</code> 대신 <code>kubectl create service nodeport &lt;이름&gt; --tcp=&lt;port&gt;:&lt;targetPort&gt; --node-port=&lt;번호&gt;</code> 로 한 줄에 만들 수 있습니다.
+다만 <strong>셀렉터가 <code>app=&lt;Service 이름&gt;</code> 으로 자동 설정</strong>됩니다. 파드 레이블과 Service 이름이 다르면 Endpoints 가 비므로,
+이름이 다를 때는 <code>$do</code> 로 뽑아 셀렉터를 고치거나 위처럼 <code>expose</code> + YAML 을 씁니다.</p>
+</div>
+<hr />
+<h2 id="5-loadbalancer-pending-headless-ip">5) LoadBalancer 는 Pending, Headless 는 IP 가 없다<a class="headerlink" href="#5-loadbalancer-pending-headless-ip" title="Permanent link">&para;</a></h2>
+<h3 id="loadbalancer-pending">LoadBalancer — 베어메탈에서는 Pending 이 정상<a class="headerlink" href="#loadbalancer-pending" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>deployment<span class="w"> </span>menu<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--name<span class="o">=</span>menu-lb<span class="w"> </span>--type<span class="o">=</span>LoadBalancer<span class="w"> </span>--port<span class="o">=</span><span class="m">80</span><span class="w"> </span>--target-port<span class="o">=</span><span class="m">80</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>menu-lb<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>NAME      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>menu-lb   LoadBalancer   10.98.144.73    &lt;pending&gt;     80:31877/TCP   5s
+</span></code></pre></div>
+<p>관찰 포인트: <code>EXTERNAL-IP</code> 가 <code>&lt;pending&gt;</code> 에서 멈춥니다. 외부 IP 를 붙여 줄 <strong>클라우드 로드밸런서가 없기 때문</strong>입니다(고장이 아닙니다).
+그래도 <code>80:31877</code> 처럼 <strong>NodePort 는 이미 열려 있습니다.</strong> LoadBalancer = NodePort + 외부 LB 라서입니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code}\n'</span><span class="w"> </span>http://192.168.56.11:31877<span class="w">      </span><span class="c1"># 내 포트 번호로</span>
+</span></code></pre></div>
+<h3 id="headless-clusterip-none">Headless — ClusterIP 가 None<a class="headerlink" href="#headless-clusterip-none" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>deployment<span class="w"> </span>menu<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--name<span class="o">=</span>menu-headless<span class="w"> </span>--port<span class="o">=</span><span class="m">80</span><span class="w"> </span>--cluster-ip<span class="o">=</span>None
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>menu-headless<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>NAME            TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>menu-headless   ClusterIP   None         &lt;none&gt;        80/TCP    3s
+</span></code></pre></div>
+<p>부하 분산용 가상 IP 가 없고, DNS 가 <strong>파드 IP 들을 직접</strong> 돌려줍니다(6) 에서 확인). StatefulSet 이 파드마다 고정 이름을 받을 때 씁니다.</p>
+<table>
+<thead>
+<tr>
+<th>타입</th>
+<th>ClusterIP</th>
+<th>밖에서 접속</th>
+<th>이 클러스터에서</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ClusterIP</td>
+<td>있음</td>
+<td>안 됨</td>
+<td>파드끼리 부르는 기본</td>
+</tr>
+<tr>
+<td>NodePort</td>
+<td>있음</td>
+<td><code>&lt;노드IP&gt;:30000–32767</code></td>
+<td>실습·시험에서 외부 노출</td>
+</tr>
+<tr>
+<td>LoadBalancer</td>
+<td>있음 (+NodePort)</td>
+<td>외부 LB IP</td>
+<td><code>EXTERNAL-IP &lt;pending&gt;</code></td>
+</tr>
+<tr>
+<td>Headless (<code>clusterIP: None</code>)</td>
+<td><strong>없음</strong></td>
+<td>안 됨</td>
+<td>DNS 가 파드 IP 목록을 준다</td>
+</tr>
+<tr>
+<td>ExternalName</td>
+<td>없음</td>
+<td>—</td>
+<td>셀렉터 없이 DNS CNAME 만 만든다</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>svc<span class="w"> </span>menu-lb<span class="w"> </span>-n<span class="w"> </span>guide-net
+</span></code></pre></div>
+<hr />
+<h2 id="6-dns">6) DNS — 이름으로 부른다<a class="headerlink" href="#6-dns" title="Permanent link">&para;</a></h2>
+<h3 id="resolvconf">파드의 resolv.conf<a class="headerlink" href="#resolvconf" title="Permanent link">&para;</a></h3>
+<p>DNS 확인용 파드를 하나 띄워 둡니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>dnsbox<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--command<span class="w"> </span>--<span class="w"> </span>sleep<span class="w"> </span><span class="m">3600</span>
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dnsbox<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/etc/resolv.conf
+</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>kube-dns<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>search guide-net.svc.cluster.local svc.cluster.local cluster.local
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>nameserver 10.96.0.10
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>options ndots:5
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a>
+</span><span id="__span-43-5"><a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a>NAME       TYPE        CLUSTER-IP   PORT(S)                  AGE
+</span><span id="__span-43-6"><a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a>kube-dns   ClusterIP   10.96.0.10   53/UDP,53/TCP,9153/TCP   3d
+</span></code></pre></div>
+<p>관찰 포인트: <code>nameserver</code> 는 <strong>CoreDNS 의 Service IP</strong>(이름은 역사적 이유로 <code>kube-dns</code>)이고,
+<code>search</code> 첫 줄이 <strong>내 네임스페이스</strong>입니다. 그래서 같은 네임스페이스의 Service 는 짧은 이름으로 부를 수 있습니다.</p>
+<h3 id="_5">이름 네 가지로 조회하기<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dnsbox<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>menu-svc
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dnsbox<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>menu-svc.guide-net.svc.cluster.local
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>Server:     10.96.0.10
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>Address:    10.96.0.10:53
+</span><span id="__span-45-3"><a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a>
+</span><span id="__span-45-4"><a id="__codelineno-45-4" name="__codelineno-45-4" href="#__codelineno-45-4"></a>Name:   menu-svc.guide-net.svc.cluster.local
+</span><span id="__span-45-5"><a id="__codelineno-45-5" name="__codelineno-45-5" href="#__codelineno-45-5"></a>Address: 10.104.62.18                ← menu-svc 의 CLUSTER-IP 와 같다
+</span></code></pre></div>
+<p>다른 네임스페이스의 Service 를 짧은 이름으로 불러 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dnsbox<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>kube-dns<span class="w">                 </span><span class="c1"># 실패</span>
+</span><span id="__span-46-2"><a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dnsbox<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>kube-dns.kube-system<span class="w">     </span><span class="c1"># 성공</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>** server can't find kube-dns.guide-net.svc.cluster.local: NXDOMAIN
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>...
+</span><span id="__span-47-3"><a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>Name:   kube-dns.kube-system.svc.cluster.local
+</span><span id="__span-47-4"><a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a>Address: 10.96.0.10
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>부르는 이름</th>
+<th>같은 ns 에서</th>
+<th>다른 ns 에서</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>menu-svc</code></td>
+<td>✅</td>
+<td>❌ (내 ns 에서 찾는다)</td>
+</tr>
+<tr>
+<td><code>menu-svc.guide-net</code></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>menu-svc.guide-net.svc</code></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>menu-svc.guide-net.svc.cluster.local</code> (FQDN)</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="headless-ip">Headless 는 파드 IP 들을 돌려준다<a class="headerlink" href="#headless-ip" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dnsbox<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>menu-headless
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>Name:   menu-headless.guide-net.svc.cluster.local
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>Address: 10.0.1.88
+</span><span id="__span-49-3"><a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>Address: 10.0.2.57
+</span><span id="__span-49-4"><a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a>Address: 10.0.1.94
+</span></code></pre></div>
+<p>관찰 포인트: <code>menu-svc</code> 는 IP <strong>하나</strong>(ClusterIP), <code>menu-headless</code> 는 <strong>파드 수만큼</strong>입니다. <code>kubectl get endpoints menu-headless -n guide-net</code> 의 IP 와 같습니다.</p>
+<h3 id="coredns">실험 — CoreDNS 가 없으면<a class="headerlink" href="#coredns" title="Permanent link">&para;</a></h3>
+<p>CoreDNS 를 잠깐 0 개로 줄여 봅니다. <strong>실습 클러스터에서만</strong> 하세요.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-50-1"><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>--replicas<span class="o">=</span><span class="m">0</span>
+</span><span id="__span-50-2"><a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dnsbox<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>menu-svc
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-51-1"><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>;; connection timed out; no servers could be reached
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-52-1"><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dnsbox<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>--timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span>http://10.104.62.18:8080<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-4<span class="w">   </span><span class="c1"># IP 로는 된다</span>
+</span><span id="__span-52-2"><a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>--replicas<span class="o">=</span><span class="m">2</span><span class="w">                                    </span><span class="c1"># 반드시 되돌린다</span>
+</span><span id="__span-52-3"><a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/coredns<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span></code></pre></div>
+<p>관찰 포인트: <strong>이름 해석만 죽고 IP 통신은 살아 있습니다.</strong> "이름으로는 안 되는데 IP 로는 된다" 면 DNS(CoreDNS · Egress 53) 를 봅니다.</p>
+<div class="admonition tip">
+<p class="admonition-title">시험 팁</p>
+<p>DNS 문제는 대개 <code>nslookup &lt;svc&gt;</code> 결과를 파일로 남기라고 합니다. <code>kubectl exec &lt;pod&gt; -- nslookup &lt;svc&gt; &gt; /경로/파일</code> 처럼 <strong>리다이렉트는 exec 바깥</strong>에서 합니다.</p>
+</div>
+<hr />
+<h2 id="7-kube-proxy-cilium-port-forward">7) 누가 실제로 넘기는가 — kube-proxy / Cilium, 그리고 port-forward<a class="headerlink" href="#7-kube-proxy-cilium-port-forward" title="Permanent link">&para;</a></h2>
+<p>Service 는 <strong>가상 IP 와 목록</strong>일 뿐입니다. 패킷을 실제 파드로 바꿔 보내는 것은 각 노드의 규칙입니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-53-1"><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>ds<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-53-2"><a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>cm<span class="w"> </span>kube-proxy<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.data.config\.conf}'</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^mode'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-54-1"><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a>NAME           DESIRED   CURRENT   READY   ...
+</span><span id="__span-54-2"><a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a>cilium         3         3         3
+</span><span id="__span-54-3"><a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a>kube-proxy     3         3         3       ← 이 과정의 클러스터(Cilium 기본 모드)에는 있다
+</span><span id="__span-54-4"><a id="__codelineno-54-4" name="__codelineno-54-4" href="#__codelineno-54-4"></a>mode: ""                                   ← 빈 값이면 iptables 모드
+</span></code></pre></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">kube-proxy 가 있을 때 (iptables)</label><label for="__tabbed_1_2">Cilium 이 대신할 때 (eBPF)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-55-1"><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>sudo<span class="w"> </span>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-L<span class="w"> </span>KUBE-SERVICES<span class="w"> </span>-n<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>menu-svc
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-56-1"><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>KUBE-SVC-ABCD...  tcp  --  0.0.0.0/0  10.104.62.18  /* guide-net/menu-svc cluster IP */ tcp dpt:8080
+</span></code></pre></div></p>
+</div>
+<div class="tabbed-block">
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-57-1"><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>ds/cilium<span class="w"> </span>-c<span class="w"> </span>cilium-agent<span class="w"> </span>--<span class="w"> </span>cilium-dbg<span class="w"> </span>service<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span><span class="m">10</span>.104.62.18
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-58-1"><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a>27   10.104.62.18:8080   ClusterIP   1 =&gt; 10.0.1.88:80 (active)
+</span><span id="__span-58-2"><a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a>                                     2 =&gt; 10.0.2.57:80 (active)
+</span><span id="__span-58-3"><a id="__codelineno-58-3" name="__codelineno-58-3" href="#__codelineno-58-3"></a>                                     3 =&gt; 10.0.1.94:80 (active)
+</span></code></pre></div>
+Cilium 버전이 낮으면 명령 이름이 <code>cilium-dbg</code> 가 아니라 <code>cilium</code> 입니다.</p>
+</div>
+</div>
+</div>
+<p>관찰 포인트: 어느 쪽이든 <strong>ClusterIP:8080 → 파드IP:80 목록</strong>이 노드에 심어져 있습니다. 이 목록의 원본이 2) 의 EndpointSlice 입니다.
+ClusterIP 는 포트 규칙만 있는 가상 IP 라서 <code>ping</code> 에는 보통 응답하지 않습니다. 통신 확인은 <code>wget</code>/<code>curl</code> 로 합니다.</p>
+<table>
+<thead>
+<tr>
+<th>부품</th>
+<th>하는 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EndpointSlice 컨트롤러</td>
+<td>셀렉터에 맞고 Ready 인 파드 IP 목록을 만든다</td>
+</tr>
+<tr>
+<td>kube-proxy (또는 Cilium)</td>
+<td>그 목록을 노드의 iptables/IPVS/eBPF 규칙으로 심는다</td>
+</tr>
+<tr>
+<td>커널</td>
+<td>규칙대로 목적지를 바꿔 전달한다</td>
+</tr>
+<tr>
+<td>CoreDNS</td>
+<td>이름 → ClusterIP (Headless 면 파드 IP)</td>
+</tr>
+<tr>
+<td>CNI (Cilium)</td>
+<td>파드 IP 할당 · 노드 간 통신 · NetworkPolicy 집행</td>
+</tr>
+</tbody>
+</table>
+<h3 id="port-forward">port-forward — 내 터미널에서 잠깐 붙기<a class="headerlink" href="#port-forward" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-59-1"><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>svc/menu-svc<span class="w"> </span><span class="m">18080</span>:8080<span class="w"> </span><span class="p">&amp;</span>
+</span><span id="__span-59-2"><a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a>sleep<span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>http://127.0.0.1:18080<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>title
+</span><span id="__span-59-3"><a id="__codelineno-59-3" name="__codelineno-59-3" href="#__codelineno-59-3"></a><span class="nb">kill</span><span class="w"> </span>%1
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-60-1"><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a>Forwarding from 127.0.0.1:18080 -&gt; 80
+</span><span id="__span-60-2"><a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a>&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+</span></code></pre></div>
+<p>관찰 포인트: <code>-&gt; 80</code> 입니다. port-forward 는 Service 의 셀렉터로 <strong>파드 하나를 골라 그 파드의 targetPort 로 바로</strong> 붙습니다. 부하 분산이 없고 디버깅용입니다.</p>
+<hr />
+<h2 id="8-networkpolicy">8) NetworkPolicy 미리 보기 — 한 번만 막아 본다<a class="headerlink" href="#8-networkpolicy" title="Permanent link">&para;</a></h2>
+<p>지금까지는 <strong>모든 파드가 menu 에 닿습니다.</strong> 두 클라이언트를 만들고, 한쪽만 허용해 봅니다. 원리와 함정은 <a href="../10-networkpolicy/">10강 · NetworkPolicy</a> 에서 자세히 다룹니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-61-1"><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>cashier<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--labels<span class="o">=</span><span class="nv">role</span><span class="o">=</span>cashier<span class="w"> </span>--command<span class="w"> </span>--<span class="w"> </span>sleep<span class="w"> </span><span class="m">3600</span>
+</span><span id="__span-61-2"><a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a>kubectl<span class="w"> </span>run<span class="w"> </span>guest<span class="w">   </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--labels<span class="o">=</span><span class="nv">role</span><span class="o">=</span>guest<span class="w">   </span>--command<span class="w"> </span>--<span class="w"> </span>sleep<span class="w"> </span><span class="m">3600</span>
+</span></code></pre></div>
+<p><code>menu-from-cashier.yaml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-62-1"><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+</span><span id="__span-62-2"><a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NetworkPolicy</span>
+</span><span id="__span-62-3"><a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-62-4"><a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">menu-from-cashier</span>
+</span><span id="__span-62-5"><a id="__codelineno-62-5" name="__codelineno-62-5" href="#__codelineno-62-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-net</span>
+</span><span id="__span-62-6"><a id="__codelineno-62-6" name="__codelineno-62-6" href="#__codelineno-62-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-62-7"><a id="__codelineno-62-7" name="__codelineno-62-7" href="#__codelineno-62-7"></a><span class="w">  </span><span class="nt">podSelector</span><span class="p">:</span>
+</span><span id="__span-62-8"><a id="__codelineno-62-8" name="__codelineno-62-8" href="#__codelineno-62-8"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-62-9"><a id="__codelineno-62-9" name="__codelineno-62-9" href="#__codelineno-62-9"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">menu</span><span class="w">               </span><span class="c1"># ← 이 정책이 '지키는' 파드</span>
+</span><span id="__span-62-10"><a id="__codelineno-62-10" name="__codelineno-62-10" href="#__codelineno-62-10"></a><span class="w">  </span><span class="nt">policyTypes</span><span class="p">:</span>
+</span><span id="__span-62-11"><a id="__codelineno-62-11" name="__codelineno-62-11" href="#__codelineno-62-11"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span><span class="w">                 </span><span class="c1"># ← 들어오는 방향만 제한</span>
+</span><span id="__span-62-12"><a id="__codelineno-62-12" name="__codelineno-62-12" href="#__codelineno-62-12"></a><span class="w">  </span><span class="nt">ingress</span><span class="p">:</span>
+</span><span id="__span-62-13"><a id="__codelineno-62-13" name="__codelineno-62-13" href="#__codelineno-62-13"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">from</span><span class="p">:</span>
+</span><span id="__span-62-14"><a id="__codelineno-62-14" name="__codelineno-62-14" href="#__codelineno-62-14"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">podSelector</span><span class="p">:</span>
+</span><span id="__span-62-15"><a id="__codelineno-62-15" name="__codelineno-62-15" href="#__codelineno-62-15"></a><span class="w">            </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-62-16"><a id="__codelineno-62-16" name="__codelineno-62-16" href="#__codelineno-62-16"></a><span class="w">              </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cashier</span><span class="w">   </span><span class="c1"># ← 이 파드에서 오는 것만</span>
+</span><span id="__span-62-17"><a id="__codelineno-62-17" name="__codelineno-62-17" href="#__codelineno-62-17"></a><span class="w">      </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-62-18"><a id="__codelineno-62-18" name="__codelineno-62-18" href="#__codelineno-62-18"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+</span><span id="__span-62-19"><a id="__codelineno-62-19" name="__codelineno-62-19" href="#__codelineno-62-19"></a><span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w">            </span><span class="c1"># ← 파드 포트(targetPort). Service 포트 8080 이 아니다</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-63-1"><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>menu-from-cashier.yaml
+</span><span id="__span-63-2"><a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>cashier<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>--timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span>http://menu-svc:8080<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>title
+</span><span id="__span-63-3"><a id="__codelineno-63-3" name="__codelineno-63-3" href="#__codelineno-63-3"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>guest<span class="w">   </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>--timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span>http://menu-svc:8080
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-64-1"><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a>&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+</span><span id="__span-64-2"><a id="__codelineno-64-2" name="__codelineno-64-2" href="#__codelineno-64-2"></a>wget: download timed out                ← refused 가 아니라 timeout: 패킷이 조용히 버려진다
+</span></code></pre></div>
+<h3 id="service">실험 — 정책에 Service 포트를 적으면<a class="headerlink" href="#service" title="Permanent link">&para;</a></h3>
+<p>허용 포트를 Service 포트(8080)로 바꿔 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-65-1"><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a>kubectl<span class="w"> </span>patch<span class="w"> </span>networkpolicy<span class="w"> </span>menu-from-cashier<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--type<span class="o">=</span>json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-65-2"><a id="__codelineno-65-2" name="__codelineno-65-2" href="#__codelineno-65-2"></a><span class="w">  </span>-p<span class="w"> </span><span class="s1">'[{"op":"replace","path":"/spec/ingress/0/ports/0/port","value":8080}]'</span>
+</span><span id="__span-65-3"><a id="__codelineno-65-3" name="__codelineno-65-3" href="#__codelineno-65-3"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>networkpolicy<span class="w"> </span>menu-from-cashier<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'To Port'</span>
+</span><span id="__span-65-4"><a id="__codelineno-65-4" name="__codelineno-65-4" href="#__codelineno-65-4"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>cashier<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>--timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span>http://menu-svc:8080
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-66-1"><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a>    To Port: 8080/TCP
+</span><span id="__span-66-2"><a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a>wget: download timed out                ← 허용된 cashier 까지 막혔다
+</span></code></pre></div>
+<p>관찰 포인트: 정책은 Service 를 모릅니다. 패킷이 파드에 도착할 때의 포트(<strong>targetPort 80</strong>)로 판단합니다. 되돌려 둡니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-67-1"><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>menu-from-cashier.yaml
+</span></code></pre></div>
+<hr />
+<h2 id="_6">시험에서 빠르게<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a><span class="c1"># Service</span>
+</span><span id="__span-68-2"><a id="__codelineno-68-2" name="__codelineno-68-2" href="#__codelineno-68-2"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>deploy<span class="w"> </span>&lt;d&gt;<span class="w"> </span>--name<span class="o">=</span>&lt;svc&gt;<span class="w"> </span>--port<span class="o">=</span>&lt;p&gt;<span class="w"> </span>--target-port<span class="o">=</span>&lt;tp&gt;<span class="w">                 </span><span class="c1"># ClusterIP</span>
+</span><span id="__span-68-3"><a id="__codelineno-68-3" name="__codelineno-68-3" href="#__codelineno-68-3"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>deploy<span class="w"> </span>&lt;d&gt;<span class="w"> </span>--name<span class="o">=</span>&lt;svc&gt;<span class="w"> </span>--port<span class="o">=</span>&lt;p&gt;<span class="w"> </span>--type<span class="o">=</span>NodePort<span class="w"> </span><span class="nv">$do</span><span class="w"> </span>&gt;<span class="w"> </span>s.yaml<span class="w">       </span><span class="c1"># nodePort 는 YAML 에 추가</span>
+</span><span id="__span-68-4"><a id="__codelineno-68-4" name="__codelineno-68-4" href="#__codelineno-68-4"></a>kubectl<span class="w"> </span>create<span class="w"> </span>service<span class="w"> </span>nodeport<span class="w"> </span>&lt;<span class="nv">이름</span><span class="o">=</span>앱레이블&gt;<span class="w"> </span>--tcp<span class="o">=</span>&lt;p&gt;:&lt;tp&gt;<span class="w"> </span>--node-port<span class="o">=</span>&lt;np&gt;<span class="w">       </span><span class="c1"># 셀렉터 app=&lt;이름&gt;</span>
+</span><span id="__span-68-5"><a id="__codelineno-68-5" name="__codelineno-68-5" href="#__codelineno-68-5"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>deploy<span class="w"> </span>&lt;d&gt;<span class="w"> </span>--name<span class="o">=</span>&lt;svc&gt;<span class="w"> </span>--port<span class="o">=</span>&lt;p&gt;<span class="w"> </span>--cluster-ip<span class="o">=</span>None<span class="w">                  </span><span class="c1"># Headless</span>
+</span><span id="__span-68-6"><a id="__codelineno-68-6" name="__codelineno-68-6" href="#__codelineno-68-6"></a>
+</span><span id="__span-68-7"><a id="__codelineno-68-7" name="__codelineno-68-7" href="#__codelineno-68-7"></a><span class="c1"># 진단 순서</span>
+</span><span id="__span-68-8"><a id="__codelineno-68-8" name="__codelineno-68-8" href="#__codelineno-68-8"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc,endpoints<span class="w"> </span>&lt;svc&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w">          </span><span class="c1"># ① 비었나 차 있나</span>
+</span><span id="__span-68-9"><a id="__codelineno-68-9" name="__codelineno-68-9" href="#__codelineno-68-9"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--show-labels<span class="w">           </span><span class="c1"># ② 셀렉터와 맞나 · READY 인가</span>
+</span><span id="__span-68-10"><a id="__codelineno-68-10" name="__codelineno-68-10" href="#__codelineno-68-10"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>svc<span class="w"> </span>&lt;svc&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w">               </span><span class="c1"># ③ Selector · TargetPort</span>
+</span><span id="__span-68-11"><a id="__codelineno-68-11" name="__codelineno-68-11" href="#__codelineno-68-11"></a>kubectl<span class="w"> </span>run<span class="w"> </span>tmp<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>--timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span>http://&lt;svc&gt;:&lt;p&gt;
+</span><span id="__span-68-12"><a id="__codelineno-68-12" name="__codelineno-68-12" href="#__codelineno-68-12"></a>
+</span><span id="__span-68-13"><a id="__codelineno-68-13" name="__codelineno-68-13" href="#__codelineno-68-13"></a><span class="c1"># DNS</span>
+</span><span id="__span-68-14"><a id="__codelineno-68-14" name="__codelineno-68-14" href="#__codelineno-68-14"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>&lt;svc&gt;.&lt;ns&gt;.svc.cluster.local
+</span><span id="__span-68-15"><a id="__codelineno-68-15" name="__codelineno-68-15" href="#__codelineno-68-15"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/etc/resolv.conf
+</span><span id="__span-68-16"><a id="__codelineno-68-16" name="__codelineno-68-16" href="#__codelineno-68-16"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>k8s-app<span class="o">=</span>kube-dns
+</span></code></pre></div>
+<hr />
+<h2 id="_7">정리<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-69-1"><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>namespace<span class="w"> </span>guide-net
+</span><span id="__span-69-2"><a id="__codelineno-69-2" name="__codelineno-69-2" href="#__codelineno-69-2"></a>rm<span class="w"> </span>-f<span class="w"> </span>menu-typo.yaml<span class="w"> </span>menu-np.yaml<span class="w"> </span>menu-from-cashier.yaml
+</span><span id="__span-69-3"><a id="__codelineno-69-3" name="__codelineno-69-3" href="#__codelineno-69-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deployment<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w">      </span><span class="c1"># READY 가 원래 수(보통 2/2)로 돌아와 있는지 확인</span>
+</span></code></pre></div>
+<hr />
+<h2 id="_8">확인 질문<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<details class="question">
+<summary>1. Service 는 만들어졌는데 <code>get endpoints</code> 가 <code>&lt;none&gt;</code> 입니다. 원인 후보 셋은?</summary>
+<p>① 셀렉터와 파드 레이블 불일치 ② 파드가 Ready 가 아님 ③ Service 와 파드가 다른 네임스페이스.
+<code>kubectl get pods --show-labels</code> 와 <code>describe svc</code> 의 Selector 를 대조하는 것이 가장 빠릅니다.</p>
+</details>
+<details class="question">
+<summary>2. Endpoints 는 차 있는데 <code>Connection refused</code> 가 납니다. 무엇을 의심하나요?</summary>
+<p><code>targetPort</code> 입니다. Endpoints 에 찍힌 포트를 파드 컨테이너가 실제로 듣고 있는지 확인합니다.
+refused 가 아니라 <strong>timeout</strong> 이라면 NetworkPolicy 나 CNI 쪽입니다.</p>
+</details>
+<details class="question">
+<summary>3. <code>kubectl expose</code> 로 nodePort 번호를 지정할 수 있나요?</summary>
+<p>없습니다. <code>$do</code> 로 YAML 을 뽑아 <code>spec.ports[].nodePort</code> 를 추가하거나,
+<code>kubectl create service nodeport &lt;이름&gt; --tcp=... --node-port=...</code> 을 씁니다(이때 셀렉터는 <code>app=&lt;이름&gt;</code>).</p>
+</details>
+<details class="question">
+<summary>4. NodePort Service 에 파드가 없는 노드의 IP 로 접속하면?</summary>
+<p>됩니다. 모든 노드에 같은 포트가 열리고, 노드의 규칙(kube-proxy/Cilium)이 파드가 있는 노드로 넘겨 줍니다.</p>
+</details>
+<details class="question">
+<summary>5. 베어메탈 클러스터에서 LoadBalancer Service 의 EXTERNAL-IP 가 <code>&lt;pending&gt;</code> 입니다. 고장인가요?</summary>
+<p>아닙니다. 외부 IP 를 붙여 줄 로드밸런서 구현이 없을 뿐입니다. NodePort 는 이미 열려 있어 <code>&lt;노드IP&gt;:&lt;nodePort&gt;</code> 로 접속됩니다.</p>
+</details>
+<details class="question">
+<summary>6. <code>other</code> 네임스페이스의 파드가 <code>guide-net</code> 의 <code>menu-svc</code> 를 부르려면 어떤 이름을 써야 하나요?</summary>
+<p><code>menu-svc.guide-net</code> (또는 FQDN <code>menu-svc.guide-net.svc.cluster.local</code>). 짧은 이름 <code>menu-svc</code> 는 <code>other</code> 네임스페이스에서 찾으므로 실패합니다.</p>
+</details>
+<details class="question">
+<summary>7. 일반 Service 와 Headless Service 를 nslookup 하면 결과가 어떻게 다른가요?</summary>
+<p>일반 Service 는 ClusterIP 하나, Headless 는 Ready 인 파드 IP 들이 모두 나옵니다.</p>
+</details>
+<details class="question">
+<summary>8. NetworkPolicy 의 <code>ports.port</code> 에는 Service 의 port 와 targetPort 중 무엇을 적나요?</summary>
+<p>targetPort(파드가 듣는 포트)입니다. 정책은 파드에 도착하는 패킷을 기준으로 판단합니다.</p>
+</details>
+<hr />
+<h2 id="_9">다음 단계 — 채점 실습<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong> 채점은 실제로 임시 파드와 노드 IP 로 접속까지 확인합니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/09-networking
+</span><span id="__span-70-2"><a id="__codelineno-70-2" name="__codelineno-70-2" href="#__codelineno-70-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>문제</th>
+<th>이 페이지에서 연습한 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1 Deployment + ClusterIP Service</td>
+<td>1) 2) — expose, Endpoints 확인, 임시 파드로 접속</td>
+</tr>
+<tr>
+<td>Q2 NodePort Service (포트 고정)</td>
+<td>3) 4) — <code>$do</code> 로 뽑아 nodePort 추가</td>
+</tr>
+<tr>
+<td>Q3 NetworkPolicy — frontend 에서만 backend 로</td>
+<td>8) (자세한 원리는 <a href="../10-networkpolicy/">10강</a>)</td>
+</tr>
+<tr>
+<td>Q4 파드 안에서 클러스터 DNS 확인</td>
+<td>6) — resolv.conf, 짧은 이름과 FQDN</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
+        
+          
+          <a href="../08-storage/" class="md-footer__link md-footer__link--prev" aria-label="이전: 8강 · 스토리지">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                이전
+              </span>
+              <div class="md-ellipsis">
+                8강 · 스토리지
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../10-networkpolicy/" class="md-footer__link md-footer__link--next" aria-label="다음: 10강 · NetworkPolicy">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                다음
+              </span>
+              <div class="md-ellipsis">
+                10강 · NetworkPolicy
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.tracking", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

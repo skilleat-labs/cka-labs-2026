@@ -1,0 +1,3066 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="스킬잇 CKA 온라인 강의 — 강의가 끝나고 따라 하며 개념을 채우는 실습 가이드">
+      
+      
+      
+        <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/04-cluster-build/">
+      
+      
+        <link rel="prev" href="../03-architecture/">
+      
+      
+        <link rel="next" href="../06-workloads/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>4강 · 클러스터 구축 (VirtualBox) - CKA 실습 가이드</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pretendard:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Pretendard";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#4-virtualbox" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../.." title="CKA 실습 가이드" class="md-header__button md-logo" aria-label="CKA 실습 가이드" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CKA 실습 가이드
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              4강 · 클러스터 구축 (VirtualBox)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="다크 모드로 전환"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="라이트 모드로 전환"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/skilleat-labs/cka-labs-2026" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    skilleat-labs/cka-labs-2026
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  홈
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../start/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  시작하기
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../03-architecture/" class="md-tabs__link">
+          
+  
+  
+  강의별 실습
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CKA 실습 가이드" class="md-nav__button md-logo" aria-label="CKA 실습 가이드" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    CKA 실습 가이드
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/skilleat-labs/cka-labs-2026" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    skilleat-labs/cka-labs-2026
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    홈
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    시작하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    강의별 실습
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    강의별 실습
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3강 · 아키텍처
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4강 · 클러스터 구축 (VirtualBox)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4강 · 클러스터 구축 (VirtualBox)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습 목표
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        전체 그림
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0) 사전 준비
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="0) 사전 준비">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        사양
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        설치할 것
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-control-plane-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) control-plane VM 만들기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1) control-plane VM 만들기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-1-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-1. VM 생성
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-2. 네트워크 어댑터 두 개
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-3-openssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-3. OpenSSH 서버
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-4-ip-netplan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-4. 고정 IP (netplan)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-5-hosts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-5. hosts 파일
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-6-pc-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-6. 이제 호스트 PC 에서 SSH 로
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-swap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) swap 끄기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-sysctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) 커널 모듈과 sysctl
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-containerd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) containerd 설치
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4) containerd 설치">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemdcgroup-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SystemdCgroup = true 가 왜 필요한가
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-kubeadm-kubelet-kubectl-v132" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) kubeadm · kubelet · kubectl (v1.32)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-worker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6) worker 복제
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6) worker 복제">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#worker-ip-hostname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        worker 에서 IP 와 hostname 바꾸기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        세 대가 서로 보이는지
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-control-plane-kubeadm-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7) control-plane 초기화 — kubeadm init
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-cilium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8) Cilium 설치
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8) Cilium 설치">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CNI 는 무엇을 하나
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cilium-cli-cilium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cilium CLI 설치 → Cilium 설치
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-worker-kubeadm-join" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9) worker 조인 — kubeadm join
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10) 검증 — 세 가지를 통과하면 완성
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10) 검증 — 세 가지를 통과하면 완성">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ready-ip-19216856x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① 노드 세 대가 Ready, 버전이 같고, IP 가 192.168.56.x
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② 파드가 뜨고 Service 로 통신이 되는가
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-coredns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③ 이름이 해석되는가 (CoreDNS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        스냅샷 찍기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-pc-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11) 내 PC 의 kubectl 로 접속하기 (선택)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12) 셸 설정 (추천)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        트러블슈팅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="트러블슈팅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        노드 간 통신 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        처음부터 다시 (control-plane)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        자주 묻는 질문
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        확인 질문
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        다음 단계
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-workloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6강 · 워크로드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7강 · 스케줄링
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9강 · 서비스와 내부 통신
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10강 · NetworkPolicy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11강 · Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-cluster-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13강 · 클러스터 구축
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-rbac/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · RBAC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15강 · 유지보수
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-node-ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16강 · 노드 운영
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-helm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17강 · Helm과 Kustomize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19강 · 트러블슈팅
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습 목표
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        전체 그림
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0) 사전 준비
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="0) 사전 준비">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        사양
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        설치할 것
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-control-plane-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) control-plane VM 만들기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1) control-plane VM 만들기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-1-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-1. VM 생성
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-2. 네트워크 어댑터 두 개
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-3-openssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-3. OpenSSH 서버
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-4-ip-netplan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-4. 고정 IP (netplan)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-5-hosts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-5. hosts 파일
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-6-pc-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-6. 이제 호스트 PC 에서 SSH 로
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-swap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) swap 끄기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-sysctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) 커널 모듈과 sysctl
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-containerd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) containerd 설치
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4) containerd 설치">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemdcgroup-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SystemdCgroup = true 가 왜 필요한가
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-kubeadm-kubelet-kubectl-v132" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) kubeadm · kubelet · kubectl (v1.32)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-worker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6) worker 복제
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6) worker 복제">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#worker-ip-hostname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        worker 에서 IP 와 hostname 바꾸기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        세 대가 서로 보이는지
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-control-plane-kubeadm-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7) control-plane 초기화 — kubeadm init
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-cilium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8) Cilium 설치
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8) Cilium 설치">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CNI 는 무엇을 하나
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cilium-cli-cilium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cilium CLI 설치 → Cilium 설치
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-worker-kubeadm-join" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9) worker 조인 — kubeadm join
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10) 검증 — 세 가지를 통과하면 완성
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10) 검증 — 세 가지를 통과하면 완성">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ready-ip-19216856x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① 노드 세 대가 Ready, 버전이 같고, IP 가 192.168.56.x
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② 파드가 뜨고 Service 로 통신이 되는가
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-coredns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③ 이름이 해석되는가 (CoreDNS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        스냅샷 찍기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-pc-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11) 내 PC 의 kubectl 로 접속하기 (선택)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12) 셸 설정 (추천)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        트러블슈팅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="트러블슈팅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        노드 간 통신 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        처음부터 다시 (control-plane)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        자주 묻는 질문
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        확인 질문
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        다음 단계
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="4-virtualbox">4강 · 클러스터 구축 (VirtualBox)<a class="headerlink" href="#4-virtualbox" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>영상: <strong>04강-VirtualBox클러스터구축</strong> · 채점 세트 없음 — 이 클러스터 위에서 나머지 모든 실습을 합니다</p>
+</blockquote>
+<p>VirtualBox 로 <strong>control-plane 1대 + worker 2대</strong> 클러스터를 직접 만듭니다.
+이 페이지를 끝내면 <a href="../../start/">시작하기</a>의 환경이 준비되고, 이후 모든 페이지와 채점 실습(<code>cka-lab</code>)을 이 클러스터에서 진행합니다.</p>
+<div class="admonition info">
+<p class="admonition-title">기준 버전</p>
+<p>Kubernetes <strong>v1.32</strong> · Ubuntu Server <strong>24.04 LTS</strong> · <strong>containerd</strong> · <strong>Cilium</strong> (기본 모드, kube-proxy 유지)</p>
+</div>
+<h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>VM 한 대에 <strong>공통 설정을 끝낸 뒤 복제</strong>해서, worker 는 IP 와 hostname 만 바꾸는 방식으로 3대를 만든다.</li>
+<li>swap · 커널 모듈 · cgroup 드라이버 같은 설정이 <strong>왜 필요한지</strong>, 빠뜨리면 어디서 실패하는지 확인한다.</li>
+<li><code>kubeadm init</code> → CNI(Cilium) → <code>kubeadm join</code> 순서로 클러스터를 세우고, 단계마다 <strong>노드 상태가 어떻게 바뀌는지</strong> 본다.</li>
+<li>스케줄링 · CNI · kube-proxy · CoreDNS 를 <strong>세 가지 검증</strong>으로 확인하고 스냅샷을 찍는다.</li>
+<li>호스트 PC 의 kubectl 로도 클러스터를 조작할 수 있게 kubeconfig 를 병합한다.</li>
+</ul>
+<hr />
+<h2 id="_2">전체 그림<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph HOST["Host PC (VirtualBox)"]
+      direction TB
+      NAT(("NAT&lt;br/&gt;인터넷"))
+      subgraph HO["Host-only 192.168.56.0/24"]
+        CP["control-plane&lt;br/&gt;192.168.56.10&lt;br/&gt;2 CPU · 2560MB"]
+        W1["worker-1&lt;br/&gt;192.168.56.11&lt;br/&gt;2 CPU · 2048MB"]
+        W2["worker-2&lt;br/&gt;192.168.56.12&lt;br/&gt;2 CPU · 2048MB"]
+      end
+    end
+    NAT -. 어댑터1 .- CP
+    NAT -. 어댑터1 .- W1
+    NAT -. 어댑터1 .- W2</code></pre>
+<p>각 VM 은 네트워크 어댑터를 <strong>두 개</strong> 씁니다.</p>
+<table>
+<thead>
+<tr>
+<th>어댑터</th>
+<th>종류</th>
+<th>주소</th>
+<th>용도</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>어댑터 1</td>
+<td>NAT</td>
+<td>10.0.2.15 (모든 VM 이 같음)</td>
+<td>인터넷 — 패키지·이미지 받기</td>
+</tr>
+<tr>
+<td>어댑터 2</td>
+<td>호스트 전용 (vboxnet0)</td>
+<td>192.168.56.10 / .11 / .12</td>
+<td>노드끼리, 그리고 호스트 PC 에서 SSH</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">NAT 주소는 세 대가 모두 10.0.2.15 입니다</p>
+<p>VirtualBox NAT 는 VM 마다 따로 있는 작은 공유기라서 주소가 겹칩니다. 그래서 <strong>노드끼리는 반드시 192.168.56.x 로</strong> 통신해야 합니다.
+나중에 <code>kubectl get nodes -o wide</code> 의 INTERNAL-IP 가 10.0.2.15 로 나오면 설정이 잘못된 것입니다 (→ 10) 검증).</p>
+</div>
+<p>작업 순서입니다.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["1) control-plane VM 생성&lt;br/&gt;OpenSSH · 네트워크 · 고정 IP · hosts"] --&gt; B["2)~5) 공통 설정&lt;br/&gt;swap · 커널 · containerd · kubeadm"]
+    B --&gt; C["6) VM 종료 → worker-1, worker-2 복제&lt;br/&gt;IP · hostname 만 변경"]
+    C --&gt; D["7) control-plane: kubeadm init"]
+    D --&gt; E["8) control-plane: Cilium 설치"]
+    E --&gt; F["9) worker: kubeadm join"]
+    F --&gt; G["10) 검증 3종 → 스냅샷"]</code></pre>
+<div class="admonition tip">
+<p class="admonition-title">공통 설정을 복제 <strong>전에</strong> 끝내는 것이 핵심입니다</p>
+<p>2)~5) 를 control-plane 한 대에서만 하고 복제하면, 같은 작업을 세 번 반복하지 않아도 됩니다.</p>
+</div>
+<hr />
+<h2 id="0">0) 사전 준비<a class="headerlink" href="#0" title="Permanent link">&para;</a></h2>
+<h3 id="_3">사양<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>노드</th>
+<th>공식 최소 (kubeadm)</th>
+<th>이 가이드</th>
+<th>판정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>control-plane</td>
+<td>2 CPU · 2 GB</td>
+<td>2 CPU · <strong>2560 MB</strong> · 20 GB</td>
+<td>여유 있음</td>
+</tr>
+<tr>
+<td>worker-1</td>
+<td>1 CPU · 1 GB (권장 2 GB)</td>
+<td>2 CPU · <strong>2048 MB</strong> · 20 GB</td>
+<td>빠듯함</td>
+</tr>
+<tr>
+<td>worker-2</td>
+<td>1 CPU · 1 GB (권장 2 GB)</td>
+<td>2 CPU · <strong>2048 MB</strong> · 20 GB</td>
+<td>빠듯함</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">2 GB 는 정말 최솟값입니다</p>
+<p>OS · kubelet · containerd · Cilium 에이전트만으로 1.5 GB 가까이 씁니다. 실습 중 메모리가 모자라면 노드가 NotReady 로 흔들립니다.</p>
+<ul>
+<li>호스트 PC RAM <strong>16 GB 이상</strong>: worker 를 2560 MB 로 올리는 것을 권장합니다.</li>
+<li>호스트 PC RAM <strong>8 GB</strong>: 2048 MB 로 하되, 실습 중에는 다른 프로그램을 모두 닫으세요.</li>
+</ul>
+</div>
+<p><code>control-plane</code> 이 CPU 2 개 미만이면 <code>kubeadm init</code> 이 아예 거부합니다.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[ERROR NumCPU]: the number of available CPUs 1 is less than the required 2
+</span></code></pre></div>
+<h3 id="_4">설치할 것<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>VirtualBox</strong> — <a href="https://www.virtualbox.org/wiki/Downloads">https://www.virtualbox.org/wiki/Downloads</a> (Extension Pack 도 함께)</li>
+<li><strong>Ubuntu Server 24.04 LTS ISO</strong> — <a href="https://releases.ubuntu.com/24.04/">https://releases.ubuntu.com/24.04/</a><ul>
+<li><strong>Server</strong> 버전입니다. Desktop 은 GUI 모듈 때문에 노드 자원을 낭비합니다.</li>
+<li>Apple Silicon 맥이면 <strong>arm64</strong> 이미지 (아래 FAQ 참고)</li>
+</ul>
+</li>
+</ol>
+<details class="note">
+<summary>공식 문서 모음</summary>
+<table>
+<thead>
+<tr>
+<th>문서</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kubeadm 설치</td>
+<td><a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/">https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/</a></td>
+</tr>
+<tr>
+<td>클러스터 생성 (init/join)</td>
+<td><a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/">https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/</a></td>
+</tr>
+<tr>
+<td>containerd</td>
+<td><a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd">https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd</a></td>
+</tr>
+<tr>
+<td>Cilium 설치</td>
+<td><a href="https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/">https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/</a></td>
+</tr>
+<tr>
+<td>v1.32 릴리스 노트</td>
+<td><a href="https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.32.md">https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.32.md</a></td>
+</tr>
+</tbody>
+</table>
+<p>이 중 앞의 두 문서는 <strong>CKA 시험 중에도 열 수 있습니다.</strong> 어디에 무엇이 있는지 한 번 훑어 두세요.</p>
+</details>
+<hr />
+<h2 id="1-control-plane-vm">1) control-plane VM 만들기<a class="headerlink" href="#1-control-plane-vm" title="Permanent link">&para;</a></h2>
+<h3 id="1-1-vm">1-1. VM 생성<a class="headerlink" href="#1-1-vm" title="Permanent link">&para;</a></h3>
+<p>VirtualBox → <strong>새로 만들기</strong></p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>이름</td>
+<td><code>control-plane</code></td>
+</tr>
+<tr>
+<td>ISO</td>
+<td>Ubuntu Server 24.04 ISO</td>
+</tr>
+<tr>
+<td>무인 설치</td>
+<td><strong>Skip Unattended Installation</strong> 체크</td>
+</tr>
+<tr>
+<td>메모리 · CPU · 디스크</td>
+<td>2560 MB · 2 · 20 GB</td>
+</tr>
+</tbody>
+</table>
+<p>설치 화면에서 사용자 이름을 정합니다. 이 가이드는 <strong><code>vboxuser</code></strong> 로 가정합니다. 다른 이름을 썼다면 이후 명령의 <code>vboxuser</code> 를 바꿔서 입력하세요.</p>
+<h3 id="1-2">1-2. 네트워크 어댑터 두 개<a class="headerlink" href="#1-2" title="Permanent link">&para;</a></h3>
+<p>먼저 호스트 전용 네트워크를 만듭니다.
+VirtualBox → <strong>도구 → 네트워크 → Host-only Networks → 생성</strong> (보통 <code>vboxnet0</code>, 192.168.56.1/24)</p>
+<p>VM <strong>설정 → 네트워크</strong>:</p>
+<ul>
+<li>어댑터 1: <strong>NAT</strong></li>
+<li>어댑터 2: <strong>호스트 전용 어댑터</strong> → <code>vboxnet0</code></li>
+</ul>
+<h3 id="1-3-openssh">1-3. OpenSSH 서버<a class="headerlink" href="#1-3-openssh" title="Permanent link">&para;</a></h3>
+<p>VirtualBox 콘솔 창은 복사·붙여넣기가 불편합니다. SSH 를 켜 두면 이후 모든 작업을 <strong>호스트 PC 터미널에서</strong> 할 수 있습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># control-plane 콘솔에서</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>openssh-server
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>ssh
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>ssh
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>active
+</span></code></pre></div>
+<h3 id="1-4-ip-netplan">1-4. 고정 IP (netplan)<a class="headerlink" href="#1-4-ip-netplan" title="Permanent link">&para;</a></h3>
+<p>DHCP 는 재부팅마다 주소가 바뀔 수 있습니다. 쿠버네티스 노드는 <strong>고정 IP</strong> 가 있어야 합니다.</p>
+<p>먼저 인터페이스 이름을 확인합니다. 환경에 따라 <code>enp0s3</code>/<code>enp0s8</code> 이 아닐 수 있습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ip<span class="w"> </span>-br<span class="w"> </span>a
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>lo        UNKNOWN   127.0.0.1/8 ::1/128
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>enp0s3    UP        10.0.2.15/24 ...       ← 어댑터 1 (NAT)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>enp0s8    UP                                ← 어댑터 2 (아직 주소 없음)
+</span></code></pre></div>
+<p><code>/etc/netplan/</code> 아래의 설정 파일을 엽니다 (파일 이름은 <code>00-installer-config.yaml</code> 또는 <code>50-cloud-init.yaml</code> 등).</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ls<span class="w"> </span>/etc/netplan/
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>vi<span class="w"> </span>/etc/netplan/00-installer-config.yaml
+</span></code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">network</span><span class="p">:</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">ethernets</span><span class="p">:</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">enp0s3</span><span class="p">:</span><span class="w">              </span><span class="c1"># ← 어댑터 1 - NAT (인터넷)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="nt">enp0s8</span><span class="p">:</span><span class="w">              </span><span class="c1"># ← 어댑터 2 - Host-only (노드 간 통신)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">      </span><span class="nt">addresses</span><span class="p">:</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.56.10/24</span><span class="w">   </span><span class="c1"># ← worker-1 은 .11, worker-2 는 .12</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/netplan/*.yaml<span class="w">     </span><span class="c1"># 권한이 넓으면 경고가 나온다</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>ip<span class="w"> </span>-br<span class="w"> </span>a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">192</span>.168.56
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>enp0s8    UP    192.168.56.10/24 ...
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Host-only 어댑터에 gateway 를 넣지 마세요</p>
+<p>기본 경로(default route)는 <strong>NAT 쪽 하나만</strong> 있어야 인터넷이 됩니다. <code>enp0s8</code> 에 <code>routes</code>/<code>gateway4</code> 를 넣으면 인터넷이 끊길 수 있습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ip<span class="w"> </span>route<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>default<span class="w">     </span><span class="c1"># default via 10.0.2.2 dev enp0s3 한 줄이어야 정상</span>
+</span></code></pre></div>
+</div>
+<h3 id="1-5-hosts">1-5. hosts 파일<a class="headerlink" href="#1-5-hosts" title="Permanent link">&para;</a></h3>
+<p>DNS 서버 없이도 노드 이름으로 서로를 찾을 수 있게 합니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/hosts<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="s">192.168.56.10  control-plane</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="s">192.168.56.11  worker-1</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="s">192.168.56.12  worker-2</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="s">EOF</span>
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">hosts 파일이 노드 IP 를 정합니다</p>
+<p>kubelet 은 <code>--node-ip</code> 가 없으면 <strong>자기 hostname 을 해석한 주소</strong>를 노드 IP 로 씁니다.
+hosts 파일에 <code>192.168.56.10 control-plane</code> 이 있으니 NAT 주소(10.0.2.15) 대신 192.168.56.10 이 선택됩니다.
+이 한 단계가 빠지면 노드 IP 가 10.0.2.15 가 되어 <code>kubectl logs</code> · <code>exec</code> 가 worker 파드에서 실패합니다.</p>
+</div>
+<h3 id="1-6-pc-ssh">1-6. 이제 호스트 PC 에서 SSH 로<a class="headerlink" href="#1-6-pc-ssh" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">macOS / Linux 터미널</label><label for="__tabbed_1_2">Windows PowerShell</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ssh<span class="w"> </span>vboxuser@192.168.56.10
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">ssh</span> <span class="n">vboxuser</span><span class="nv">@192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">56</span><span class="p">.</span><span class="n">10</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>여기부터는 SSH 창에서 복사·붙여넣기로 진행합니다.</p>
+<hr />
+<h2 id="2-swap">2) swap 끄기<a class="headerlink" href="#2-swap" title="Permanent link">&para;</a></h2>
+<p>kubelet 은 파드의 메모리 요청(requests)을 기준으로 노드를 관리합니다. swap 이 켜져 있으면 "실제로 얼마나 남았는가" 가 흐려지기 때문에, 기본 설정의 kubelet 은 swap 이 있으면 <strong>시작하지 않습니다.</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>swapoff<span class="w"> </span>-a<span class="w">                                     </span><span class="c1"># 지금 끄기</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i.bak<span class="w"> </span>-r<span class="w"> </span><span class="s1">'s/(.+ swap .+)/#\1/'</span><span class="w"> </span>/etc/fstab<span class="w">  </span><span class="c1"># 재부팅 후에도 꺼져 있게</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>free<span class="w"> </span>-h
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>               total        used        free      shared  buff/cache   available
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>Mem:           2.4Gi       310Mi       1.6Gi       1.0Mi       620Mi       2.1Gi
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Swap:             0B          0B          0B        ← 0B 여야 정상
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Ubuntu 24.04 는 swap 파일(/swap.img)을 씁니다</p>
+<p><code>/etc/fstab</code> 에 <code>/swap.img none swap sw 0 0</code> 한 줄이 있고, 위 <code>sed</code> 가 이것을 주석 처리합니다.
+재부팅 후에도 <code>Swap: 0B</code> 인지 확인하세요. 안 꺼져 있으면 <code>kubeadm init</code> 이 <code>[ERROR Swap]</code> 으로 멈춥니다.</p>
+</div>
+<hr />
+<h2 id="3-sysctl">3) 커널 모듈과 sysctl<a class="headerlink" href="#3-sysctl" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>설정</th>
+<th>하는 일</th>
+<th>빠지면</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>overlay</code> 모듈</td>
+<td>컨테이너 이미지 레이어를 겹쳐 하나의 파일시스템으로 보이게 한다</td>
+<td>containerd 가 컨테이너를 못 만든다</td>
+</tr>
+<tr>
+<td><code>br_netfilter</code> 모듈</td>
+<td>리눅스 브리지를 지나는 트래픽도 iptables 를 거치게 한다</td>
+<td>kube-proxy 의 Service 규칙이 적용되지 않는다</td>
+</tr>
+<tr>
+<td><code>net.bridge.bridge-nf-call-iptables = 1</code></td>
+<td>위 동작을 켠다</td>
+<td>같음</td>
+</tr>
+<tr>
+<td><code>net.ipv4.ip_forward = 1</code></td>
+<td>노드가 패킷을 다른 인터페이스로 넘겨 준다</td>
+<td>파드 → 다른 노드 통신이 안 된다. <code>[ERROR FileContent--proc-sys-net-ipv4-ip_forward]</code></td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/modules-load.d/k8s.conf<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="s">overlay</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="s">br_netfilter</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="s">EOF</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>sudo<span class="w"> </span>modprobe<span class="w"> </span>overlay
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>sudo<span class="w"> </span>modprobe<span class="w"> </span>br_netfilter
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/sysctl.d/kubernetes.conf<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="s">net.bridge.bridge-nf-call-ip6tables = 1</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="s">net.bridge.bridge-nf-call-iptables = 1</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="s">net.ipv4.ip_forward = 1</span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="s">EOF</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>sudo<span class="w"> </span>sysctl<span class="w"> </span>--system
+</span></code></pre></div>
+<p>확인합니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'overlay|br_netfilter'</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>sysctl<span class="w"> </span>net.bridge.bridge-nf-call-iptables<span class="w"> </span>net.ipv4.ip_forward
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>br_netfilter           32768  0
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>bridge                421888  1 br_netfilter
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>overlay               212992  0
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>net.bridge.bridge-nf-call-iptables = 1
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>net.ipv4.ip_forward = 1
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">왜 Cilium 인데 br_netfilter 가 필요한가요?</p>
+<p>이 가이드는 <code>cilium install</code> <strong>기본 모드</strong>를 씁니다. 이 모드에서는 kubeadm 이 설치한 <strong>kube-proxy 가 그대로 남아</strong> Service 규칙을 iptables 로 씁니다.
+<code>cilium install --set kubeProxyReplacement=true</code> 로 kube-proxy 를 eBPF 로 대체하면 br_netfilter 가 필요 없어지지만, 이 과정은 CKA 시험 환경과 같은 <strong>kube-proxy 가 있는 구성</strong>을 유지합니다.</p>
+</div>
+<hr />
+<h2 id="4-containerd">4) containerd 설치<a class="headerlink" href="#4-containerd" title="Permanent link">&para;</a></h2>
+<p>kubelet 은 컨테이너를 직접 만들지 않고 <strong>CRI(Container Runtime Interface)</strong> 로 런타임에게 시킵니다. 그 런타임이 containerd 입니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>containerd
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/containerd
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>containerd<span class="w"> </span>config<span class="w"> </span>default<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/containerd/config.toml<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/SystemdCgroup = false/SystemdCgroup = true/'</span><span class="w"> </span>/etc/containerd/config.toml
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>containerd
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>containerd
+</span></code></pre></div>
+<h3 id="systemdcgroup-true">SystemdCgroup = true 가 왜 필요한가<a class="headerlink" href="#systemdcgroup-true" title="Permanent link">&para;</a></h3>
+<p>cgroup 은 리눅스 커널이 프로세스의 CPU·메모리를 제한하는 기능이고, 그 cgroup 트리를 관리하는 주체를 <strong>cgroup 드라이버</strong>라고 합니다.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>기본 드라이버</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>containerd</td>
+<td><code>cgroupfs</code></td>
+</tr>
+<tr>
+<td>kubelet (kubeadm 설치)</td>
+<td><code>systemd</code></td>
+</tr>
+</tbody>
+</table>
+<p>둘이 다르면 <strong>한 노드에서 cgroup 관리자가 둘</strong>이 되어 서로의 설정을 모른 채 충돌합니다. 증상은 "처음엔 잘 되다가 어느 순간 파드가 재시작을 반복하고 노드가 NotReady" 처럼 애매하게 나타납니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>grep<span class="w"> </span>-n<span class="w"> </span>SystemdCgroup<span class="w"> </span>/etc/containerd/config.toml
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>containerd
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>139:            SystemdCgroup = true
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>active
+</span></code></pre></div>
+<details class="tip">
+<summary>선택: pause 이미지 버전 맞추기</summary>
+<p>Ubuntu 패키지 containerd 의 기본 설정은 <code>sandbox_image = "registry.k8s.io/pause:3.8"</code> 입니다.
+kubeadm v1.32 는 <code>pause:3.10</code> 을 기대해서 init 때 아래 <strong>경고</strong>가 나옵니다. 동작에는 문제가 없습니다.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>W0929 ... detected that the sandbox image "registry.k8s.io/pause:3.8" of the container runtime is inconsistent with that used by kubeadm. It is recommended to use "registry.k8s.io/pause:3.10" as the CRI sandbox image.
+</span></code></pre></div>
+<p>경고를 없애려면:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s#registry.k8s.io/pause:3.8#registry.k8s.io/pause:3.10#'</span><span class="w"> </span>/etc/containerd/config.toml
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>containerd
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="5-kubeadm-kubelet-kubectl-v132">5) kubeadm · kubelet · kubectl (v1.32)<a class="headerlink" href="#5-kubeadm-kubelet-kubectl-v132" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>도구</th>
+<th>설치 위치</th>
+<th>역할</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>kubeadm</strong></td>
+<td>모든 노드</td>
+<td>클러스터를 <strong>세울 때만</strong> 쓰는 도구. <code>init</code> · <code>join</code> · <code>token</code> · <code>upgrade</code></td>
+</tr>
+<tr>
+<td><strong>kubelet</strong></td>
+<td>모든 노드 (control-plane 포함)</td>
+<td>systemd 서비스로 항상 도는 노드 에이전트. 파드를 실제로 띄우고 상태를 보고한다. <code>/etc/kubernetes/manifests/</code> 의 스태틱 파드도 이것이 띄운다</td>
+</tr>
+<tr>
+<td><strong>kubectl</strong></td>
+<td>control-plane 또는 내 PC</td>
+<td><code>~/.kube/config</code> 를 읽어 API 서버에 요청하는 CLI</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>apt-transport-https<span class="w"> </span>ca-certificates<span class="w"> </span>curl<span class="w"> </span>gpg
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>-m<span class="w"> </span><span class="m">755</span><span class="w"> </span>/etc/apt/keyrings
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="w">  </span>sudo<span class="w"> </span>gpg<span class="w"> </span>--dearmor<span class="w"> </span>-o<span class="w"> </span>/etc/apt/keyrings/kubernetes-apt-keyring.gpg
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] \</span>
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="s2">https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a><span class="w">  </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/apt/sources.list.d/kubernetes.list
+</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>
+</span><span id="__span-23-11"><a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+</span><span id="__span-23-12"><a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>kubelet<span class="w"> </span>kubeadm<span class="w"> </span>kubectl
+</span><span id="__span-23-13"><a id="__codelineno-23-13" name="__codelineno-23-13" href="#__codelineno-23-13"></a>sudo<span class="w"> </span>apt-mark<span class="w"> </span>hold<span class="w"> </span>kubelet<span class="w"> </span>kubeadm<span class="w"> </span>kubectl
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>kubeadm<span class="w"> </span>version<span class="w"> </span>-o<span class="w"> </span>short
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>kubectl<span class="w"> </span>version<span class="w"> </span>--client
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>apt-mark<span class="w"> </span>showhold
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>kubelet
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>v1.32.x
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>Client Version: v1.32.x
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>Kustomize Version: v5.5.0
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>kubeadm
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>kubectl
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>kubelet
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a>activating        ← 정상입니다
+</span></code></pre></div>
+<p><strong>관찰 포인트:</strong> kubelet 이 <code>activating</code>(재시작 반복) 인 것은 <strong>아직 설정 파일(<code>/var/lib/kubelet/config.yaml</code>)이 없어서</strong>입니다. <code>kubeadm init</code>/<code>join</code> 이 이 파일을 만들어 주면 그때 <code>active</code> 가 됩니다.</p>
+<div class="admonition note">
+<p class="admonition-title">저장소 주소의 <code>v1.32</code> 가 설치할 <strong>마이너 버전</strong>을 정합니다</p>
+<p>pkgs.k8s.io 는 마이너 버전마다 저장소가 따로 있습니다. 나중에 1.33 으로 업그레이드할 때는 이 파일의 <code>v1.32</code> 를 <code>v1.33</code> 으로 바꾸는 것부터 시작합니다 (<a href="../15-maintenance/">15강 유지보수</a> 참고).
+<code>apt-mark hold</code> 는 <code>apt upgrade</code> 가 실수로 버전을 올리지 못하게 막습니다.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">복제 전 체크리스트</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>free<span class="w"> </span>-h<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Swap<span class="w">                                   </span><span class="c1"># 0B</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>sysctl<span class="w"> </span>-n<span class="w"> </span>net.ipv4.ip_forward<span class="w">                         </span><span class="c1"># 1</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'SystemdCgroup = true'</span><span class="w"> </span>/etc/containerd/config.toml<span class="w">   </span><span class="c1"># 1</span>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>kubeadm<span class="w"> </span>version<span class="w"> </span>-o<span class="w"> </span>short<span class="w">                              </span><span class="c1"># v1.32.x</span>
+</span></code></pre></div>
+모두 맞으면 VM 을 끕니다: <code>sudo poweroff</code></p>
+</div>
+<hr />
+<h2 id="6-worker">6) worker 복제<a class="headerlink" href="#6-worker" title="Permanent link">&para;</a></h2>
+<p>공통 설정이 끝난 VM 을 그대로 찍어 냅니다.</p>
+<ol>
+<li><code>control-plane</code> 이 <strong>꺼진 상태</strong>에서 우클릭 → <strong>복제</strong></li>
+<li>이름 <code>worker-1</code>, MAC 주소 정책 <strong>모든 네트워크 어댑터의 새 MAC 주소 생성</strong>, <strong>완전한 복제</strong></li>
+<li><code>worker-2</code> 도 똑같이</li>
+<li>복제된 VM 의 메모리를 2048 MB 로 조정</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">MAC 주소를 새로 만들지 않으면</p>
+<p>kubeadm 은 노드마다 <strong>MAC 주소와 product_uuid 가 달라야</strong> 한다고 요구합니다. 같은 MAC 이면 Host-only 네트워크에서 두 VM 이 서로의 패킷을 가로채 통신이 불안정해집니다.</p>
+</div>
+<h3 id="worker-ip-hostname">worker 에서 IP 와 hostname 바꾸기<a class="headerlink" href="#worker-ip-hostname" title="Permanent link">&para;</a></h3>
+<p>복제된 VM 은 아직 192.168.56.10 을 쓰고 있으므로 <strong>한 대씩</strong> 켜서 VirtualBox 콘솔에서 바꿉니다.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">worker-1</label><label for="__tabbed_2_2">worker-2</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s#192.168.56.10/24#192.168.56.11/24#'</span><span class="w"> </span>/etc/netplan/*.yaml
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>sudo<span class="w"> </span>hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>worker-1
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/^127.0.1.1 .*/127.0.1.1 worker-1/'</span><span class="w"> </span>/etc/hosts
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="nb">exec</span><span class="w"> </span>bash
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s#192.168.56.10/24#192.168.56.12/24#'</span><span class="w"> </span>/etc/netplan/*.yaml
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>sudo<span class="w"> </span>hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>worker-2
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/^127.0.1.1 .*/127.0.1.1 worker-2/'</span><span class="w"> </span>/etc/hosts
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="nb">exec</span><span class="w"> </span>bash
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title"><code>127.0.1.1</code> 줄도 함께 고치세요</p>
+<p>Ubuntu 는 설치할 때 <code>/etc/hosts</code> 에 <code>127.0.1.1 control-plane</code> 을 넣어 둡니다. <code>hostnamectl</code> 은 이 줄을 바꾸지 않습니다.
+그대로 두면 worker 에서 <code>ping control-plane</code> 이 <strong>자기 자신(127.0.1.1)</strong> 으로 가고, <code>sudo</code> 가 느려지는 등 헷갈리는 증상이 생깁니다.</p>
+</div>
+<details class="tip">
+<summary>선택: machine-id 새로 만들기</summary>
+<p>완전 복제는 <code>/etc/machine-id</code> 까지 똑같이 복사합니다. 쿠버네티스 동작에는 영향이 없지만, 로그나 DHCP 식별자가 겹치는 것이 신경 쓰이면 worker 에서 다시 만듭니다.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>sudo<span class="w"> </span>rm<span class="w"> </span>/etc/machine-id<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>systemd-machine-id-setup<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>reboot
+</span></code></pre></div></p>
+</details>
+<h3 id="_5">세 대가 서로 보이는지<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># control-plane 에서</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span>worker-1
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span>worker-2
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>PING worker-1 (192.168.56.11) 56(84) bytes of data.
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>64 bytes from worker-1 (192.168.56.11): icmp_seq=1 ttl=64 time=0.412 ms
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>...
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="c1"># worker-1 에서</span>
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span>control-plane<span class="w">         </span><span class="c1"># 192.168.56.10 이 나와야 한다 (127.0.1.1 이면 위 경고 참고)</span>
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>cat<span class="w"> </span>/sys/class/dmi/id/product_uuid<span class="w">   </span><span class="c1"># 세 대 모두 달라야 한다</span>
+</span></code></pre></div>
+<hr />
+<h2 id="7-control-plane-kubeadm-init">7) control-plane 초기화 — <code>kubeadm init</code><a class="headerlink" href="#7-control-plane-kubeadm-init" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c1"># control-plane 에서만</span>
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>sudo<span class="w"> </span>kubeadm<span class="w"> </span>init<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="w">  </span>--apiserver-advertise-address<span class="o">=</span><span class="m">192</span>.168.56.10<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="w">  </span>--pod-network-cidr<span class="o">=</span><span class="m">10</span>.244.0.0/16
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>옵션</th>
+<th>의미</th>
+<th>빠지면</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--apiserver-advertise-address</code></td>
+<td>API 서버가 <strong>어느 주소로</strong> 자신을 알릴지</td>
+<td>NAT 주소(10.0.2.15)로 알려서 worker 가 조인하지 못한다</td>
+</tr>
+<tr>
+<td><code>--pod-network-cidr</code></td>
+<td>파드 IP 대역 (노드별 <code>podCIDR</code> 을 나눠 준다)</td>
+<td>이 값을 요구하는 CNI(Flannel 등)가 동작하지 않는다</td>
+</tr>
+</tbody>
+</table>
+<p>출력은 단계(phase) 순서대로 나옵니다.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>[preflight] Running pre-flight checks
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>[certs] Generating "ca" certificate and key
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>...
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a>[kubeconfig] Writing "admin.conf" kubeconfig file
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>...
+</span><span id="__span-34-6"><a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a>[control-plane] Creating static Pod manifest for "kube-apiserver"
+</span><span id="__span-34-7"><a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a>[control-plane] Creating static Pod manifest for "kube-controller-manager"
+</span><span id="__span-34-8"><a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a>[control-plane] Creating static Pod manifest for "kube-scheduler"
+</span><span id="__span-34-9"><a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a>[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+</span><span id="__span-34-10"><a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a>[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods ...
+</span><span id="__span-34-11"><a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a>...
+</span><span id="__span-34-12"><a id="__codelineno-34-12" name="__codelineno-34-12" href="#__codelineno-34-12"></a>[addons] Applied essential addon: CoreDNS
+</span><span id="__span-34-13"><a id="__codelineno-34-13" name="__codelineno-34-13" href="#__codelineno-34-13"></a>[addons] Applied essential addon: kube-proxy
+</span><span id="__span-34-14"><a id="__codelineno-34-14" name="__codelineno-34-14" href="#__codelineno-34-14"></a>
+</span><span id="__span-34-15"><a id="__codelineno-34-15" name="__codelineno-34-15" href="#__codelineno-34-15"></a>Your Kubernetes control-plane has initialized successfully!
+</span><span id="__span-34-16"><a id="__codelineno-34-16" name="__codelineno-34-16" href="#__codelineno-34-16"></a>...
+</span><span id="__span-34-17"><a id="__codelineno-34-17" name="__codelineno-34-17" href="#__codelineno-34-17"></a>kubeadm join 192.168.56.10:6443 --token abcdef.0123456789abcdef \
+</span><span id="__span-34-18"><a id="__codelineno-34-18" name="__codelineno-34-18" href="#__codelineno-34-18"></a>    --discovery-token-ca-cert-hash sha256:1234...cdef
+</span></code></pre></div>
+<p><strong>마지막의 <code>kubeadm join ...</code> 두 줄을 메모장에 복사해 두세요.</strong> 잃어버려도 다시 뽑을 수 있습니다(→ 9)).</p>
+<p>kubectl 이 관리자 권한으로 API 서버에 접속하도록 kubeconfig 를 복사합니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$HOME</span>/.kube
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-i<span class="w"> </span>/etc/kubernetes/admin.conf<span class="w"> </span><span class="nv">$HOME</span>/.kube/config
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>sudo<span class="w"> </span>chown<span class="w"> </span><span class="k">$(</span>id<span class="w"> </span>-u<span class="k">)</span>:<span class="k">$(</span>id<span class="w"> </span>-g<span class="k">)</span><span class="w"> </span><span class="nv">$HOME</span>/.kube/config
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>NAME            STATUS     ROLES           AGE   VERSION
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>control-plane   NotReady   control-plane   1m    v1.32.x
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>NAME                                    READY   STATUS    RESTARTS   AGE
+</span><span id="__span-37-5"><a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a>coredns-668d6bf9bc-4xk2p                0/1     Pending   0          1m
+</span><span id="__span-37-6"><a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a>coredns-668d6bf9bc-9m7qz                0/1     Pending   0          1m
+</span><span id="__span-37-7"><a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a>etcd-control-plane                      1/1     Running   0          1m
+</span><span id="__span-37-8"><a id="__codelineno-37-8" name="__codelineno-37-8" href="#__codelineno-37-8"></a>kube-apiserver-control-plane            1/1     Running   0          1m
+</span><span id="__span-37-9"><a id="__codelineno-37-9" name="__codelineno-37-9" href="#__codelineno-37-9"></a>kube-controller-manager-control-plane   1/1     Running   0          1m
+</span><span id="__span-37-10"><a id="__codelineno-37-10" name="__codelineno-37-10" href="#__codelineno-37-10"></a>kube-proxy-7wq4k                        1/1     Running   0          1m
+</span><span id="__span-37-11"><a id="__codelineno-37-11" name="__codelineno-37-11" href="#__codelineno-37-11"></a>kube-scheduler-control-plane            1/1     Running   0          1m
+</span></code></pre></div>
+<p><strong>관찰 포인트:</strong> 노드가 <strong>NotReady</strong>, CoreDNS 가 <strong>Pending</strong> 인 것이 정상입니다. 파드 네트워크(CNI)가 아직 없기 때문입니다.
+반면 etcd · API 서버 등은 Running 입니다. 이들은 <strong>hostNetwork 로 도는 스태틱 파드</strong>라서 CNI 가 필요 없습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>node<span class="w"> </span>control-plane<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'Ready|NetworkReady'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>  Ready            False   ...   KubeletNotReady   container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized
+</span></code></pre></div>
+<details class="note">
+<summary>init 이 만든 것들</summary>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>ls<span class="w"> </span>/etc/kubernetes/<span class="w">                 </span><span class="c1"># admin.conf, kubelet.conf, manifests/, pki/ ...</span>
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>ls<span class="w"> </span>/etc/kubernetes/manifests/<span class="w">       </span><span class="c1"># etcd · apiserver · controller-manager · scheduler</span>
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>ls<span class="w"> </span>/etc/kubernetes/pki/<span class="w">             </span><span class="c1"># 클러스터 CA 와 인증서들</span>
+</span><span id="__span-40-4"><a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>get<span class="w"> </span>cm<span class="w"> </span>kubeadm-config<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A3<span class="w"> </span>networking
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>  networking:
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>    dnsDomain: cluster.local
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>    podSubnet: 10.244.0.0/16
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>    serviceSubnet: 10.96.0.0/12
+</span></code></pre></div>
+각 파일의 의미는 <a href="../03-architecture/">3강 아키텍처</a>와 <a href="../13-cluster-setup/">13강 클러스터 구축</a>에서 자세히 봅니다.</p>
+</details>
+<hr />
+<h2 id="8-cilium">8) Cilium 설치<a class="headerlink" href="#8-cilium" title="Permanent link">&para;</a></h2>
+<h3 id="cni">CNI 는 무엇을 하나<a class="headerlink" href="#cni" title="Permanent link">&para;</a></h3>
+<p>쿠버네티스는 파드 네트워크를 직접 구현하지 않고 <strong>CNI 플러그인</strong>에 맡깁니다. CNI 는 파드에 IP 를 주고, 다른 노드의 파드까지 가는 길을 만듭니다.</p>
+<table>
+<thead>
+<tr>
+<th>CNI</th>
+<th>방식</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flannel</td>
+<td>VXLAN 오버레이</td>
+<td>가장 단순. NetworkPolicy 미지원</td>
+</tr>
+<tr>
+<td>Calico</td>
+<td>BGP / 오버레이</td>
+<td>NetworkPolicy 지원, 기업 환경에서 많이 씀</td>
+</tr>
+<tr>
+<td><strong>Cilium</strong></td>
+<td><strong>eBPF</strong></td>
+<td>커널에서 직접 패킷 처리, NetworkPolicy · L7 정책 · Hubble 관찰 도구</td>
+</tr>
+</tbody>
+</table>
+<p>이 과정이 Cilium 을 쓰는 이유는 <strong>NetworkPolicy 가 실제로 동작</strong>해야 하기 때문입니다(<a href="../10-networkpolicy/">10강 NetworkPolicy</a>). Flannel 은 정책을 만들어도 아무 효과가 없습니다.</p>
+<h3 id="cilium-cli-cilium">cilium CLI 설치 → Cilium 설치<a class="headerlink" href="#cilium-cli-cilium" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="c1"># control-plane 에서</span>
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="nv">CILIUM_CLI_VERSION</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt<span class="k">)</span>
+</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a><span class="nv">CLI_ARCH</span><span class="o">=</span><span class="k">$(</span>dpkg<span class="w"> </span>--print-architecture<span class="k">)</span>
+</span><span id="__span-42-4"><a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a>curl<span class="w"> </span>-L<span class="w"> </span>--fail<span class="w"> </span>--remote-name-all<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-42-5"><a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a><span class="w">  </span>https://github.com/cilium/cilium-cli/releases/download/<span class="si">${</span><span class="nv">CILIUM_CLI_VERSION</span><span class="si">}</span>/cilium-linux-<span class="si">${</span><span class="nv">CLI_ARCH</span><span class="si">}</span>.tar.gz
+</span><span id="__span-42-6"><a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>sudo<span class="w"> </span>tar<span class="w"> </span>xzvfC<span class="w"> </span>cilium-linux-<span class="si">${</span><span class="nv">CLI_ARCH</span><span class="si">}</span>.tar.gz<span class="w"> </span>/usr/local/bin
+</span><span id="__span-42-7"><a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a>rm<span class="w"> </span>cilium-linux-<span class="si">${</span><span class="nv">CLI_ARCH</span><span class="si">}</span>.tar.gz
+</span><span id="__span-42-8"><a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a>
+</span><span id="__span-42-9"><a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a>cilium<span class="w"> </span>install
+</span><span id="__span-42-10"><a id="__codelineno-42-10" name="__codelineno-42-10" href="#__codelineno-42-10"></a>cilium<span class="w"> </span>status<span class="w"> </span>--wait
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>    /¯¯\
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a> /¯¯\__/¯¯\    Cilium:             OK
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a> \__/¯¯\__/    Operator:           OK
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a> /¯¯\__/¯¯\    Envoy DaemonSet:    OK
+</span><span id="__span-43-5"><a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a> \__/¯¯\__/    Hubble Relay:       disabled
+</span><span id="__span-43-6"><a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a>    \__/       ClusterMesh:        disabled
+</span><span id="__span-43-7"><a id="__codelineno-43-7" name="__codelineno-43-7" href="#__codelineno-43-7"></a>
+</span><span id="__span-43-8"><a id="__codelineno-43-8" name="__codelineno-43-8" href="#__codelineno-43-8"></a>DaemonSet              cilium             Desired: 1, Ready: 1/1, Available: 1/1
+</span><span id="__span-43-9"><a id="__codelineno-43-9" name="__codelineno-43-9" href="#__codelineno-43-9"></a>Deployment             cilium-operator    Desired: 1, Ready: 1/1, Available: 1/1
+</span><span id="__span-43-10"><a id="__codelineno-43-10" name="__codelineno-43-10" href="#__codelineno-43-10"></a>...
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'coredns|cilium'</span>
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>cilium<span class="w"> </span>version
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>NAME            STATUS   ROLES           AGE   VERSION
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>control-plane   Ready    control-plane   6m    v1.32.x
+</span><span id="__span-45-3"><a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a>
+</span><span id="__span-45-4"><a id="__codelineno-45-4" name="__codelineno-45-4" href="#__codelineno-45-4"></a>cilium-7pq2x                       1/1   Running   ...   192.168.56.10   control-plane
+</span><span id="__span-45-5"><a id="__codelineno-45-5" name="__codelineno-45-5" href="#__codelineno-45-5"></a>cilium-envoy-...                   1/1   Running   ...   192.168.56.10   control-plane
+</span><span id="__span-45-6"><a id="__codelineno-45-6" name="__codelineno-45-6" href="#__codelineno-45-6"></a>cilium-operator-...                1/1   Running   ...   192.168.56.10   control-plane
+</span><span id="__span-45-7"><a id="__codelineno-45-7" name="__codelineno-45-7" href="#__codelineno-45-7"></a>coredns-668d6bf9bc-4xk2p           1/1   Running   ...   10.0.0.123      control-plane
+</span><span id="__span-45-8"><a id="__codelineno-45-8" name="__codelineno-45-8" href="#__codelineno-45-8"></a>coredns-668d6bf9bc-9m7qz           1/1   Running   ...   10.0.0.45       control-plane
+</span><span id="__span-45-9"><a id="__codelineno-45-9" name="__codelineno-45-9" href="#__codelineno-45-9"></a>
+</span><span id="__span-45-10"><a id="__codelineno-45-10" name="__codelineno-45-10" href="#__codelineno-45-10"></a>cilium-cli: v0.x.y compiled with go...
+</span><span id="__span-45-11"><a id="__codelineno-45-11" name="__codelineno-45-11" href="#__codelineno-45-11"></a>cilium image (default): v1.x.y
+</span><span id="__span-45-12"><a id="__codelineno-45-12" name="__codelineno-45-12" href="#__codelineno-45-12"></a>cilium image (running): v1.x.y
+</span></code></pre></div>
+<p><strong>관찰 포인트:</strong> 노드가 Ready 로 바뀌었고 CoreDNS 가 IP 를 받았습니다. CoreDNS 는 control-plane 의 Taint 를 견디는 Toleration 이 있어서 여기에 뜹니다.</p>
+<div class="admonition note">
+<p class="admonition-title">파드 IP 가 10.244.x.x 가 아니라 10.0.x.x 입니다</p>
+<p><code>cilium install</code> 기본값은 <strong>Cilium 자체 IPAM(cluster-pool, 10.0.0.0/8)</strong> 을 씁니다. <code>--pod-network-cidr=10.244.0.0/16</code> 은 kubeadm 설정에 기록되지만 Cilium 은 그 값을 쓰지 않습니다.
+그래서 이 가이드의 예시 출력에 나오는 파드 IP 는 모두 <code>10.0.&lt;노드번호&gt;.x</code> 모양입니다. 동작에는 문제가 없습니다.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Cilium 버전</p>
+<p><code>cilium install</code> 은 <strong>CLI 에 들어 있는 기본 버전</strong>을 설치합니다. 강의 자료와 버전이 다를 수 있으니 <code>cilium version</code> 으로 실제 버전을 확인하세요.
+버전을 고정하려면 <code>cilium install --version 1.x.y</code> 처럼 지정합니다.</p>
+</div>
+<hr />
+<h2 id="9-worker-kubeadm-join">9) worker 조인 — <code>kubeadm join</code><a class="headerlink" href="#9-worker-kubeadm-join" title="Permanent link">&para;</a></h2>
+<p>worker 가 control-plane 의 API 서버를 <strong>신뢰하고</strong>, API 서버가 worker 를 <strong>받아들이는</strong> 과정입니다.</p>
+<table>
+<thead>
+<tr>
+<th>조인 명령의 부분</th>
+<th>누가 누구를 확인하나</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>192.168.56.10:6443</code></td>
+<td>접속할 API 서버 주소</td>
+</tr>
+<tr>
+<td><code>--token</code></td>
+<td>API 서버가 worker 를 확인 — "조인해도 되는 노드인가" (기본 24시간 유효)</td>
+</tr>
+<tr>
+<td><code>--discovery-token-ca-cert-hash</code></td>
+<td>worker 가 API 서버를 확인 — "진짜 우리 클러스터의 CA 인가" (중간자 방지)</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="c1"># worker-1, worker-2 에서 각각 (반드시 sudo)</span>
+</span><span id="__span-46-2"><a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>sudo<span class="w"> </span>kubeadm<span class="w"> </span>join<span class="w"> </span><span class="m">192</span>.168.56.10:6443<span class="w"> </span>--token<span class="w"> </span>abcdef.0123456789abcdef<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-46-3"><a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a><span class="w">  </span>--discovery-token-ca-cert-hash<span class="w"> </span>sha256:1234...cdef
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>[preflight] Running pre-flight checks
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>[preflight] Reading configuration from the "kubeadm-config" ConfigMap in namespace "kube-system"...
+</span><span id="__span-47-3"><a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+</span><span id="__span-47-4"><a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a>[kubelet-start] Starting the kubelet
+</span><span id="__span-47-5"><a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap
+</span><span id="__span-47-6"><a id="__codelineno-47-6" name="__codelineno-47-6" href="#__codelineno-47-6"></a>
+</span><span id="__span-47-7"><a id="__codelineno-47-7" name="__codelineno-47-7" href="#__codelineno-47-7"></a>This node has joined the cluster:
+</span><span id="__span-47-8"><a id="__codelineno-47-8" name="__codelineno-47-8" href="#__codelineno-47-8"></a>* Certificate signing request was sent to apiserver and a response was received.
+</span><span id="__span-47-9"><a id="__codelineno-47-9" name="__codelineno-47-9" href="#__codelineno-47-9"></a>* The Kubelet was informed of the new secure connection details.
+</span></code></pre></div>
+<p>토큰을 잃어버렸거나 24시간이 지났으면 control-plane 에서 새로 뽑습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="c1"># control-plane 에서</span>
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>kubeadm<span class="w"> </span>token<span class="w"> </span>create<span class="w"> </span>--print-join-command
+</span><span id="__span-48-3"><a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>kubeadm<span class="w"> </span>token<span class="w"> </span>list
+</span></code></pre></div>
+<p>control-plane 에서 지켜보면 두 노드가 <strong>NotReady → Ready</strong> 로 바뀝니다. 그 사이 Cilium DaemonSet 이 새 노드에 에이전트를 띄웁니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-w
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-50-1"><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>NAME            STATUS     ROLES           AGE   VERSION
+</span><span id="__span-50-2"><a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>control-plane   Ready      control-plane   12m   v1.32.x
+</span><span id="__span-50-3"><a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a>worker-1        NotReady   &lt;none&gt;          10s   v1.32.x
+</span><span id="__span-50-4"><a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a>worker-1        Ready      &lt;none&gt;          40s   v1.32.x
+</span><span id="__span-50-5"><a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a>worker-2        NotReady   &lt;none&gt;          5s    v1.32.x
+</span><span id="__span-50-6"><a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a>worker-2        Ready      &lt;none&gt;          38s   v1.32.x
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">조인을 다시 해야 할 때</p>
+<p>한 번 실패한 worker 는 이전 상태를 지워야 다시 조인됩니다. 안 지우면 <code>[ERROR FileAvailable--etc-kubernetes-kubelet.conf]</code> 로 멈춥니다.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-51-1"><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a><span class="c1"># 해당 worker 에서</span>
+</span><span id="__span-51-2"><a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a>sudo<span class="w"> </span>kubeadm<span class="w"> </span>reset<span class="w"> </span>-f
+</span><span id="__span-51-3"><a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a>sudo<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/etc/cni/net.d
+</span></code></pre></div></p>
+</div>
+<hr />
+<h2 id="10">10) 검증 — 세 가지를 통과하면 완성<a class="headerlink" href="#10" title="Permanent link">&para;</a></h2>
+<h3 id="1-ready-ip-19216856x">① 노드 세 대가 Ready, 버전이 같고, IP 가 192.168.56.x<a class="headerlink" href="#1-ready-ip-19216856x" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-52-1"><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-o<span class="w"> </span>wide
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-53-1"><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>NAME            STATUS   ROLES           AGE   VERSION   INTERNAL-IP     OS-IMAGE             CONTAINER-RUNTIME
+</span><span id="__span-53-2"><a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>control-plane   Ready    control-plane   15m   v1.32.x   192.168.56.10   Ubuntu 24.04.x LTS   containerd://1.7.x
+</span><span id="__span-53-3"><a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a>worker-1        Ready    &lt;none&gt;          3m    v1.32.x   192.168.56.11   Ubuntu 24.04.x LTS   containerd://1.7.x
+</span><span id="__span-53-4"><a id="__codelineno-53-4" name="__codelineno-53-4" href="#__codelineno-53-4"></a>worker-2        Ready    &lt;none&gt;          2m    v1.32.x   192.168.56.12   Ubuntu 24.04.x LTS   containerd://1.7.x
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">INTERNAL-IP 가 10.0.2.15 인 노드가 있다면</p>
+<p>그 노드의 hosts 파일에 자기 이름이 192.168.56.x 로 없거나, 127.0.1.1 줄이 다른 이름을 가리키고 있습니다. 1-5) · 6) 을 다시 확인하세요.
+hosts 로 해결되지 않으면 kubelet 에 노드 IP 를 직접 알려 줍니다.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-54-1"><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a><span class="c1"># 해당 노드에서 (worker-1 예시)</span>
+</span><span id="__span-54-2"><a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'KUBELET_EXTRA_ARGS=--node-ip=192.168.56.11'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/default/kubelet
+</span><span id="__span-54-3"><a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+</span></code></pre></div></p>
+</div>
+<h3 id="2-service">② 파드가 뜨고 Service 로 통신이 되는가<a class="headerlink" href="#2-service" title="Permanent link">&para;</a></h3>
+<p>스케줄러 · CNI · kube-proxy 가 모두 정상인지 한 번에 확인합니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-55-1"><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>guide-build
+</span><span id="__span-55-2"><a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a>kubectl<span class="w"> </span>create<span class="w"> </span>deployment<span class="w"> </span>hello<span class="w"> </span>-n<span class="w"> </span>guide-build<span class="w"> </span>--image<span class="o">=</span>nginx:1.27<span class="w"> </span>--replicas<span class="o">=</span><span class="m">2</span>
+</span><span id="__span-55-3"><a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/hello<span class="w"> </span>-n<span class="w"> </span>guide-build
+</span><span id="__span-55-4"><a id="__codelineno-55-4" name="__codelineno-55-4" href="#__codelineno-55-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-build<span class="w"> </span>-o<span class="w"> </span>wide
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-56-1"><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>NAME                     READY   STATUS    IP           NODE
+</span><span id="__span-56-2"><a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>hello-7c5b9d6f8d-2xk8p   1/1     Running   10.0.1.87    worker-1
+</span><span id="__span-56-3"><a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a>hello-7c5b9d6f8d-q4m7t   1/1     Running   10.0.2.19    worker-2
+</span></code></pre></div>
+<p>파드가 <strong>worker 두 대에 나뉘어</strong> 뜬 것을 확인합니다. control-plane 은 Taint 때문에 일반 파드를 받지 않습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-57-1"><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>kubectl<span class="w"> </span>expose<span class="w"> </span>deployment<span class="w"> </span>hello<span class="w"> </span>-n<span class="w"> </span>guide-build<span class="w"> </span>--port<span class="o">=</span><span class="m">80</span>
+</span><span id="__span-57-2"><a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>kubectl<span class="w"> </span>run<span class="w"> </span>probe<span class="w"> </span>-n<span class="w"> </span>guide-build<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>-T<span class="w"> </span><span class="m">3</span><span class="w"> </span>http://hello
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-58-1"><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a>&lt;!DOCTYPE html&gt;
+</span><span id="__span-58-2"><a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a>&lt;html&gt;
+</span><span id="__span-58-3"><a id="__codelineno-58-3" name="__codelineno-58-3" href="#__codelineno-58-3"></a>&lt;head&gt;
+</span><span id="__span-58-4"><a id="__codelineno-58-4" name="__codelineno-58-4" href="#__codelineno-58-4"></a>&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+</span><span id="__span-58-5"><a id="__codelineno-58-5" name="__codelineno-58-5" href="#__codelineno-58-5"></a>...
+</span></code></pre></div>
+<h3 id="3-coredns">③ 이름이 해석되는가 (CoreDNS)<a class="headerlink" href="#3-coredns" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-59-1"><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>probe<span class="w"> </span>-n<span class="w"> </span>guide-build<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>hello.guide-build.svc.cluster.local
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-60-1"><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a>Server:    10.96.0.10
+</span><span id="__span-60-2"><a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a>Address:   10.96.0.10:53
+</span><span id="__span-60-3"><a id="__codelineno-60-3" name="__codelineno-60-3" href="#__codelineno-60-3"></a>
+</span><span id="__span-60-4"><a id="__codelineno-60-4" name="__codelineno-60-4" href="#__codelineno-60-4"></a>Name:      hello.guide-build.svc.cluster.local
+</span><span id="__span-60-5"><a id="__codelineno-60-5" name="__codelineno-60-5" href="#__codelineno-60-5"></a>Address:   10.10x.x.x
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>통과한 검증</th>
+<th>정상이라는 뜻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>①</td>
+<td>kubelet · containerd · CNI 가 세 노드에서 모두 동작</td>
+</tr>
+<tr>
+<td>②</td>
+<td>스케줄러 · 노드 간 파드 통신(CNI) · Service 규칙(kube-proxy)</td>
+</tr>
+<tr>
+<td>③</td>
+<td>CoreDNS 와 파드의 DNS 설정</td>
+</tr>
+</tbody>
+</table>
+<p>검증에 쓴 것을 지웁니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-61-1"><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>namespace<span class="w"> </span>guide-build
+</span></code></pre></div>
+<h3 id="_6">스냅샷 찍기<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>세 가지를 통과한 지금이 <strong>돌아올 기준점</strong>입니다. 세 VM 을 모두 끄고 각각 스냅샷을 찍습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-62-1"><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a><span class="c1"># 각 노드에서</span>
+</span><span id="__span-62-2"><a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a>sudo<span class="w"> </span>poweroff
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>시점</th>
+<th>스냅샷 이름</th>
+<th>쓸 때</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>구축 직후 · 검증 통과</td>
+<td><code>clean-cluster</code></td>
+<td>실습을 망쳤을 때 돌아올 기준점</td>
+</tr>
+<tr>
+<td>업그레이드 직전</td>
+<td><code>before-upgrade</code></td>
+<td><a href="../15-maintenance/">15강 유지보수</a> 업그레이드를 반복 연습할 때</td>
+</tr>
+<tr>
+<td>etcd 백업을 만든 뒤</td>
+<td><code>before-etcd-restore</code></td>
+<td>복원 연습은 되돌릴 수 없으므로 필수</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">세 대를 함께 찍고, 함께 되돌립니다</p>
+<p>control-plane 만 되돌리면 etcd 에 기록된 상태와 worker 의 실제 상태가 어긋납니다.</p>
+</div>
+<hr />
+<h2 id="11-pc-kubectl">11) 내 PC 의 kubectl 로 접속하기 (선택)<a class="headerlink" href="#11-pc-kubectl" title="Permanent link">&para;</a></h2>
+<p>control-plane 의 <code>admin.conf</code> 를 내 PC 의 <code>~/.kube/config</code> 에 <strong>병합</strong>하면, 기존 컨텍스트(AKS · minikube 등)를 유지한 채 이 클러스터로 전환해서 쓸 수 있습니다.</p>
+<div class="admonition warning">
+<p class="admonition-title">admin.conf 는 클러스터 최고 권한입니다</p>
+<p>복사한 파일을 다른 곳에 올리거나 공유하지 마세요. 병합이 끝나면 임시 파일을 지웁니다.</p>
+</div>
+<p><strong>Step 1. 복사</strong></p>
+<p><code>/etc/kubernetes/admin.conf</code> 는 root 만 읽을 수 있으므로, 7) 에서 만든 <strong>사용자 홈의 사본</strong>을 가져옵니다.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">macOS / Linux</label><label for="__tabbed_3_2">Windows PowerShell</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-63-1"><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a>scp<span class="w"> </span>vboxuser@192.168.56.10:~/.kube/config<span class="w"> </span>~/admin.conf
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-64-1"><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a><span class="n">scp</span> <span class="n">vboxuser</span><span class="nv">@192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">56</span><span class="p">.</span><span class="n">10</span><span class="p">:~/.</span><span class="n">kube</span><span class="p">/</span><span class="n">config</span> <span class="nv">$env:USERPROFILE</span><span class="p">\</span><span class="n">admin</span><span class="p">.</span><span class="n">conf</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Step 2. 병합</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">macOS / Linux</label><label for="__tabbed_4_2">Windows PowerShell</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-65-1"><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a>cp<span class="w"> </span>~/.kube/config<span class="w"> </span>~/.kube/config.bak<span class="w">     </span><span class="c1"># 백업</span>
+</span><span id="__span-65-2"><a id="__codelineno-65-2" name="__codelineno-65-2" href="#__codelineno-65-2"></a><span class="nv">KUBECONFIG</span><span class="o">=</span>~/.kube/config:~/admin.conf<span class="w"> </span>kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--flatten<span class="w"> </span>&gt;<span class="w"> </span>/tmp/merged.yaml
+</span><span id="__span-65-3"><a id="__codelineno-65-3" name="__codelineno-65-3" href="#__codelineno-65-3"></a>mv<span class="w"> </span>/tmp/merged.yaml<span class="w"> </span>~/.kube/config
+</span><span id="__span-65-4"><a id="__codelineno-65-4" name="__codelineno-65-4" href="#__codelineno-65-4"></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/.kube/config
+</span><span id="__span-65-5"><a id="__codelineno-65-5" name="__codelineno-65-5" href="#__codelineno-65-5"></a>rm<span class="w"> </span>~/admin.conf
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-66-1"><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a><span class="nb">Copy-Item</span> <span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">kube</span><span class="p">\</span><span class="n">config</span> <span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">kube</span><span class="p">\</span><span class="n">config</span><span class="p">.</span><span class="n">bak</span>
+</span><span id="__span-66-2"><a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a><span class="nv">$env:KUBECONFIG</span> <span class="p">=</span> <span class="s2">"$env:USERPROFILE\.kube\config;$env:USERPROFILE\admin.conf"</span>
+</span><span id="__span-66-3"><a id="__codelineno-66-3" name="__codelineno-66-3" href="#__codelineno-66-3"></a><span class="n">kubectl</span> <span class="n">config</span> <span class="n">view</span> <span class="p">-</span><span class="n">-flatten</span> <span class="p">&gt;</span> <span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">kube</span><span class="p">\</span><span class="n">merged</span><span class="p">.</span><span class="n">yaml</span>
+</span><span id="__span-66-4"><a id="__codelineno-66-4" name="__codelineno-66-4" href="#__codelineno-66-4"></a><span class="nb">Move-Item</span> <span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">kube</span><span class="p">\</span><span class="n">merged</span><span class="p">.</span><span class="n">yaml</span> <span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">kube</span><span class="p">\</span><span class="n">config</span> <span class="n">-Force</span>
+</span><span id="__span-66-5"><a id="__codelineno-66-5" name="__codelineno-66-5" href="#__codelineno-66-5"></a><span class="nb">Remove-Item</span> <span class="nv">$env:USERPROFILE</span><span class="p">\</span><span class="n">admin</span><span class="p">.</span><span class="n">conf</span>
+</span><span id="__span-66-6"><a id="__codelineno-66-6" name="__codelineno-66-6" href="#__codelineno-66-6"></a><span class="nb">Remove-Item</span> <span class="n">Env</span><span class="p">:</span><span class="n">KUBECONFIG</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">내 PC 에 ~/.kube/config 가 아직 없다면</p>
+<p>병합할 필요 없이 <code>admin.conf</code> 를 <code>~/.kube/config</code> 로 옮기기만 하면 됩니다.</p>
+</div>
+<p><strong>Step 3. 전환</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-67-1"><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts
+</span><span id="__span-67-2"><a id="__codelineno-67-2" name="__codelineno-67-2" href="#__codelineno-67-2"></a>kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>kubernetes-admin@kubernetes
+</span><span id="__span-67-3"><a id="__codelineno-67-3" name="__codelineno-67-3" href="#__codelineno-67-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a>CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPACE
+</span><span id="__span-68-2"><a id="__codelineno-68-2" name="__codelineno-68-2" href="#__codelineno-68-2"></a>          my-aks                        my-aks       clusterUser_...
+</span><span id="__span-68-3"><a id="__codelineno-68-3" name="__codelineno-68-3" href="#__codelineno-68-3"></a>*         kubernetes-admin@kubernetes   kubernetes   kubernetes-admin
+</span></code></pre></div>
+<p>문제가 생기면 백업으로 되돌립니다: <code>cp ~/.kube/config.bak ~/.kube/config</code></p>
+<div class="admonition tip">
+<p class="admonition-title">시험 팁 — 컨텍스트 전환은 시험의 첫 동작입니다</p>
+<p>CKA 는 문제마다 "이 컨텍스트에서 풀라" 는 <code>kubectl config use-context ...</code> 명령을 줍니다.
+컨텍스트를 안 바꾸고 풀면 <strong>다른 클러스터에 답을 만들어</strong> 0점이 됩니다. 여기서 전환을 손에 익혀 두세요.</p>
+</div>
+<hr />
+<h2 id="12">12) 셸 설정 (추천)<a class="headerlink" href="#12" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-69-1"><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a><span class="c1"># control-plane 에서 (bash)</span>
+</span><span id="__span-69-2"><a id="__codelineno-69-2" name="__codelineno-69-2" href="#__codelineno-69-2"></a>cat<span class="w"> </span><span class="s">&lt;&lt;'EOF' &gt;&gt; ~/.bashrc</span>
+</span><span id="__span-69-3"><a id="__codelineno-69-3" name="__codelineno-69-3" href="#__codelineno-69-3"></a><span class="s">source &lt;(kubectl completion bash)</span>
+</span><span id="__span-69-4"><a id="__codelineno-69-4" name="__codelineno-69-4" href="#__codelineno-69-4"></a><span class="s">alias k=kubectl</span>
+</span><span id="__span-69-5"><a id="__codelineno-69-5" name="__codelineno-69-5" href="#__codelineno-69-5"></a><span class="s">complete -o default -F __start_kubectl k</span>
+</span><span id="__span-69-6"><a id="__codelineno-69-6" name="__codelineno-69-6" href="#__codelineno-69-6"></a><span class="s">export do="--dry-run=client -o yaml"</span>
+</span><span id="__span-69-7"><a id="__codelineno-69-7" name="__codelineno-69-7" href="#__codelineno-69-7"></a><span class="s">EOF</span>
+</span><span id="__span-69-8"><a id="__codelineno-69-8" name="__codelineno-69-8" href="#__codelineno-69-8"></a><span class="nb">source</span><span class="w"> </span>~/.bashrc
+</span></code></pre></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">macOS (zsh)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a>cat<span class="w"> </span><span class="s">&lt;&lt;'EOF' &gt;&gt; ~/.zshrc</span>
+</span><span id="__span-70-2"><a id="__codelineno-70-2" name="__codelineno-70-2" href="#__codelineno-70-2"></a><span class="s">autoload -Uz compinit &amp;&amp; compinit</span>
+</span><span id="__span-70-3"><a id="__codelineno-70-3" name="__codelineno-70-3" href="#__codelineno-70-3"></a><span class="s">source &lt;(kubectl completion zsh)</span>
+</span><span id="__span-70-4"><a id="__codelineno-70-4" name="__codelineno-70-4" href="#__codelineno-70-4"></a><span class="s">alias k=kubectl</span>
+</span><span id="__span-70-5"><a id="__codelineno-70-5" name="__codelineno-70-5" href="#__codelineno-70-5"></a><span class="s">EOF</span>
+</span><span id="__span-70-6"><a id="__codelineno-70-6" name="__codelineno-70-6" href="#__codelineno-70-6"></a><span class="nb">source</span><span class="w"> </span>~/.zshrc
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p><code>k get po&lt;Tab&gt;</code> 이 <code>pods</code> 로 완성되면 성공입니다. 자세한 것은 <a href="../../start/">시작하기</a>를 보세요.</p>
+<hr />
+<h2 id="_7">트러블슈팅<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>증상</th>
+<th>먼저 볼 것</th>
+<th>해결</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kubeadm init</code> 이 <code>[ERROR Swap]</code></td>
+<td><code>free -h</code></td>
+<td>2) 다시. fstab 주석 확인</td>
+</tr>
+<tr>
+<td><code>[ERROR CRI]</code> · <code>container runtime is not running</code></td>
+<td><code>systemctl status containerd</code></td>
+<td>4) 다시, <code>sudo systemctl restart containerd</code></td>
+</tr>
+<tr>
+<td><code>[ERROR FileContent--proc-sys-net-ipv4-ip_forward]</code></td>
+<td><code>sysctl net.ipv4.ip_forward</code></td>
+<td>3) 다시 (<code>sudo sysctl --system</code>)</td>
+</tr>
+<tr>
+<td><code>[ERROR NumCPU]</code> · <code>[ERROR Mem]</code></td>
+<td>VM 설정</td>
+<td>CPU 2 이상, 메모리 늘리기</td>
+</tr>
+<tr>
+<td><code>[ERROR Port-6443]</code></td>
+<td>이전 init 흔적</td>
+<td><code>sudo kubeadm reset -f</code> 후 재시도</td>
+</tr>
+<tr>
+<td>join 이 멈춤 · 타임아웃</td>
+<td>worker 에서 <code>ping 192.168.56.10</code>, <code>nc -zv 192.168.56.10 6443</code></td>
+<td>어댑터 2 · netplan · 토큰 만료 확인</td>
+</tr>
+<tr>
+<td>노드가 계속 NotReady</td>
+<td><code>cilium status</code>, <code>kubectl describe node &lt;노드&gt;</code></td>
+<td>Cilium 파드 상태, <code>journalctl -u kubelet -n 50</code></td>
+</tr>
+<tr>
+<td>파드가 재시작 반복, 노드가 가끔 NotReady</td>
+<td><code>grep SystemdCgroup /etc/containerd/config.toml</code></td>
+<td><code>true</code> 로 고치고 containerd · kubelet 재시작</td>
+</tr>
+<tr>
+<td>INTERNAL-IP 가 10.0.2.15</td>
+<td><code>/etc/hosts</code></td>
+<td>10) ① 의 danger 박스</td>
+</tr>
+<tr>
+<td>worker 에서 <code>ping control-plane</code> 이 127.0.1.1</td>
+<td><code>/etc/hosts</code> 의 127.0.1.1 줄</td>
+<td>6) 의 경고 박스</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">노드 간 통신 확인<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a>ip<span class="w"> </span>-br<span class="w"> </span>a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">192</span>.168.56
+</span><span id="__span-71-2"><a id="__codelineno-71-2" name="__codelineno-71-2" href="#__codelineno-71-2"></a>ip<span class="w"> </span>route<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>default
+</span><span id="__span-71-3"><a id="__codelineno-71-3" name="__codelineno-71-3" href="#__codelineno-71-3"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">192</span>.168.56.10
+</span></code></pre></div>
+<h3 id="control-plane">처음부터 다시 (control-plane)<a class="headerlink" href="#control-plane" title="Permanent link">&para;</a></h3>
+<div class="admonition danger">
+<p class="admonition-title">클러스터가 통째로 사라집니다</p>
+<p>스냅샷이 있다면 스냅샷으로 되돌리는 것이 훨씬 빠릅니다.</p>
+</div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a>sudo<span class="w"> </span>kubeadm<span class="w"> </span>reset<span class="w"> </span>-f
+</span><span id="__span-72-2"><a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a>sudo<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/etc/cni/net.d<span class="w"> </span><span class="nv">$HOME</span>/.kube
+</span><span id="__span-72-3"><a id="__codelineno-72-3" name="__codelineno-72-3" href="#__codelineno-72-3"></a>sudo<span class="w"> </span>iptables<span class="w"> </span>-F<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-F<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>iptables<span class="w"> </span>-X
+</span><span id="__span-72-4"><a id="__codelineno-72-4" name="__codelineno-72-4" href="#__codelineno-72-4"></a><span class="c1"># 이후 7) 부터 다시. worker 도 각각 kubeadm reset -f 후 9) 부터</span>
+</span></code></pre></div>
+<hr />
+<h2 id="_9">자주 묻는 질문<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<details class="question">
+<summary>Windows 에서 VirtualBox VM 이 안 켜지거나 매우 느려요</summary>
+<p>Hyper-V 나 Windows Hypervisor Platform 이 켜져 있으면 VirtualBox 와 충돌합니다.</p>
+<ul>
+<li>관리자 PowerShell 에서 <code>bcdedit /set hypervisorlaunchtype off</code> 후 재부팅</li>
+<li>또는 제어판 → 프로그램 → Windows 기능 켜기/끄기 → <strong>Hyper-V · Windows Hypervisor Platform · Virtual Machine Platform</strong> 체크 해제 후 재부팅</li>
+</ul>
+<p>WSL2 도 Hyper-V 기반이라 이렇게 끄면 WSL2 가 동작하지 않습니다. WSL2 를 계속 써야 한다면 VMware Workstation Player 를 대안으로 쓸 수 있습니다.</p>
+</details>
+<details class="question">
+<summary>Apple Silicon(M1~M4) 맥에서는 어떻게 하나요?</summary>
+<p>VirtualBox 의 Apple Silicon 지원은 제한적입니다. <strong>UTM</strong> 이나 <strong>Multipass</strong> 로 Ubuntu 24.04 <strong>arm64</strong> VM 을 만든 뒤, 이 페이지의 2) 부터 똑같이 진행합니다.
+kubeadm · kubelet · kubectl · containerd · Cilium 모두 arm64 패키지가 있고, 위 명령의 <code>$(dpkg --print-architecture)</code> 가 자동으로 arm64 를 고릅니다.
+네트워크 어댑터 이름과 대역은 도구마다 다르니 1-4) 의 IP 를 그 환경에 맞게 바꾸세요.</p>
+</details>
+<details class="question">
+<summary><code>kubeadm init</code> 을 한 번 실패했는데 다시 하면 또 실패해요</summary>
+<p>이전 실행이 남긴 파일과 포트 때문입니다. <code>sudo kubeadm reset -f</code> 로 지운 뒤 다시 실행합니다.
+<code>reset</code> 은 <code>~/.kube/config</code> 와 <code>/etc/cni/net.d</code> 는 지우지 않으니 필요하면 직접 지웁니다.</p>
+</details>
+<details class="question">
+<summary>worker 를 조인했는데 control-plane 에서 안 보여요</summary>
+<p>조인 명령을 <strong>sudo 없이</strong> 실행했거나, 토큰이 만료됐거나, worker 에서 swap 이 켜져 있는 경우가 대부분입니다.
+worker 에서 <code>free -h</code>, <code>ping 192.168.56.10</code> 을 확인하고, control-plane 에서 <code>kubeadm token create --print-join-command</code> 로 새 명령을 받아 <code>sudo</code> 로 실행합니다.</p>
+</details>
+<details class="question">
+<summary>왜 kubeadm 인가요? minikube 나 kind 로는 안 되나요?</summary>
+<p>CKA 는 <strong>kubeadm 으로 만든 클러스터</strong>를 다룹니다. 스태틱 파드, <code>/etc/kubernetes/manifests</code>, etcd 백업, <code>kubeadm upgrade</code>, 노드 조인은 모두 이 구조를 전제로 합니다.
+minikube · kind 에서는 이 파일들을 직접 만지기 어렵거나 구조가 다릅니다.</p>
+</details>
+<hr />
+<h2 id="_10">확인 질문<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<details class="question">
+<summary>1. 공통 설정을 복제 <strong>전에</strong> 끝내는 이유는?</summary>
+<p>swap · 커널 모듈 · containerd · kubeadm 설치는 세 노드가 모두 똑같아야 합니다. 한 번 해 두고 복제하면 worker 에서는 IP 와 hostname 만 바꾸면 됩니다.</p>
+</details>
+<details class="question">
+<summary>2. VM 마다 어댑터를 두 개 쓰는 이유는?</summary>
+<p>NAT 는 인터넷(패키지·이미지)용이고, 모든 VM 이 같은 10.0.2.15 를 받습니다. 노드끼리는 고정 IP 가 있는 Host-only(192.168.56.x)로 통신해야 합니다.</p>
+</details>
+<details class="question">
+<summary>3. containerd 에 <code>SystemdCgroup = true</code> 를 주지 않으면?</summary>
+<p>kubelet(systemd 드라이버)과 containerd(cgroupfs)가 서로 다른 방식으로 cgroup 을 관리해 충돌합니다. 파드 재시작 반복이나 노드 NotReady 처럼 애매한 증상으로 나타납니다.</p>
+</details>
+<details class="question">
+<summary>4. <code>kubeadm init</code> 직후 노드가 NotReady 인데 etcd · API 서버는 Running 인 이유는?</summary>
+<p>CNI 가 없어서 파드 네트워크가 준비되지 않았기 때문입니다. 컨트롤플레인 구성 요소는 hostNetwork 로 도는 스태틱 파드라서 CNI 없이도 뜹니다.</p>
+</details>
+<details class="question">
+<summary>5. join 명령의 <code>--token</code> 과 <code>--discovery-token-ca-cert-hash</code> 는 각각 무엇을 확인하나요?</summary>
+<p><code>--token</code> 은 API 서버가 worker 를 확인하는 값이고, <code>--discovery-token-ca-cert-hash</code> 는 worker 가 API 서버의 CA 가 진짜인지 확인하는 값입니다.</p>
+</details>
+<details class="question">
+<summary>6. 토큰이 만료됐을 때 새 조인 명령을 얻는 방법은?</summary>
+<p>control-plane 에서 <code>kubeadm token create --print-join-command</code></p>
+</details>
+<details class="question">
+<summary>7. <code>kubectl get nodes -o wide</code> 에서 INTERNAL-IP 가 10.0.2.15 로 나오면 무엇이 문제인가요?</summary>
+<p>kubelet 이 NAT 주소를 노드 IP 로 골랐습니다. hosts 파일에 자기 이름이 192.168.56.x 로 있어야 하고, 안 되면 <code>/etc/default/kubelet</code> 에 <code>--node-ip</code> 를 줍니다.</p>
+</details>
+<details class="question">
+<summary>8. 검증 ②(Service 로 wget)가 통과하면 어떤 구성 요소가 정상이라는 뜻인가요?</summary>
+<p>스케줄러(파드 배치), CNI(노드 간 파드 통신), kube-proxy(Service 규칙)입니다.</p>
+</details>
+<hr />
+<h2 id="_11">다음 단계<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>클러스터가 준비됐습니다. <a href="../../start/">시작하기</a>의 셸 설정을 확인하고 <a href="../03-architecture/">3강 · 아키텍처</a>부터 시작하세요.</li>
+<li><code>kubeadm init</code> · <code>join</code> · CNI 를 <strong>더 깊이</strong> 다루는 것은 <a href="../13-cluster-setup/">13강 · 클러스터 구축</a>입니다 (채점 세트 <code>13-cluster-setup</code>).</li>
+<li>채점 실습 저장소를 받습니다.</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a><span class="c1"># control-plane 에서</span>
+</span><span id="__span-73-2"><a id="__codelineno-73-2" name="__codelineno-73-2" href="#__codelineno-73-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/skilleat-labs/cka-lab.git<span class="w"> </span>~/cka-lab
+</span><span id="__span-73-3"><a id="__codelineno-73-3" name="__codelineno-73-3" href="#__codelineno-73-3"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash<span class="w"> </span>setup-shell.sh
+</span></code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
+        
+          
+          <a href="../03-architecture/" class="md-footer__link md-footer__link--prev" aria-label="이전: 3강 · 아키텍처">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                이전
+              </span>
+              <div class="md-ellipsis">
+                3강 · 아키텍처
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../06-workloads/" class="md-footer__link md-footer__link--next" aria-label="다음: 6강 · 워크로드">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                다음
+              </span>
+              <div class="md-ellipsis">
+                6강 · 워크로드
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.tracking", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

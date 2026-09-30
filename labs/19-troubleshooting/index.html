@@ -1,0 +1,3280 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="스킬잇 CKA 온라인 강의 — 강의가 끝나고 따라 하며 개념을 채우는 실습 가이드">
+      
+      
+      
+        <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/19-troubleshooting/">
+      
+      
+        <link rel="prev" href="../17-helm/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>19강 · 트러블슈팅 - CKA 실습 가이드</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pretendard:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Pretendard";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#19" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../.." title="CKA 실습 가이드" class="md-header__button md-logo" aria-label="CKA 실습 가이드" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CKA 실습 가이드
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              19강 · 트러블슈팅
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="다크 모드로 전환"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="라이트 모드로 전환"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/skilleat-labs/cka-labs-2026" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    skilleat-labs/cka-labs-2026
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  홈
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../start/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  시작하기
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../03-architecture/" class="md-tabs__link">
+          
+  
+  
+  강의별 실습
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CKA 실습 가이드" class="md-nav__button md-logo" aria-label="CKA 실습 가이드" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    CKA 실습 가이드
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/skilleat-labs/cka-labs-2026" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    skilleat-labs/cka-labs-2026
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    홈
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    시작하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    강의별 실습
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    강의별 실습
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3강 · 아키텍처
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-cluster-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4강 · 클러스터 구축 (VirtualBox)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-workloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6강 · 워크로드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7강 · 스케줄링
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9강 · 서비스와 내부 통신
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10강 · NetworkPolicy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11강 · Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-cluster-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13강 · 클러스터 구축
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-rbac/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · RBAC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15강 · 유지보수
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-node-ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16강 · 노드 운영
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-helm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17강 · Helm과 Kustomize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19강 · 트러블슈팅
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19강 · 트러블슈팅
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습 목표
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0) 준비
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) 진단 순서 — 네 개의 명령과 판단 흐름
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1) 진단 순서 — 네 개의 명령과 판단 흐름">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        판단 흐름
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        이벤트 보는 두 가지 방법
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubectl-top" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        자원 사용량 — kubectl top
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) Pending — 스케줄러가 놓을 곳을 못 찾는다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2) Pending — 스케줄러가 놓을 곳을 못 찾는다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① 자원 부족
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-nodeselector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② nodeSelector 가 맞는 노드가 없다
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-imagepullbackoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) ImagePullBackOff — 이미지를 못 받는다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3) ImagePullBackOff — 이미지를 못 받는다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        고치기 — Deployment 템플릿을 바꾼다
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-crashloopbackoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) CrashLoopBackOff — 떴다가 죽고, 다시 뜨고
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4) CrashLoopBackOff — 떴다가 죽고, 다시 뜨고">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        설정 파일이 없어 죽는 앱
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        고치기 — 없는 설정을 넣어 준다
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        비교 — 실행 파일 자체가 없으면
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-oomkilled-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) OOMKilled — 메모리 limit 을 넘었다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5) OOMKilled — 메모리 limit 을 넘었다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-running-ready-01-readinessprobe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6) Running 인데 READY 0/1 — readinessProbe 실패
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6) Running 인데 READY 0/1 — readinessProbe 실패">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        고치기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-service-targetport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7) Service 가 파드를 못 찾는다 — 셀렉터와 targetPort
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7) Service 가 파드를 못 찾는다 — 셀렉터와 targetPort">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① Endpoints 가 비었다 → 셀렉터
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-endpoints-targetport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② Endpoints 는 있는데 접속이 안 된다 → targetPort
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8) DNS — 이름으로만 안 될 때
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8) DNS — 이름으로만 안 될 때">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredns-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        깨 보기 — CoreDNS 를 잠시 0 개로
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-notready-kubelet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9) 노드 NotReady — kubelet 을 멈춰 보기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9) 노드 NotReady — kubelet 을 멈춰 보기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        멈추기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        관찰
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        원인 찾고 복구하기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10) 컨트롤플레인 로그 — kubectl 이 안 믿길 때
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10) 컨트롤플레인 로그 — kubectl 이 안 믿길 때">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API 서버가 살아 있을 때
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-crictl-varlogpods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API 서버 없이 보는 법 — crictl 과 /var/log/pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        깨 보기 — 스케줄러에 없는 옵션을 넣는다
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        되돌리기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시험에서 빠르게
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        정리
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        확인 질문
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        다음 단계 — 채점 실습
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습 목표
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0) 준비
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) 진단 순서 — 네 개의 명령과 판단 흐름
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1) 진단 순서 — 네 개의 명령과 판단 흐름">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        판단 흐름
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        이벤트 보는 두 가지 방법
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubectl-top" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        자원 사용량 — kubectl top
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) Pending — 스케줄러가 놓을 곳을 못 찾는다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2) Pending — 스케줄러가 놓을 곳을 못 찾는다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① 자원 부족
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-nodeselector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② nodeSelector 가 맞는 노드가 없다
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-imagepullbackoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) ImagePullBackOff — 이미지를 못 받는다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3) ImagePullBackOff — 이미지를 못 받는다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        고치기 — Deployment 템플릿을 바꾼다
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-crashloopbackoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) CrashLoopBackOff — 떴다가 죽고, 다시 뜨고
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4) CrashLoopBackOff — 떴다가 죽고, 다시 뜨고">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        설정 파일이 없어 죽는 앱
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        고치기 — 없는 설정을 넣어 준다
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        비교 — 실행 파일 자체가 없으면
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-oomkilled-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) OOMKilled — 메모리 limit 을 넘었다
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5) OOMKilled — 메모리 limit 을 넘었다">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-running-ready-01-readinessprobe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6) Running 인데 READY 0/1 — readinessProbe 실패
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6) Running 인데 READY 0/1 — readinessProbe 실패">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        고치기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-service-targetport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7) Service 가 파드를 못 찾는다 — 셀렉터와 targetPort
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7) Service 가 파드를 못 찾는다 — 셀렉터와 targetPort">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① Endpoints 가 비었다 → 셀렉터
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-endpoints-targetport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② Endpoints 는 있는데 접속이 안 된다 → targetPort
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8) DNS — 이름으로만 안 될 때
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8) DNS — 이름으로만 안 될 때">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredns-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        깨 보기 — CoreDNS 를 잠시 0 개로
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-notready-kubelet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9) 노드 NotReady — kubelet 을 멈춰 보기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9) 노드 NotReady — kubelet 을 멈춰 보기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        멈추기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        관찰
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        원인 찾고 복구하기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10) 컨트롤플레인 로그 — kubectl 이 안 믿길 때
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10) 컨트롤플레인 로그 — kubectl 이 안 믿길 때">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API 서버가 살아 있을 때
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-crictl-varlogpods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API 서버 없이 보는 법 — crictl 과 /var/log/pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        깨 보기 — 스케줄러에 없는 옵션을 넣는다
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        되돌리기
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시험에서 빠르게
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        정리
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        확인 질문
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        다음 단계 — 채점 실습
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="19">19강 · 트러블슈팅<a class="headerlink" href="#19" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>영상: <strong>19강-트러블슈팅</strong> · 이어서 풀 채점 세트: <code>19-troubleshooting</code></p>
+</blockquote>
+<h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>증상(STATUS)을 보고 <strong>어느 층(스케줄링 · 이미지 · 컨테이너 · 프로브 · 서비스 · DNS · 노드)</strong> 을 볼지 고르는 순서를 몸에 익힌다.</li>
+<li>Pending · ImagePullBackOff · CrashLoopBackOff · OOMKilled · <code>0/1 Running</code> 을 <strong>직접 만들고</strong>, 각각 어느 명령의 어느 줄에 원인이 찍히는지 확인한다.</li>
+<li>Service 의 Endpoints 가 비는 두 원인(<strong>셀렉터 불일치 · 준비 안 된 파드</strong>)과, 차 있는데도 안 되는 원인(<strong>targetPort</strong>)을 가른다.</li>
+<li>워커의 kubelet 을 멈춰 <strong>NotReady 노드</strong>를 만들고 <code>systemctl</code> · <code>journalctl</code> 로 복구한다.</li>
+<li>kubectl 로 볼 수 없을 때를 대비해 <strong>컨트롤플레인 로그를 <code>crictl</code> · <code>/var/log/pods</code></strong> 에서 읽는다.</li>
+</ul>
+<hr />
+<h2 id="0">0) 준비<a class="headerlink" href="#0" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>guide-trouble
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/guide-trouble<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/guide-trouble
+</span></code></pre></div>
+<p>이 페이지는 일부러 고장을 냅니다. 9) 은 <strong>워커 노드의 kubelet 을</strong>, 10) 은 <strong>컨트롤플레인의 스케줄러를</strong> 잠시 멈춥니다.
+두 절에는 되돌리는 명령이 바로 붙어 있고, <strong>정리</strong> 절에서 한 번 더 확인합니다.</p>
+<div class="admonition warning">
+<p class="admonition-title">노드 이름을 확인하세요</p>
+<p>이 페이지는 워커를 <code>worker-1</code> · <code>worker-2</code>, 컨트롤플레인을 <code>control-plane</code> 으로 적습니다. <code>kubectl get nodes</code> 로 내 이름을 확인해 바꿔 입력하세요.</p>
+</div>
+<hr />
+<h2 id="1">1) 진단 순서 — 네 개의 명령과 판단 흐름<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<h3 id="_2">왜<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>트러블슈팅은 명령을 많이 아는 것보다 <strong>순서를 건너뛰지 않는 것</strong>이 중요합니다.
+거의 모든 문제는 아래 네 명령 안에서 원인이 드러납니다.</p>
+<table>
+<thead>
+<tr>
+<th>순서</th>
+<th>명령</th>
+<th>보는 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>①</td>
+<td><code>kubectl get pod -o wide</code></td>
+<td>STATUS · READY · RESTARTS · 어느 노드</td>
+</tr>
+<tr>
+<td>②</td>
+<td><code>kubectl describe pod</code></td>
+<td>맨 아래 <strong>Events</strong>, 컨테이너의 <strong>State / Last State</strong></td>
+</tr>
+<tr>
+<td>③</td>
+<td><code>kubectl logs [--previous]</code></td>
+<td>앱이 남긴 말. 죽은 컨테이너는 <code>--previous</code></td>
+</tr>
+<tr>
+<td>④</td>
+<td><code>kubectl events</code> / <code>get events</code></td>
+<td>네임스페이스 전체에서 시간순으로 무슨 일이 있었나</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">판단 흐름<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+    S["kubectl get pod -o wide"] --&gt; P{"STATUS"}
+    P -- Pending --&gt; P1["describe → Events: FailedScheduling&lt;br/&gt;자원 부족 · taint · nodeSelector/affinity · PVC 미바인딩"]
+    P -- ContainerCreating --&gt; C1["describe → Events&lt;br/&gt;볼륨 마운트 실패 · Secret/ConfigMap 없음 · CNI 오류"]
+    P -- "ErrImagePull / ImagePullBackOff" --&gt; I1["describe → Events: Failed to pull&lt;br/&gt;태그 오타 · 없는 저장소 · 인증(imagePullSecrets)"]
+    P -- "CrashLoopBackOff / Error" --&gt; L1["logs --previous&lt;br/&gt;describe → Last State: Exit Code"]
+    L1 --&gt; L2{"Exit Code"}
+    L2 -- "137 + OOMKilled" --&gt; L3["메모리 limit 초과"]
+    L2 -- "1 등" --&gt; L4["앱 에러 · 설정 누락 · 잘못된 command"]
+    L2 -- "128 StartError" --&gt; L5["실행 파일 없음 · 잘못된 command"]
+    P -- "Running 인데 READY 0/1" --&gt; R1["describe → Unhealthy&lt;br/&gt;readinessProbe 실패"]
+    P -- "Running 1/1 인데 접속 안 됨" --&gt; V1{"get endpoints"}
+    V1 -- "비어 있음" --&gt; V2["Service selector ↔ 파드 레이블&lt;br/&gt;또는 파드가 Ready 아님"]
+    V1 -- "IP 는 있음" --&gt; V3["targetPort ↔ containerPort&lt;br/&gt;→ 그다음 DNS → NetworkPolicy"]
+    S -.-&gt; N{"노드가 NotReady?"}
+    N -- 예 --&gt; N1["ssh 노드 → systemctl status kubelet&lt;br/&gt;journalctl -u kubelet"]
+    S -.-&gt; K{"kubectl 자체가 안 됨?"}
+    K -- 예 --&gt; K1["컨트롤플레인 ssh → /etc/kubernetes/manifests&lt;br/&gt;crictl ps -a · crictl logs"]</code></pre>
+<h3 id="_4">이벤트 보는 두 가지 방법<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--sort-by<span class="o">=</span>.lastTimestamp<span class="w">          </span><span class="c1"># 오래된 것 → 최근 것</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--field-selector<span class="w"> </span><span class="nv">type</span><span class="o">=</span>Warning<span class="w">     </span><span class="c1"># 경고만</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>kubectl<span class="w"> </span>events<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--for<span class="w"> </span>pod/&lt;이름&gt;<span class="w">                       </span><span class="c1"># 특정 오브젝트만 (시간순 정렬이 기본)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>kubectl<span class="w"> </span>events<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--types<span class="o">=</span>Warning<span class="w"> </span>--watch<span class="w">                </span><span class="c1"># 경고를 실시간으로</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">시험 팁 — 이벤트는 1시간이면 사라집니다</p>
+<p>이벤트는 기본 1시간만 보관됩니다. 오래전에 난 문제는 이벤트가 없을 수 있으니, 그때는 <code>describe</code> 의 <strong>Last State</strong> 와 <code>logs --previous</code> 가 증거입니다.</p>
+</div>
+<h3 id="kubectl-top">자원 사용량 — <code>kubectl top</code><a class="headerlink" href="#kubectl-top" title="Permanent link">&para;</a></h3>
+<p><code>kubectl top</code> 은 <strong>metrics-server</strong> 가 있어야 동작합니다. kubeadm 클러스터에는 기본으로 없습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>top<span class="w"> </span>nodes
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>error: Metrics API not available
+</span></code></pre></div>
+<details class="note">
+<summary>metrics-server 설치 (선택)</summary>
+<p>kubeadm 의 kubelet 서빙 인증서는 클러스터 CA 가 아니라 kubelet 이 스스로 서명한 것이라, metrics-server 가 검증하지 못합니다. 실습용으로 <code>--kubelet-insecure-tls</code> 를 추가합니다.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>kubectl<span class="w"> </span>patch<span class="w"> </span>deployment<span class="w"> </span>metrics-server<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>--type<span class="o">=</span>json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>-p<span class="o">=</span><span class="s1">'[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/metrics-server<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span></code></pre></div>
+1분쯤 뒤:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>kubectl<span class="w"> </span>top<span class="w"> </span>nodes
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>kubectl<span class="w"> </span>top<span class="w"> </span>pods<span class="w"> </span>-A<span class="w"> </span>--sort-by<span class="o">=</span>memory<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-5
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>NAME            CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>control-plane   182m         9%       1289Mi          68%
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>worker-1        48m          2%       702Mi           37%
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>worker-2        41m          2%       655Mi           34%
+</span></code></pre></div></p>
+</details>
+<hr />
+<h2 id="2-pending">2) Pending — 스케줄러가 놓을 곳을 못 찾는다<a class="headerlink" href="#2-pending" title="Permanent link">&para;</a></h2>
+<h3 id="_5">왜<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>Pending 은 <strong>아직 노드가 정해지지 않은</strong> 상태입니다. 컨테이너는 시작도 안 했으니 <code>logs</code> 는 비어 있고, 원인은 전부 <strong>스케줄러의 이벤트</strong>에 있습니다.</p>
+<h3 id="1_1">① 자원 부족<a class="headerlink" href="#1_1" title="Permanent link">&para;</a></h3>
+<p><code>too-big.yaml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">too-big</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-trouble</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.27</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="nt">resources</span><span class="p">:</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">      </span><span class="nt">requests</span><span class="p">:</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">"64"</span><span class="w">            </span><span class="c1"># ← 64 코어. 어느 노드에도 없다</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64Mi</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>too-big.yaml
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>too-big<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-o<span class="w"> </span>wide
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>kubectl<span class="w"> </span>events<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--for<span class="w"> </span>pod/too-big
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>NAME      READY   STATUS    RESTARTS   AGE   IP       NODE
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>too-big   0/1     Pending   0          8s    &lt;none&gt;   &lt;none&gt;      ← NODE 가 비어 있다
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>LAST SEEN   TYPE      REASON             OBJECT        MESSAGE
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>8s          Warning   FailedScheduling   Pod/too-big   0/3 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }, 2 Insufficient cpu. preemption: 0/3 nodes are available: 1 Preemption is not helpful for scheduling, 2 No preemption victims found for incoming pod.
+</span></code></pre></div>
+<p>관찰 포인트: 메시지가 <strong>노드 3대를 어떻게 탈락시켰는지</strong> 나눠서 말해 줍니다. 컨트롤플레인 1대는 taint 로, 워커 2대는 CPU 부족으로 탈락했습니다.</p>
+<p>노드에 실제로 얼마가 남았는지는 <code>describe node</code> 의 <strong>Allocated resources</strong> 로 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>node<span class="w"> </span>worker-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A6<span class="w"> </span><span class="s1">'Allocated resources'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Allocated resources:
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  (Total limits may be over 100 percent, i.e., overcommitted.)
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>  Resource           Requests     Limits
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>  --------           --------     ------
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>  cpu                350m (17%)   0 (0%)
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>  memory             140Mi (7%)   340Mi (18%)
+</span></code></pre></div>
+<p>스케줄러는 <strong>실제 사용량이 아니라 requests 의 합</strong>으로 판단합니다. <code>kubectl top</code> 이 한가해 보여도 requests 가 차 있으면 Pending 입니다.</p>
+<h3 id="2-nodeselector">② nodeSelector 가 맞는 노드가 없다<a class="headerlink" href="#2-nodeselector" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>picky<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--image<span class="o">=</span>nginx:1.27<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>--overrides<span class="o">=</span><span class="s1">'{"spec":{"nodeSelector":{"disktype":"nvme"}}}'</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>kubectl<span class="w"> </span>events<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--for<span class="w"> </span>pod/picky<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-1
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>... FailedScheduling   Pod/picky   0/3 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }, 2 node(s) didn't match Pod's node affinity/selector. preemption: ...
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>picky<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.nodeSelector}{"\n"}'</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-L<span class="w"> </span>disktype
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>worker-1<span class="w"> </span><span class="nv">disktype</span><span class="o">=</span>nvme
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>picky<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-o<span class="w"> </span>wide
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>{"disktype":"nvme"}
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>NAME            STATUS   ROLES           AGE   VERSION   DISKTYPE
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>control-plane   Ready    control-plane   5d    v1.32.x
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>worker-1        Ready    &lt;none&gt;          5d    v1.32.x
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>worker-2        Ready    &lt;none&gt;          5d    v1.32.x
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>node/worker-1 labeled
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>NAME    READY   STATUS    NODE
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>picky   1/1     Running   worker-1
+</span></code></pre></div>
+<p>Pending 파드는 조건이 맞는 순간 <strong>스케줄러가 알아서 다시 시도</strong>합니다. 파드를 지우고 다시 만들 필요가 없습니다.</p>
+<table>
+<thead>
+<tr>
+<th>FailedScheduling 메시지 조각</th>
+<th>원인</th>
+<th>대응</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Insufficient cpu</code> / <code>memory</code></td>
+<td>requests 가 남은 자원보다 크다</td>
+<td>requests 줄이기 · 다른 파드 정리</td>
+</tr>
+<tr>
+<td><code>had untolerated taint {…}</code></td>
+<td>노드의 taint</td>
+<td>toleration 추가 또는 taint 제거</td>
+</tr>
+<tr>
+<td><code>didn't match Pod's node affinity/selector</code></td>
+<td>nodeSelector · affinity</td>
+<td>노드 레이블 추가 또는 조건 수정</td>
+</tr>
+<tr>
+<td><code>pod has unbound immediate PersistentVolumeClaims</code></td>
+<td>PVC 가 Pending</td>
+<td>8강 스토리지 — PV · StorageClass 확인</td>
+</tr>
+<tr>
+<td><code>node(s) were unschedulable</code></td>
+<td><code>kubectl cordon</code> 된 노드</td>
+<td><code>kubectl uncordon</code></td>
+</tr>
+<tr>
+<td>이벤트가 아예 없음</td>
+<td>스케줄러가 죽었다</td>
+<td>10) 컨트롤플레인 확인</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>too-big<span class="w"> </span>picky<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<hr />
+<h2 id="3-imagepullbackoff">3) ImagePullBackOff — 이미지를 못 받는다<a class="headerlink" href="#3-imagepullbackoff" title="Permanent link">&para;</a></h2>
+<h3 id="_6">왜<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>노드는 정해졌는데 kubelet 이 <strong>컨테이너 런타임(containerd)에게 이미지를 받아 오라고 했다가 실패</strong>한 상태입니다.
+<code>ErrImagePull</code>(방금 실패) → <code>ImagePullBackOff</code>(잠시 기다렸다 재시도) 를 번갈아 보입니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>deployment<span class="w"> </span>cart<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--image<span class="o">=</span>redis:7.9.99
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>cart<span class="w"> </span>-w
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>NAME                    READY   STATUS              RESTARTS   AGE
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>cart-6f8b7d9c5-k2x7p    0/1     ContainerCreating   0          1s
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>cart-6f8b7d9c5-k2x7p    0/1     ErrImagePull        0          4s
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>cart-6f8b7d9c5-k2x7p    0/1     ImagePullBackOff    0          17s
+</span></code></pre></div>
+<p><code>Ctrl+C</code> 로 빠져나와 이벤트를 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>cart<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span>-n<span class="w"> </span><span class="s1">'/Events:/,$p'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>Events:
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>  Type     Reason     Age   From               Message
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>  ----     ------     ----  ----               -------
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>  Normal   Scheduled  30s   default-scheduler  Successfully assigned guide-trouble/cart-6f8b7d9c5-k2x7p to worker-2
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>  Normal   Pulling    29s   kubelet            Pulling image "redis:7.9.99"
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>  Warning  Failed     27s   kubelet            Failed to pull image "redis:7.9.99": rpc error: code = NotFound desc = failed to pull and unpack image "docker.io/library/redis:7.9.99": failed to resolve reference "docker.io/library/redis:7.9.99": docker.io/library/redis:7.9.99: not found
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>  Warning  Failed     27s   kubelet            Error: ErrImagePull
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>  Normal   BackOff    14s   kubelet            Back-off pulling image "redis:7.9.99"
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>  Warning  Failed     14s   kubelet            Error: ImagePullBackOff
+</span></code></pre></div>
+<p>관찰 포인트: <code>Scheduled</code> 는 성공했습니다. 스케줄링 문제가 아니라 <strong>노드(kubelet) 단계</strong>의 문제라는 뜻입니다.
+<code>redis:7.9.99</code> 가 <code>docker.io/library/redis:7.9.99</code> 로 풀려서 해석된 것도 보입니다.</p>
+<table>
+<thead>
+<tr>
+<th>메시지 조각</th>
+<th>원인</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>not found</code> / <code>manifest unknown</code></td>
+<td>태그 · 이미지 이름 오타</td>
+</tr>
+<tr>
+<td><code>pull access denied</code> / <code>unauthorized</code> / <code>401</code></td>
+<td>비공개 저장소 — <code>imagePullSecrets</code> 필요</td>
+</tr>
+<tr>
+<td><code>i/o timeout</code> / <code>dial tcp … no such host</code></td>
+<td>노드에서 저장소로 나가는 네트워크 · DNS</td>
+</tr>
+<tr>
+<td><code>toomanyrequests</code></td>
+<td>Docker Hub 요청 한도</td>
+</tr>
+</tbody>
+</table>
+<h3 id="deployment">고치기 — Deployment 템플릿을 바꾼다<a class="headerlink" href="#deployment" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deploy<span class="w"> </span>cart<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.template.spec.containers[*].name}{"\n"}'</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>kubectl<span class="w"> </span><span class="nb">set</span><span class="w"> </span>image<span class="w"> </span>deployment/cart<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span><span class="nv">redis</span><span class="o">=</span>redis:7.4
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/cart<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>redis
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>deployment "cart" successfully rolled out
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">파드의 이미지는 고칠 수 있습니다</p>
+<p>파드 필드는 대부분 수정할 수 없지만 <strong><code>image</code> 는 예외</strong>입니다. Deployment 없는 단독 파드라면
+<code>kubectl set image pod/&lt;이름&gt; &lt;컨테이너&gt;=&lt;이미지&gt;</code> 로 바로 고칠 수 있습니다. 다른 필드를 바꿔야 하면 <code>kubectl replace --force -f</code> 로 지우고 다시 만듭니다.</p>
+</div>
+<p>노드에서 직접 받아 보면 kubelet 을 거치지 않고 확인할 수 있습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>ssh<span class="w"> </span>worker-2<span class="w"> </span><span class="s1">'sudo crictl pull redis:7.9.99'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>... pulling image: failed to pull and unpack image "docker.io/library/redis:7.9.99": failed to resolve reference ... not found
+</span></code></pre></div>
+<hr />
+<h2 id="4-crashloopbackoff">4) CrashLoopBackOff — 떴다가 죽고, 다시 뜨고<a class="headerlink" href="#4-crashloopbackoff" title="Permanent link">&para;</a></h2>
+<h3 id="_7">왜<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>컨테이너가 <strong>시작은 됐는데 곧 종료</strong>되고, kubelet 이 재시작하는 것을 반복합니다. 재시작 간격은 10초 → 20초 → 40초 … 최대 5분까지 늘어납니다.
+원인은 <strong>죽은 컨테이너가 남긴 로그</strong>와 <strong>종료 코드</strong>에 있습니다.</p>
+<h3 id="_8">설정 파일이 없어 죽는 앱<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><code>crashy.yaml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">crashy</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-trouble</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:1.36</span>
+</span><span id="__span-25-10"><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"sh"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"-c"</span><span class="p p-Indicator">]</span>
+</span><span id="__span-25-11"><a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a><span class="w">    </span><span class="nt">args</span><span class="p">:</span>
+</span><span id="__span-25-12"><a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-25-13"><a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a><span class="w">      </span><span class="no">echo "starting app, reading /etc/app/app.conf"</span>
+</span><span id="__span-25-14"><a id="__codelineno-25-14" name="__codelineno-25-14" href="#__codelineno-25-14"></a><span class="w">      </span><span class="no">cat /etc/app/app.conf || { echo "FATAL: config not found"; exit 1; }   # ← 파일이 없으면 exit 1</span>
+</span><span id="__span-25-15"><a id="__codelineno-25-15" name="__codelineno-25-15" href="#__codelineno-25-15"></a><span class="w">      </span><span class="no">sleep 3600</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>crashy.yaml
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>sleep<span class="w"> </span><span class="m">30</span><span class="p">;</span><span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>crashy<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>NAME     READY   STATUS             RESTARTS      AGE
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>crashy   0/1     CrashLoopBackOff   2 (15s ago)   32s
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>crashy<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--previous
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>crashy<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A8<span class="w"> </span><span class="s1">'    State:'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>starting app, reading /etc/app/app.conf
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>cat: can't open '/etc/app/app.conf': No such file or directory
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>FATAL: config not found
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>    State:          Waiting
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>      Reason:       CrashLoopBackOff
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>    Last State:     Terminated
+</span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>      Reason:       Error
+</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>      Exit Code:    1                    ← 앱이 스스로 에러로 끝냈다
+</span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>      Started:      Tue, 29 Sep 2026 07:41:03 +0000
+</span><span id="__span-29-11"><a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a>      Finished:     Tue, 29 Sep 2026 07:41:03 +0000
+</span><span id="__span-29-12"><a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a>    Ready:          False
+</span><span id="__span-29-13"><a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a>    Restart Count:  2
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title"><code>--previous</code> 를 빼면</p>
+<p><code>kubectl logs crashy</code> 는 <strong>지금 막 재시작한 컨테이너</strong>의 로그를 봅니다. 그 컨테이너가 아직 아무것도 못 찍었거나 Waiting 상태면 비어 있거나 에러가 납니다.
+죽기 직전의 말은 <strong><code>--previous</code>(<code>-p</code>)</strong> 에 있습니다.</p>
+</div>
+<h3 id="_9">고치기 — 없는 설정을 넣어 준다<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>configmap<span class="w"> </span>crashy-conf<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--from-literal<span class="o">=</span>app.conf<span class="o">=</span><span class="s1">'mode=prod'</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>crashy<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span>&gt;<span class="w"> </span>crashy-fixed.yaml
+</span></code></pre></div>
+<p><code>crashy-fixed.yaml</code> 에 볼륨을 추가합니다. SA 토큰용 <code>volumes</code> · <code>volumeMounts</code> 목록이 이미 있으니 <strong>그 목록에 항목을 하나씩 더합니다</strong>.
+(파드의 볼륨은 실행 중에 바꿀 수 없으므로 <code>replace --force</code> 로 지우고 다시 만듭니다.)</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+</span><span id="__span-31-6"><a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+</span><span id="__span-31-7"><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a><span class="w">      </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/app</span><span class="w">          </span><span class="c1"># ← 앱이 찾는 경로</span>
+</span><span id="__span-31-8"><a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+</span><span id="__span-31-9"><a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+</span><span id="__span-31-10"><a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a><span class="w">    </span><span class="nt">configMap</span><span class="p">:</span>
+</span><span id="__span-31-11"><a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">crashy-conf</span><span class="w">            </span><span class="c1"># ← 키 app.conf 가 파일 /etc/app/app.conf 가 된다</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>kubectl<span class="w"> </span>replace<span class="w"> </span>--force<span class="w"> </span>-f<span class="w"> </span>crashy-fixed.yaml
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>crashy<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>crashy<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>pod "crashy" deleted
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>pod/crashy replaced
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>NAME     READY   STATUS    RESTARTS   AGE
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>crashy   1/1     Running   0          5s
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>
+</span><span id="__span-33-7"><a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a>starting app, reading /etc/app/app.conf
+</span><span id="__span-33-8"><a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a>mode=prod
+</span></code></pre></div>
+<h3 id="_10">비교 — 실행 파일 자체가 없으면<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>no-binary<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--command<span class="w"> </span>--<span class="w"> </span>start-server<span class="w"> </span>--port<span class="w"> </span><span class="m">80</span>
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>sleep<span class="w"> </span><span class="m">20</span><span class="p">;</span><span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>no-binary<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>no-binary<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--previous
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>no-binary<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A6<span class="w"> </span><span class="s1">'Last State'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>NAME        READY   STATUS             RESTARTS      AGE
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>no-binary   0/1     CrashLoopBackOff   2 (12s ago)   20s
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>(비어 있다 — 프로세스가 시작조차 못 했다)
+</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>
+</span><span id="__span-35-6"><a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a>    Last State:     Terminated
+</span><span id="__span-35-7"><a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>      Reason:       StartError
+</span><span id="__span-35-8"><a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a>      Message:      failed to create containerd task: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: exec: "start-server": executable file not found in $PATH: unknown
+</span><span id="__span-35-9"><a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a>      Exit Code:    128
+</span></code></pre></div>
+<p>관찰 포인트: 앱 에러는 <strong>logs 에</strong>, 실행 자체의 실패는 <strong>describe 의 Message 에</strong> 남습니다. 로그가 비어 있으면 describe 로 갑니다.</p>
+<table>
+<thead>
+<tr>
+<th>Exit Code</th>
+<th>뜻</th>
+<th>먼저 볼 곳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>정상 종료 — 그런데 <code>restartPolicy: Always</code> 라 다시 뜬다 (할 일 없이 끝나는 command)</td>
+<td>command/args</td>
+</tr>
+<tr>
+<td>1, 2 …</td>
+<td>앱이 에러로 종료</td>
+<td><code>logs --previous</code></td>
+</tr>
+<tr>
+<td>126 / 127</td>
+<td>셸에서 실행 권한 없음 / 명령 없음</td>
+<td><code>logs --previous</code>, command</td>
+</tr>
+<tr>
+<td>128 (<code>StartError</code>)</td>
+<td>컨테이너 프로세스를 시작하지 못함</td>
+<td>describe 의 Message</td>
+</tr>
+<tr>
+<td>137</td>
+<td>SIGKILL — <strong>OOMKilled</strong> 이거나 강제 종료</td>
+<td>describe 의 Reason</td>
+</tr>
+<tr>
+<td>143</td>
+<td>SIGTERM — 정상적인 종료 요청</td>
+<td>보통 문제 아님 (liveness 실패 재시작 등)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-oomkilled-limit">5) OOMKilled — 메모리 limit 을 넘었다<a class="headerlink" href="#5-oomkilled-limit" title="Permanent link">&para;</a></h2>
+<h3 id="_11">왜<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p>컨테이너가 <code>resources.limits.memory</code> 를 넘으면 커널이 프로세스를 <strong>즉시 죽입니다(SIGKILL, 137)</strong>. 앱은 로그를 남길 틈도 없습니다.</p>
+<p><code>memhog.yaml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">memhog</span>
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-trouble</span>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stress</span>
+</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">polinux/stress</span>
+</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"stress"</span><span class="p p-Indicator">]</span>
+</span><span id="__span-36-11"><a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a><span class="w">    </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"--vm"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"1"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--vm-bytes"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"150M"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--vm-hang"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"1"</span><span class="p p-Indicator">]</span><span class="w">   </span><span class="c1"># ← 150MB 를 잡으려 한다</span>
+</span><span id="__span-36-12"><a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a><span class="w">    </span><span class="nt">resources</span><span class="p">:</span>
+</span><span id="__span-36-13"><a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a><span class="w">      </span><span class="nt">requests</span><span class="p">:</span>
+</span><span id="__span-36-14"><a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a><span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">32Mi</span>
+</span><span id="__span-36-15"><a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a><span class="w">      </span><span class="nt">limits</span><span class="p">:</span>
+</span><span id="__span-36-16"><a id="__codelineno-36-16" name="__codelineno-36-16" href="#__codelineno-36-16"></a><span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64Mi</span><span class="w">                                              </span><span class="c1"># ← 한도는 64Mi</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>memhog.yaml
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>sleep<span class="w"> </span><span class="m">15</span><span class="p">;</span><span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>memhog<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>memhog<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s1">'Last State'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>NAME     READY   STATUS      RESTARTS     AGE
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>memhog   0/1     OOMKilled   1 (8s ago)   15s
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>
+</span><span id="__span-38-4"><a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>    Last State:     Terminated
+</span><span id="__span-38-5"><a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a>      Reason:       OOMKilled            ← 결정적 증거
+</span><span id="__span-38-6"><a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a>      Exit Code:    137
+</span><span id="__span-38-7"><a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a>      Started:      ...
+</span><span id="__span-38-8"><a id="__codelineno-38-8" name="__codelineno-38-8" href="#__codelineno-38-8"></a>      Finished:     ...
+</span></code></pre></div>
+<p>잠시 뒤에는 STATUS 가 <code>CrashLoopBackOff</code> 로 바뀝니다. <strong>STATUS 만 보면 CrashLoop 과 구분이 안 되므로</strong> Last State 의 Reason 을 꼭 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>memhog<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.containerStatuses[0].lastState.terminated.reason}{"\n"}'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>OOMKilled
+</span></code></pre></div>
+<p>고치는 방법은 둘입니다 — limit 을 올리거나, 앱이 덜 쓰게 합니다. 여기서는 사용량을 줄여 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/"150M"/"40M"/'</span><span class="w"> </span>memhog.yaml
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>kubectl<span class="w"> </span>replace<span class="w"> </span>--force<span class="w"> </span>-f<span class="w"> </span>memhog.yaml
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>sleep<span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>memhog<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>NAME     READY   STATUS    RESTARTS   AGE
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>memhog   1/1     Running   0          10s
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">노드 전체 메모리가 모자라면</p>
+<p>컨테이너 limit 이 아니라 <strong>노드 메모리</strong>가 부족하면 kubelet 이 파드를 <strong>축출(Evicted)</strong> 합니다. STATUS 가 <code>Evicted</code> 이고
+<code>describe node</code> 의 Conditions 에 <code>MemoryPressure True</code> 가 보입니다. OOMKilled 와는 다른 경로입니다.</p>
+</div>
+<hr />
+<h2 id="6-running-ready-01-readinessprobe">6) Running 인데 READY 0/1 — readinessProbe 실패<a class="headerlink" href="#6-running-ready-01-readinessprobe" title="Permanent link">&para;</a></h2>
+<h3 id="_12">왜<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p>컨테이너는 살아 있지만 <strong>"요청 받을 준비가 됐다"</strong> 는 검사를 통과하지 못한 상태입니다.
+준비 안 된 파드는 <strong>Service 의 Endpoints 에서 빠집니다.</strong> 파드는 멀쩡해 보이는데 서비스가 안 되는 흔한 원인입니다.</p>
+<p><code>menu.yaml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">menu</span>
+</span><span id="__span-43-5"><a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-trouble</span>
+</span><span id="__span-43-6"><a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-43-7"><a id="__codelineno-43-7" name="__codelineno-43-7" href="#__codelineno-43-7"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-43-8"><a id="__codelineno-43-8" name="__codelineno-43-8" href="#__codelineno-43-8"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-43-9"><a id="__codelineno-43-9" name="__codelineno-43-9" href="#__codelineno-43-9"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> app</span><span class="p">:</span><span class="w"> </span><span class="nv">menu</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</span><span id="__span-43-10"><a id="__codelineno-43-10" name="__codelineno-43-10" href="#__codelineno-43-10"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-43-11"><a id="__codelineno-43-11" name="__codelineno-43-11" href="#__codelineno-43-11"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-43-12"><a id="__codelineno-43-12" name="__codelineno-43-12" href="#__codelineno-43-12"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> app</span><span class="p">:</span><span class="w"> </span><span class="nv">menu</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</span><span id="__span-43-13"><a id="__codelineno-43-13" name="__codelineno-43-13" href="#__codelineno-43-13"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-43-14"><a id="__codelineno-43-14" name="__codelineno-43-14" href="#__codelineno-43-14"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-43-15"><a id="__codelineno-43-15" name="__codelineno-43-15" href="#__codelineno-43-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+</span><span id="__span-43-16"><a id="__codelineno-43-16" name="__codelineno-43-16" href="#__codelineno-43-16"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.27</span>
+</span><span id="__span-43-17"><a id="__codelineno-43-17" name="__codelineno-43-17" href="#__codelineno-43-17"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-43-18"><a id="__codelineno-43-18" name="__codelineno-43-18" href="#__codelineno-43-18"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-43-19"><a id="__codelineno-43-19" name="__codelineno-43-19" href="#__codelineno-43-19"></a><span class="w">        </span><span class="nt">readinessProbe</span><span class="p">:</span>
+</span><span id="__span-43-20"><a id="__codelineno-43-20" name="__codelineno-43-20" href="#__codelineno-43-20"></a><span class="w">          </span><span class="nt">httpGet</span><span class="p">:</span>
+</span><span id="__span-43-21"><a id="__codelineno-43-21" name="__codelineno-43-21" href="#__codelineno-43-21"></a><span class="w">            </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/healthz</span><span class="w">          </span><span class="c1"># ← nginx 기본 설정에는 이 경로가 없다 → 404</span>
+</span><span id="__span-43-22"><a id="__codelineno-43-22" name="__codelineno-43-22" href="#__codelineno-43-22"></a><span class="w">            </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-43-23"><a id="__codelineno-43-23" name="__codelineno-43-23" href="#__codelineno-43-23"></a><span class="w">          </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</span><span id="__span-43-24"><a id="__codelineno-43-24" name="__codelineno-43-24" href="#__codelineno-43-24"></a><span class="nn">---</span>
+</span><span id="__span-43-25"><a id="__codelineno-43-25" name="__codelineno-43-25" href="#__codelineno-43-25"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-43-26"><a id="__codelineno-43-26" name="__codelineno-43-26" href="#__codelineno-43-26"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-43-27"><a id="__codelineno-43-27" name="__codelineno-43-27" href="#__codelineno-43-27"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-43-28"><a id="__codelineno-43-28" name="__codelineno-43-28" href="#__codelineno-43-28"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">menu</span>
+</span><span id="__span-43-29"><a id="__codelineno-43-29" name="__codelineno-43-29" href="#__codelineno-43-29"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-trouble</span>
+</span><span id="__span-43-30"><a id="__codelineno-43-30" name="__codelineno-43-30" href="#__codelineno-43-30"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-43-31"><a id="__codelineno-43-31" name="__codelineno-43-31" href="#__codelineno-43-31"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> app</span><span class="p">:</span><span class="w"> </span><span class="nv">menu</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</span><span id="__span-43-32"><a id="__codelineno-43-32" name="__codelineno-43-32" href="#__codelineno-43-32"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-43-33"><a id="__codelineno-43-33" name="__codelineno-43-33" href="#__codelineno-43-33"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-43-34"><a id="__codelineno-43-34" name="__codelineno-43-34" href="#__codelineno-43-34"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>menu.yaml
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>sleep<span class="w"> </span><span class="m">20</span><span class="p">;</span><span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>menu
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>menu<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>NAME                    READY   STATUS    RESTARTS   AGE
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>menu-7d5c9b6f8-4hq9z    0/1     Running   0          20s      ← Running 이지만 0/1
+</span><span id="__span-45-3"><a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a>menu-7d5c9b6f8-m2n8c    0/1     Running   0          20s
+</span><span id="__span-45-4"><a id="__codelineno-45-4" name="__codelineno-45-4" href="#__codelineno-45-4"></a>
+</span><span id="__span-45-5"><a id="__codelineno-45-5" name="__codelineno-45-5" href="#__codelineno-45-5"></a>NAME   ENDPOINTS   AGE
+</span><span id="__span-45-6"><a id="__codelineno-45-6" name="__codelineno-45-6" href="#__codelineno-45-6"></a>menu   &lt;none&gt;      20s
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>menu<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'Readiness|Unhealthy'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>    Readiness:      http-get http://:80/healthz delay=0s timeout=1s period=5s #success=1 #failure=3
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>  Warning  Unhealthy  3s (x6 over 28s)  kubelet  Readiness probe failed: HTTP probe failed with statuscode: 404
+</span></code></pre></div>
+<p>EndpointSlice 를 보면 파드 IP 는 <strong>알고 있지만 ready 가 false</strong> 라서 빠진 것이 보입니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpointslice<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-l<span class="w"> </span>kubernetes.io/service-name<span class="o">=</span>menu<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'addresses|- 10\.|ready:'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>- addresses:
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>  - 10.0.1.87
+</span><span id="__span-49-3"><a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>    ready: false
+</span><span id="__span-49-4"><a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a>- addresses:
+</span><span id="__span-49-5"><a id="__codelineno-49-5" name="__codelineno-49-5" href="#__codelineno-49-5"></a>  - 10.0.2.19
+</span><span id="__span-49-6"><a id="__codelineno-49-6" name="__codelineno-49-6" href="#__codelineno-49-6"></a>    ready: false
+</span></code></pre></div>
+<h3 id="_13">고치기<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-50-1"><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>kubectl<span class="w"> </span>patch<span class="w"> </span>deployment<span class="w"> </span>menu<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--type<span class="o">=</span>json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-50-2"><a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a><span class="w">  </span>-p<span class="o">=</span><span class="s1">'[{"op":"replace","path":"/spec/template/spec/containers/0/readinessProbe/httpGet/path","value":"/"}]'</span>
+</span><span id="__span-50-3"><a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/menu<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span><span id="__span-50-4"><a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>menu<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-51-1"><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>deployment "menu" successfully rolled out
+</span><span id="__span-51-2"><a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a>NAME   ENDPOINTS                     AGE
+</span><span id="__span-51-3"><a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a>menu   10.0.1.92:80,10.0.2.24:80     2m
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>readinessProbe 실패</th>
+<th>livenessProbe 실패</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>결과</td>
+<td>Endpoints 에서 빠진다 (READY 0/1)</td>
+<td>컨테이너를 <strong>재시작</strong>한다 (RESTARTS 증가)</td>
+</tr>
+<tr>
+<td>STATUS</td>
+<td>Running</td>
+<td>Running ↔ CrashLoopBackOff</td>
+</tr>
+<tr>
+<td>이벤트</td>
+<td><code>Readiness probe failed</code></td>
+<td><code>Liveness probe failed</code> · <code>Container … failed liveness probe, will be restarted</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-service-targetport">7) Service 가 파드를 못 찾는다 — 셀렉터와 targetPort<a class="headerlink" href="#7-service-targetport" title="Permanent link">&para;</a></h2>
+<h3 id="_14">왜<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<p>Service 문제는 순서대로 좁힙니다. <strong>① Endpoints 가 비었나 → ② 차 있는데 안 되나(포트) → ③ 이름만 안 되나(DNS, 8절) → ④ 다 맞는데 안 되나(NetworkPolicy)</strong>.</p>
+<p><code>billing.yaml</code> — 두 군데를 일부러 틀렸습니다.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-52-1"><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-52-2"><a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-52-3"><a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-52-4"><a id="__codelineno-52-4" name="__codelineno-52-4" href="#__codelineno-52-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">billing</span>
+</span><span id="__span-52-5"><a id="__codelineno-52-5" name="__codelineno-52-5" href="#__codelineno-52-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-trouble</span>
+</span><span id="__span-52-6"><a id="__codelineno-52-6" name="__codelineno-52-6" href="#__codelineno-52-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-52-7"><a id="__codelineno-52-7" name="__codelineno-52-7" href="#__codelineno-52-7"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-52-8"><a id="__codelineno-52-8" name="__codelineno-52-8" href="#__codelineno-52-8"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-52-9"><a id="__codelineno-52-9" name="__codelineno-52-9" href="#__codelineno-52-9"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> app</span><span class="p">:</span><span class="w"> </span><span class="nv">billing</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</span><span id="__span-52-10"><a id="__codelineno-52-10" name="__codelineno-52-10" href="#__codelineno-52-10"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-52-11"><a id="__codelineno-52-11" name="__codelineno-52-11" href="#__codelineno-52-11"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-52-12"><a id="__codelineno-52-12" name="__codelineno-52-12" href="#__codelineno-52-12"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> app</span><span class="p">:</span><span class="w"> </span><span class="nv">billing</span><span class="p p-Indicator">,</span><span class="nt"> tier</span><span class="p">:</span><span class="w"> </span><span class="nv">backend</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</span><span id="__span-52-13"><a id="__codelineno-52-13" name="__codelineno-52-13" href="#__codelineno-52-13"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-52-14"><a id="__codelineno-52-14" name="__codelineno-52-14" href="#__codelineno-52-14"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-52-15"><a id="__codelineno-52-15" name="__codelineno-52-15" href="#__codelineno-52-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+</span><span id="__span-52-16"><a id="__codelineno-52-16" name="__codelineno-52-16" href="#__codelineno-52-16"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.27</span>
+</span><span id="__span-52-17"><a id="__codelineno-52-17" name="__codelineno-52-17" href="#__codelineno-52-17"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-52-18"><a id="__codelineno-52-18" name="__codelineno-52-18" href="#__codelineno-52-18"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-52-19"><a id="__codelineno-52-19" name="__codelineno-52-19" href="#__codelineno-52-19"></a><span class="nn">---</span>
+</span><span id="__span-52-20"><a id="__codelineno-52-20" name="__codelineno-52-20" href="#__codelineno-52-20"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-52-21"><a id="__codelineno-52-21" name="__codelineno-52-21" href="#__codelineno-52-21"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-52-22"><a id="__codelineno-52-22" name="__codelineno-52-22" href="#__codelineno-52-22"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-52-23"><a id="__codelineno-52-23" name="__codelineno-52-23" href="#__codelineno-52-23"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">billing-svc</span>
+</span><span id="__span-52-24"><a id="__codelineno-52-24" name="__codelineno-52-24" href="#__codelineno-52-24"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-trouble</span>
+</span><span id="__span-52-25"><a id="__codelineno-52-25" name="__codelineno-52-25" href="#__codelineno-52-25"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-52-26"><a id="__codelineno-52-26" name="__codelineno-52-26" href="#__codelineno-52-26"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-52-27"><a id="__codelineno-52-27" name="__codelineno-52-27" href="#__codelineno-52-27"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">billing-api</span><span class="w">            </span><span class="c1"># ← 틀림 ①: 파드 레이블은 app=billing</span>
+</span><span id="__span-52-28"><a id="__codelineno-52-28" name="__codelineno-52-28" href="#__codelineno-52-28"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-52-29"><a id="__codelineno-52-29" name="__codelineno-52-29" href="#__codelineno-52-29"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-52-30"><a id="__codelineno-52-30" name="__codelineno-52-30" href="#__codelineno-52-30"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span><span class="w">            </span><span class="c1"># ← 틀림 ②: nginx 는 80 에서 듣는다</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-53-1"><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>billing.yaml
+</span><span id="__span-53-2"><a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>billing-svc<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-54-1"><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a>NAME          ENDPOINTS   AGE
+</span><span id="__span-54-2"><a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a>billing-svc   &lt;none&gt;      5s
+</span></code></pre></div>
+<h3 id="1-endpoints">① Endpoints 가 비었다 → 셀렉터<a class="headerlink" href="#1-endpoints" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-55-1"><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>billing-svc<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.selector}{"\n"}'</span>
+</span><span id="__span-55-2"><a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>billing<span class="w"> </span>--show-labels
+</span><span id="__span-55-3"><a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>billing-api<span class="w">         </span><span class="c1"># 서비스 셀렉터로 직접 조회</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-56-1"><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>{"app":"billing-api"}
+</span><span id="__span-56-2"><a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>
+</span><span id="__span-56-3"><a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a>NAME                       READY   STATUS    LABELS
+</span><span id="__span-56-4"><a id="__codelineno-56-4" name="__codelineno-56-4" href="#__codelineno-56-4"></a>billing-5b8c7d6f9-7wq4k    1/1     Running   app=billing,pod-template-hash=5b8c7d6f9,tier=backend
+</span><span id="__span-56-5"><a id="__codelineno-56-5" name="__codelineno-56-5" href="#__codelineno-56-5"></a>billing-5b8c7d6f9-x2k8p    1/1     Running   app=billing,pod-template-hash=5b8c7d6f9,tier=backend
+</span><span id="__span-56-6"><a id="__codelineno-56-6" name="__codelineno-56-6" href="#__codelineno-56-6"></a>
+</span><span id="__span-56-7"><a id="__codelineno-56-7" name="__codelineno-56-7" href="#__codelineno-56-7"></a>No resources found in guide-trouble namespace.
+</span></code></pre></div>
+<p>관찰 포인트: <strong>서비스 셀렉터를 그대로 <code>-l</code> 에 넣어 조회</strong>하면 한 번에 판정됩니다. 결과가 없으면 셀렉터 문제입니다.
+6절처럼 파드가 Ready 가 아닐 때도 Endpoints 가 비므로, READY 칸도 함께 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-57-1"><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>kubectl<span class="w"> </span>patch<span class="w"> </span>svc<span class="w"> </span>billing-svc<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-p<span class="w"> </span><span class="s1">'{"spec":{"selector":{"app":"billing"}}}'</span>
+</span><span id="__span-57-2"><a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>billing-svc<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-58-1"><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a>NAME          ENDPOINTS                       AGE
+</span><span id="__span-58-2"><a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a>billing-svc   10.0.1.45:8080,10.0.2.61:8080   1m     ← 포트가 8080
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title"><code>patch</code> 로 셀렉터를 바꿀 때</p>
+<p><code>-p '{"spec":{"selector":{...}}}'</code> 는 기존 키에 <strong>병합</strong>됩니다. 틀린 키 이름이 따로 있었다면(예: <code>application: billing</code>) 그 키는 남습니다.
+<code>kubectl edit svc</code> 로 셀렉터 전체를 눈으로 확인하는 편이 안전합니다.</p>
+</div>
+<h3 id="2-endpoints-targetport">② Endpoints 는 있는데 접속이 안 된다 → targetPort<a class="headerlink" href="#2-endpoints-targetport" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-59-1"><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>probe<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-59-2"><a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a><span class="w">  </span>wget<span class="w"> </span>-qO-<span class="w"> </span>-T<span class="w"> </span><span class="m">3</span><span class="w"> </span>http://billing-svc
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-60-1"><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a>wget: can't connect to remote host (10.103.72.15): Connection refused
+</span><span id="__span-60-2"><a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a>pod "probe" deleted
+</span><span id="__span-60-3"><a id="__codelineno-60-3" name="__codelineno-60-3" href="#__codelineno-60-3"></a>pod guide-trouble/probe terminated (Error)
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-61-1"><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>billing<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].spec.containers[0].ports[*].containerPort}{"\n"}'</span>
+</span><span id="__span-61-2"><a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a>kubectl<span class="w"> </span>patch<span class="w"> </span>svc<span class="w"> </span>billing-svc<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--type<span class="o">=</span>json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-61-3"><a id="__codelineno-61-3" name="__codelineno-61-3" href="#__codelineno-61-3"></a><span class="w">  </span>-p<span class="o">=</span><span class="s1">'[{"op":"replace","path":"/spec/ports/0/targetPort","value":80}]'</span>
+</span><span id="__span-61-4"><a id="__codelineno-61-4" name="__codelineno-61-4" href="#__codelineno-61-4"></a>kubectl<span class="w"> </span>run<span class="w"> </span>probe<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-61-5"><a id="__codelineno-61-5" name="__codelineno-61-5" href="#__codelineno-61-5"></a><span class="w">  </span>wget<span class="w"> </span>-qO-<span class="w"> </span>-T<span class="w"> </span><span class="m">3</span><span class="w"> </span>http://billing-svc<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-4
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-62-1"><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a>80
+</span><span id="__span-62-2"><a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a>
+</span><span id="__span-62-3"><a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a>&lt;!DOCTYPE html&gt;
+</span><span id="__span-62-4"><a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a>&lt;html&gt;
+</span><span id="__span-62-5"><a id="__codelineno-62-5" name="__codelineno-62-5" href="#__codelineno-62-5"></a>&lt;head&gt;
+</span><span id="__span-62-6"><a id="__codelineno-62-6" name="__codelineno-62-6" href="#__codelineno-62-6"></a>&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>증상</th>
+<th>원인</th>
+<th>확인 명령</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ENDPOINTS <code>&lt;none&gt;</code>, 파드 Ready</td>
+<td>selector ↔ 파드 레이블</td>
+<td><code>get pods -l &lt;서비스 셀렉터&gt;</code></td>
+</tr>
+<tr>
+<td>ENDPOINTS <code>&lt;none&gt;</code>, 파드 0/1</td>
+<td>readinessProbe</td>
+<td><code>describe pod</code> → Unhealthy</td>
+</tr>
+<tr>
+<td>ENDPOINTS 에 IP 있음, <code>Connection refused</code></td>
+<td>targetPort ↔ containerPort</td>
+<td><code>get svc -o yaml</code>, 파드 ports</td>
+</tr>
+<tr>
+<td>ENDPOINTS 에 IP 있음, 타임아웃</td>
+<td>NetworkPolicy · CNI</td>
+<td><code>get networkpolicy -n &lt;ns&gt;</code></td>
+</tr>
+<tr>
+<td>IP 로는 되는데 이름으로 안 됨</td>
+<td>DNS</td>
+<td>8)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-dns">8) DNS — 이름으로만 안 될 때<a class="headerlink" href="#8-dns" title="Permanent link">&para;</a></h2>
+<h3 id="_15">왜<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<p>파드는 <code>/etc/resolv.conf</code> 에 적힌 <strong>CoreDNS(kube-dns Service)</strong> 에게 이름을 묻습니다. 이름으로만 안 되면 CoreDNS 와 resolv.conf 를 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-63-1"><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>dns<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.28<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-63-2"><a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a><span class="w">  </span>nslookup<span class="w"> </span>billing-svc.guide-trouble.svc.cluster.local
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-64-1"><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a>Server:    10.96.0.10
+</span><span id="__span-64-2"><a id="__codelineno-64-2" name="__codelineno-64-2" href="#__codelineno-64-2"></a>Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+</span><span id="__span-64-3"><a id="__codelineno-64-3" name="__codelineno-64-3" href="#__codelineno-64-3"></a>
+</span><span id="__span-64-4"><a id="__codelineno-64-4" name="__codelineno-64-4" href="#__codelineno-64-4"></a>Name:      billing-svc.guide-trouble.svc.cluster.local
+</span><span id="__span-64-5"><a id="__codelineno-64-5" name="__codelineno-64-5" href="#__codelineno-64-5"></a>Address 1: 10.103.72.15 billing-svc.guide-trouble.svc.cluster.local
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">busybox 1.28 을 쓰는 이유</p>
+<p>최신 busybox 의 <code>nslookup</code> 은 search 도메인 처리가 달라 헷갈리는 결과를 낼 때가 있습니다. DNS 확인용으로는 1.28 이 흔히 쓰입니다.</p>
+</div>
+<p>파드 안의 resolv.conf 는 이렇게 생겼습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-65-1"><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>dns<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.28<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/etc/resolv.conf
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-66-1"><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a>search guide-trouble.svc.cluster.local svc.cluster.local cluster.local
+</span><span id="__span-66-2"><a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a>nameserver 10.96.0.10          ← kube-dns Service 의 ClusterIP
+</span><span id="__span-66-3"><a id="__codelineno-66-3" name="__codelineno-66-3" href="#__codelineno-66-3"></a>options ndots:5
+</span></code></pre></div>
+<p><code>search</code> 줄 덕분에 같은 네임스페이스에서는 <code>billing-svc</code> 만, 다른 네임스페이스에서는 <code>billing-svc.guide-trouble</code> 로 부를 수 있습니다.</p>
+<h3 id="coredns-0">깨 보기 — CoreDNS 를 잠시 0 개로<a class="headerlink" href="#coredns-0" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">클러스터 전체의 이름 해석이 멈춥니다</p>
+<p>몇십 초 동안 모든 파드의 DNS 가 안 됩니다. 실습 클러스터에서만 하고, 바로 되돌립니다.</p>
+</div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-67-1"><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deploy<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.replicas}{"\n"}'</span><span class="w">   </span><span class="c1"># 원래 개수 기억 (보통 2)</span>
+</span><span id="__span-67-2"><a id="__codelineno-67-2" name="__codelineno-67-2" href="#__codelineno-67-2"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deploy<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>--replicas<span class="o">=</span><span class="m">0</span>
+</span><span id="__span-67-3"><a id="__codelineno-67-3" name="__codelineno-67-3" href="#__codelineno-67-3"></a>kubectl<span class="w"> </span>run<span class="w"> </span>dns<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.28<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-67-4"><a id="__codelineno-67-4" name="__codelineno-67-4" href="#__codelineno-67-4"></a><span class="w">  </span>nslookup<span class="w"> </span>billing-svc
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a>2
+</span><span id="__span-68-2"><a id="__codelineno-68-2" name="__codelineno-68-2" href="#__codelineno-68-2"></a>deployment.apps/coredns scaled
+</span><span id="__span-68-3"><a id="__codelineno-68-3" name="__codelineno-68-3" href="#__codelineno-68-3"></a>Server:    10.96.0.10
+</span><span id="__span-68-4"><a id="__codelineno-68-4" name="__codelineno-68-4" href="#__codelineno-68-4"></a>Address 1: 10.96.0.10
+</span><span id="__span-68-5"><a id="__codelineno-68-5" name="__codelineno-68-5" href="#__codelineno-68-5"></a>
+</span><span id="__span-68-6"><a id="__codelineno-68-6" name="__codelineno-68-6" href="#__codelineno-68-6"></a>nslookup: can't resolve 'billing-svc'
+</span><span id="__span-68-7"><a id="__codelineno-68-7" name="__codelineno-68-7" href="#__codelineno-68-7"></a>pod guide-trouble/dns terminated (Error)
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-69-1"><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>kube-dns<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-69-2"><a id="__codelineno-69-2" name="__codelineno-69-2" href="#__codelineno-69-2"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deploy<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>--replicas<span class="o">=</span><span class="m">2</span>
+</span><span id="__span-69-3"><a id="__codelineno-69-3" name="__codelineno-69-3" href="#__codelineno-69-3"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deploy<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-69-4"><a id="__codelineno-69-4" name="__codelineno-69-4" href="#__codelineno-69-4"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>k8s-app<span class="o">=</span>kube-dns<span class="w"> </span>--tail<span class="o">=</span><span class="m">5</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a>NAME       ENDPOINTS   AGE
+</span><span id="__span-70-2"><a id="__codelineno-70-2" name="__codelineno-70-2" href="#__codelineno-70-2"></a>kube-dns   &lt;none&gt;      5d          ← 7절과 같은 모양: 서비스는 있는데 뒤에 파드가 없다
+</span><span id="__span-70-3"><a id="__codelineno-70-3" name="__codelineno-70-3" href="#__codelineno-70-3"></a>
+</span><span id="__span-70-4"><a id="__codelineno-70-4" name="__codelineno-70-4" href="#__codelineno-70-4"></a>deployment.apps/coredns scaled
+</span><span id="__span-70-5"><a id="__codelineno-70-5" name="__codelineno-70-5" href="#__codelineno-70-5"></a>deployment "coredns" successfully rolled out
+</span><span id="__span-70-6"><a id="__codelineno-70-6" name="__codelineno-70-6" href="#__codelineno-70-6"></a>.:53
+</span><span id="__span-70-7"><a id="__codelineno-70-7" name="__codelineno-70-7" href="#__codelineno-70-7"></a>[INFO] plugin/reload: Running configuration SHA512 = ...
+</span><span id="__span-70-8"><a id="__codelineno-70-8" name="__codelineno-70-8" href="#__codelineno-70-8"></a>CoreDNS-1.11.3
+</span><span id="__span-70-9"><a id="__codelineno-70-9" name="__codelineno-70-9" href="#__codelineno-70-9"></a>linux/amd64, go1.21.11, a6338e9
+</span></code></pre></div>
+<p>관찰 포인트: DNS 장애도 결국 <strong>"kube-dns Service 의 Endpoints 가 비었다"</strong> 로 보입니다. 7절의 점검 순서가 그대로 통합니다.</p>
+<hr />
+<h2 id="9-notready-kubelet">9) 노드 NotReady — kubelet 을 멈춰 보기<a class="headerlink" href="#9-notready-kubelet" title="Permanent link">&para;</a></h2>
+<h3 id="_16">왜<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<p>노드의 상태는 그 노드의 <strong>kubelet 이 API 서버에 주기적으로 보고</strong>해서 정해집니다. 보고가 끊기면 컨트롤플레인은 약 40초 뒤 노드를 <code>NotReady</code>(정확히는 <code>Unknown</code>)로 표시합니다.
+kubelet 은 파드가 아니라 <strong>systemd 서비스</strong>라서, 고치려면 그 노드에 들어가야 합니다.</p>
+<div class="admonition warning">
+<p class="admonition-title">워커 하나에서만, 끝나면 반드시 되돌립니다</p>
+<p><code>worker-2</code> 의 kubelet 을 멈춥니다. 5분 넘게 두면 그 노드의 파드가 다른 노드로 축출되기 시작합니다. 관찰이 끝나면 곧바로 <code>systemctl start kubelet</code> 합니다.</p>
+</div>
+<h3 id="_17">멈추기<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">터미널 1 — 컨트롤플레인에서 지켜보기</label><label for="__tabbed_1_2">터미널 2 — worker-2 에서 멈추기</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-w
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a>ssh<span class="w"> </span>worker-2
+</span><span id="__span-72-2"><a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>kubelet
+</span><span id="__span-72-3"><a id="__codelineno-72-3" name="__codelineno-72-3" href="#__codelineno-72-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>kubelet<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-5
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a>● kubelet.service - kubelet: The Kubernetes Node Agent
+</span><span id="__span-73-2"><a id="__codelineno-73-2" name="__codelineno-73-2" href="#__codelineno-73-2"></a>     Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; preset: enabled)
+</span><span id="__span-73-3"><a id="__codelineno-73-3" name="__codelineno-73-3" href="#__codelineno-73-3"></a>    Drop-In: /usr/lib/systemd/system/kubelet.service.d
+</span><span id="__span-73-4"><a id="__codelineno-73-4" name="__codelineno-73-4" href="#__codelineno-73-4"></a>             └─10-kubeadm.conf
+</span><span id="__span-73-5"><a id="__codelineno-73-5" name="__codelineno-73-5" href="#__codelineno-73-5"></a>     Active: inactive (dead) since Tue 2026-09-29 08:02:11 UTC; 5s ago
+</span></code></pre></div>
+<p>40초쯤 지나면 터미널 1 에:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-74-1"><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a>NAME            STATUS     ROLES           AGE   VERSION
+</span><span id="__span-74-2"><a id="__codelineno-74-2" name="__codelineno-74-2" href="#__codelineno-74-2"></a>worker-2        NotReady   &lt;none&gt;          5d    v1.32.x
+</span></code></pre></div>
+<h3 id="_18">관찰<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-75-1"><a id="__codelineno-75-1" name="__codelineno-75-1" href="#__codelineno-75-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>node<span class="w"> </span>worker-2<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span>-n<span class="w"> </span><span class="s1">'/Taints:/,/Unschedulable/p;/Conditions:/,/Addresses:/p'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-76-1"><a id="__codelineno-76-1" name="__codelineno-76-1" href="#__codelineno-76-1"></a>Taints:             node.kubernetes.io/unreachable:NoExecute
+</span><span id="__span-76-2"><a id="__codelineno-76-2" name="__codelineno-76-2" href="#__codelineno-76-2"></a>                    node.kubernetes.io/unreachable:NoSchedule
+</span><span id="__span-76-3"><a id="__codelineno-76-3" name="__codelineno-76-3" href="#__codelineno-76-3"></a>Unschedulable:      false
+</span><span id="__span-76-4"><a id="__codelineno-76-4" name="__codelineno-76-4" href="#__codelineno-76-4"></a>Conditions:
+</span><span id="__span-76-5"><a id="__codelineno-76-5" name="__codelineno-76-5" href="#__codelineno-76-5"></a>  Type             Status    LastHeartbeatTime   Reason              Message
+</span><span id="__span-76-6"><a id="__codelineno-76-6" name="__codelineno-76-6" href="#__codelineno-76-6"></a>  ----             ------    -----------------   ------              -------
+</span><span id="__span-76-7"><a id="__codelineno-76-7" name="__codelineno-76-7" href="#__codelineno-76-7"></a>  MemoryPressure   Unknown   ...                 NodeStatusUnknown   Kubelet stopped posting node status.
+</span><span id="__span-76-8"><a id="__codelineno-76-8" name="__codelineno-76-8" href="#__codelineno-76-8"></a>  DiskPressure     Unknown   ...                 NodeStatusUnknown   Kubelet stopped posting node status.
+</span><span id="__span-76-9"><a id="__codelineno-76-9" name="__codelineno-76-9" href="#__codelineno-76-9"></a>  PIDPressure      Unknown   ...                 NodeStatusUnknown   Kubelet stopped posting node status.
+</span><span id="__span-76-10"><a id="__codelineno-76-10" name="__codelineno-76-10" href="#__codelineno-76-10"></a>  Ready            Unknown   ...                 NodeStatusUnknown   Kubelet stopped posting node status.
+</span><span id="__span-76-11"><a id="__codelineno-76-11" name="__codelineno-76-11" href="#__codelineno-76-11"></a>Addresses:
+</span></code></pre></div>
+<p>관찰 포인트:</p>
+<ul>
+<li>Status 가 <code>False</code> 가 아니라 <strong><code>Unknown</code></strong> 입니다. "나빠졌다" 가 아니라 "소식이 끊겼다" 입니다.</li>
+<li>노드 컨트롤러가 <strong><code>unreachable</code> taint</strong> 를 자동으로 붙였습니다. <code>NoSchedule</code> 때문에 새 파드는 오지 않고,
+  <code>NoExecute</code> 때문에 기존 파드는 기본 toleration(300초)이 지나면 축출됩니다.</li>
+<li>그 노드의 파드는 API 에 여전히 <code>Running</code> 으로 보일 수 있습니다. <strong>보고할 kubelet 이 없어서</strong> 갱신이 안 된 것입니다.</li>
+</ul>
+<h3 id="_19">원인 찾고 복구하기<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p>worker-2 에서:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-77-1"><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>kubelet<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>--no-pager
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-78-1"><a id="__codelineno-78-1" name="__codelineno-78-1" href="#__codelineno-78-1"></a>Sep 29 08:02:11 worker-2 systemd[1]: Stopping kubelet.service - kubelet: The Kubernetes Node Agent...
+</span><span id="__span-78-2"><a id="__codelineno-78-2" name="__codelineno-78-2" href="#__codelineno-78-2"></a>Sep 29 08:02:11 worker-2 systemd[1]: kubelet.service: Deactivated successfully.
+</span><span id="__span-78-3"><a id="__codelineno-78-3" name="__codelineno-78-3" href="#__codelineno-78-3"></a>Sep 29 08:02:11 worker-2 systemd[1]: Stopped kubelet.service - kubelet: The Kubernetes Node Agent.
+</span></code></pre></div>
+<p>누가 멈췄다는 기록만 있습니다. 이번 원인은 "멈춰 있다" 이므로 시작하고, 부팅 때도 뜨도록 enable 을 확인합니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-79-1"><a id="__codelineno-79-1" name="__codelineno-79-1" href="#__codelineno-79-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>kubelet
+</span><span id="__span-79-2"><a id="__codelineno-79-2" name="__codelineno-79-2" href="#__codelineno-79-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>kubelet
+</span><span id="__span-79-3"><a id="__codelineno-79-3" name="__codelineno-79-3" href="#__codelineno-79-3"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>kubelet<span class="p">;</span><span class="w"> </span>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>kubelet
+</span><span id="__span-79-4"><a id="__codelineno-79-4" name="__codelineno-79-4" href="#__codelineno-79-4"></a><span class="nb">exit</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-80-1"><a id="__codelineno-80-1" name="__codelineno-80-1" href="#__codelineno-80-1"></a>active
+</span><span id="__span-80-2"><a id="__codelineno-80-2" name="__codelineno-80-2" href="#__codelineno-80-2"></a>enabled
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-81-1"><a id="__codelineno-81-1" name="__codelineno-81-1" href="#__codelineno-81-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+</span><span id="__span-81-2"><a id="__codelineno-81-2" name="__codelineno-81-2" href="#__codelineno-81-2"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>node<span class="w"> </span>worker-2<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Taints
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-82-1"><a id="__codelineno-82-1" name="__codelineno-82-1" href="#__codelineno-82-1"></a>worker-2        Ready      &lt;none&gt;          5d    v1.32.x
+</span><span id="__span-82-2"><a id="__codelineno-82-2" name="__codelineno-82-2" href="#__codelineno-82-2"></a>Taints:             &lt;none&gt;
+</span></code></pre></div>
+<p>taint 도 자동으로 사라졌습니다.</p>
+<table>
+<thead>
+<tr>
+<th>journalctl 에 보이는 것</th>
+<th>흔한 원인</th>
+<th>대응</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Stopped kubelet.service</code> 뿐</td>
+<td>누가 멈췄다 · disable 됐다</td>
+<td><code>systemctl enable --now kubelet</code></td>
+</tr>
+<tr>
+<td><code>failed to load kubelet config file</code></td>
+<td><code>/var/lib/kubelet/config.yaml</code> 경로 · 문법</td>
+<td>파일 확인 후 restart</td>
+</tr>
+<tr>
+<td><code>unable to load client CA file</code> / 인증서 에러</td>
+<td>인증서 경로 · 만료</td>
+<td><code>/etc/kubernetes/kubelet.conf</code>, <code>/var/lib/kubelet/pki</code></td>
+</tr>
+<tr>
+<td><code>container runtime is down</code> / containerd 소켓 에러</td>
+<td>containerd 가 죽었다</td>
+<td><code>systemctl status containerd</code></td>
+</tr>
+<tr>
+<td><code>running with swap on is not supported</code></td>
+<td>swap 이 켜졌다</td>
+<td><code>swapoff -a</code> + fstab</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">시험 팁 — 설정을 고쳤으면 <code>daemon-reload</code></p>
+<p><code>/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf</code> 같은 <strong>systemd 유닛 파일</strong>을 고쳤다면 <code>sudo systemctl daemon-reload</code> 후 restart 해야 반영됩니다.
+<code>/var/lib/kubelet/config.yaml</code> 만 고쳤다면 restart 로 충분합니다.</p>
+</div>
+<hr />
+<h2 id="10-kubectl">10) 컨트롤플레인 로그 — kubectl 이 안 믿길 때<a class="headerlink" href="#10-kubectl" title="Permanent link">&para;</a></h2>
+<h3 id="_20">왜<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<p>컨트롤플레인 구성 요소는 <strong>스태틱 파드</strong>입니다(3강). API 서버가 살아 있으면 <code>kubectl logs</code> 로 보면 되지만,
+API 서버가 죽으면 kubectl 이 아예 동작하지 않습니다. 그때는 <strong>노드의 컨테이너 런타임에게 직접</strong> 묻습니다.</p>
+<h3 id="api">API 서버가 살아 있을 때<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-83-1"><a id="__codelineno-83-1" name="__codelineno-83-1" href="#__codelineno-83-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">tier</span><span class="o">=</span>control-plane
+</span><span id="__span-83-2"><a id="__codelineno-83-2" name="__codelineno-83-2" href="#__codelineno-83-2"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>kube-scheduler-control-plane<span class="w"> </span>--tail<span class="o">=</span><span class="m">3</span>
+</span></code></pre></div>
+<h3 id="api-crictl-varlogpods">API 서버 없이 보는 법 — crictl 과 /var/log/pods<a class="headerlink" href="#api-crictl-varlogpods" title="Permanent link">&para;</a></h3>
+<p>컨트롤플레인 노드에서:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-84-1"><a id="__codelineno-84-1" name="__codelineno-84-1" href="#__codelineno-84-1"></a>sudo<span class="w"> </span>crictl<span class="w"> </span>ps<span class="w"> </span>--name<span class="w"> </span>kube-scheduler
+</span><span id="__span-84-2"><a id="__codelineno-84-2" name="__codelineno-84-2" href="#__codelineno-84-2"></a>sudo<span class="w"> </span>crictl<span class="w"> </span>logs<span class="w"> </span>--tail<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="k">$(</span>sudo<span class="w"> </span>crictl<span class="w"> </span>ps<span class="w"> </span>-q<span class="w"> </span>--name<span class="w"> </span>kube-scheduler<span class="k">)</span>
+</span><span id="__span-84-3"><a id="__codelineno-84-3" name="__codelineno-84-3" href="#__codelineno-84-3"></a>ls<span class="w"> </span>/var/log/pods/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>kube-system_kube-scheduler
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-85-1"><a id="__codelineno-85-1" name="__codelineno-85-1" href="#__codelineno-85-1"></a>CONTAINER       IMAGE           CREATED       STATE     NAME             ATTEMPT   POD ID          POD
+</span><span id="__span-85-2"><a id="__codelineno-85-2" name="__codelineno-85-2" href="#__codelineno-85-2"></a>3f9e2c1d8a7b4   a389e107f4ff1   5 days ago    Running   kube-scheduler   0         9b2d4c6e1f3a5   kube-scheduler-control-plane
+</span><span id="__span-85-3"><a id="__codelineno-85-3" name="__codelineno-85-3" href="#__codelineno-85-3"></a>
+</span><span id="__span-85-4"><a id="__codelineno-85-4" name="__codelineno-85-4" href="#__codelineno-85-4"></a>I0929 08:10:02.112345       1 leaderelection.go:...] successfully acquired lease kube-system/kube-scheduler
+</span><span id="__span-85-5"><a id="__codelineno-85-5" name="__codelineno-85-5" href="#__codelineno-85-5"></a>...
+</span><span id="__span-85-6"><a id="__codelineno-85-6" name="__codelineno-85-6" href="#__codelineno-85-6"></a>kube-system_kube-scheduler-control-plane_6c1f0d2e8b...
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">crictl 이 경고를 낸다면</p>
+<p><code>WARN ... runtime connect using default endpoints</code> 경고가 나오면 소켓을 알려 줍니다.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-86-1"><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a>sudo<span class="w"> </span>crictl<span class="w"> </span>config<span class="w"> </span>--set<span class="w"> </span>runtime-endpoint<span class="o">=</span>unix:///run/containerd/containerd.sock<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-86-2"><a id="__codelineno-86-2" name="__codelineno-86-2" href="#__codelineno-86-2"></a><span class="w">                   </span>--set<span class="w"> </span>image-endpoint<span class="o">=</span>unix:///run/containerd/containerd.sock
+</span></code></pre></div></p>
+</div>
+<h3 id="_21">깨 보기 — 스케줄러에 없는 옵션을 넣는다<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<p>API 서버는 그대로 두고 <strong>스케줄러만</strong> 고장 냅니다. 먼저 매니페스트를 <strong>manifests 디렉터리 밖에</strong> 백업합니다.</p>
+<div class="admonition warning">
+<p class="admonition-title">백업을 <code>/etc/kubernetes/manifests/</code> 안에 두지 마세요</p>
+<p>kubelet 은 그 디렉터리의 <strong>모든 파일</strong>을 스태틱 파드로 띄우려 합니다. 백업 파일이 거기 있으면 같은 이름의 파드가 충돌합니다.</p>
+</div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-87-1"><a id="__codelineno-87-1" name="__codelineno-87-1" href="#__codelineno-87-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/etc/kubernetes/manifests/kube-scheduler.yaml<span class="w"> </span>~/guide-trouble/kube-scheduler.yaml.bak
+</span><span id="__span-87-2"><a id="__codelineno-87-2" name="__codelineno-87-2" href="#__codelineno-87-2"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/    - --bind-address=127.0.0.1/    - --bind-address=127.0.0.1\n    - --no-such-flag=true/'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-87-3"><a id="__codelineno-87-3" name="__codelineno-87-3" href="#__codelineno-87-3"></a><span class="w">  </span>/etc/kubernetes/manifests/kube-scheduler.yaml
+</span><span id="__span-87-4"><a id="__codelineno-87-4" name="__codelineno-87-4" href="#__codelineno-87-4"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-n<span class="w"> </span><span class="s1">'no-such-flag'</span><span class="w"> </span>/etc/kubernetes/manifests/kube-scheduler.yaml
+</span></code></pre></div>
+<p>kubelet 이 파일 변경을 감지해 스케줄러를 다시 띄웁니다. 30초쯤 뒤:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-88-1"><a id="__codelineno-88-1" name="__codelineno-88-1" href="#__codelineno-88-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">component</span><span class="o">=</span>kube-scheduler
+</span><span id="__span-88-2"><a id="__codelineno-88-2" name="__codelineno-88-2" href="#__codelineno-88-2"></a>kubectl<span class="w"> </span>run<span class="w"> </span>after-break<span class="w"> </span>-n<span class="w"> </span>guide-trouble<span class="w"> </span>--image<span class="o">=</span>nginx:1.27
+</span><span id="__span-88-3"><a id="__codelineno-88-3" name="__codelineno-88-3" href="#__codelineno-88-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>after-break<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-89-1"><a id="__codelineno-89-1" name="__codelineno-89-1" href="#__codelineno-89-1"></a>NAME                           READY   STATUS             RESTARTS      AGE
+</span><span id="__span-89-2"><a id="__codelineno-89-2" name="__codelineno-89-2" href="#__codelineno-89-2"></a>kube-scheduler-control-plane   0/1     CrashLoopBackOff   2 (20s ago)   5d
+</span><span id="__span-89-3"><a id="__codelineno-89-3" name="__codelineno-89-3" href="#__codelineno-89-3"></a>
+</span><span id="__span-89-4"><a id="__codelineno-89-4" name="__codelineno-89-4" href="#__codelineno-89-4"></a>NAME          READY   STATUS    RESTARTS   AGE
+</span><span id="__span-89-5"><a id="__codelineno-89-5" name="__codelineno-89-5" href="#__codelineno-89-5"></a>after-break   0/1     Pending   0          5s        ← 이벤트조차 없다 (2절 표의 마지막 줄)
+</span></code></pre></div>
+<p>이제 kubectl 없이 원인을 찾습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-90-1"><a id="__codelineno-90-1" name="__codelineno-90-1" href="#__codelineno-90-1"></a>sudo<span class="w"> </span>crictl<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span>--name<span class="w"> </span>kube-scheduler<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
+</span><span id="__span-90-2"><a id="__codelineno-90-2" name="__codelineno-90-2" href="#__codelineno-90-2"></a>sudo<span class="w"> </span>crictl<span class="w"> </span>logs<span class="w"> </span><span class="k">$(</span>sudo<span class="w"> </span>crictl<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span>-q<span class="w"> </span>--name<span class="w"> </span>kube-scheduler<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="k">)</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
+</span><span id="__span-90-3"><a id="__codelineno-90-3" name="__codelineno-90-3" href="#__codelineno-90-3"></a>sudo<span class="w"> </span>tail<span class="w"> </span>-3<span class="w"> </span>/var/log/pods/kube-system_kube-scheduler-control-plane_*/kube-scheduler/*.log
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-91-1"><a id="__codelineno-91-1" name="__codelineno-91-1" href="#__codelineno-91-1"></a>CONTAINER       IMAGE           CREATED          STATE    NAME             ATTEMPT   ...
+</span><span id="__span-91-2"><a id="__codelineno-91-2" name="__codelineno-91-2" href="#__codelineno-91-2"></a>8c1e4f2a9d6b3   a389e107f4ff1   12 seconds ago   Exited   kube-scheduler   3         ...
+</span><span id="__span-91-3"><a id="__codelineno-91-3" name="__codelineno-91-3" href="#__codelineno-91-3"></a>
+</span><span id="__span-91-4"><a id="__codelineno-91-4" name="__codelineno-91-4" href="#__codelineno-91-4"></a>Error: unknown flag: --no-such-flag
+</span><span id="__span-91-5"><a id="__codelineno-91-5" name="__codelineno-91-5" href="#__codelineno-91-5"></a>...
+</span><span id="__span-91-6"><a id="__codelineno-91-6" name="__codelineno-91-6" href="#__codelineno-91-6"></a>2026-09-29T08:15:40.123Z stderr F Error: unknown flag: --no-such-flag
+</span></code></pre></div>
+<p>관찰 포인트: <code>crictl ps</code> 에는 <strong><code>-a</code></strong> 를 붙여야 죽은(Exited) 컨테이너까지 보입니다. 로그 파일은 <code>/var/log/pods/&lt;ns&gt;_&lt;파드&gt;_&lt;uid&gt;/&lt;컨테이너&gt;/&lt;재시작번호&gt;.log</code> 입니다.</p>
+<h3 id="_22">되돌리기<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-92-1"><a id="__codelineno-92-1" name="__codelineno-92-1" href="#__codelineno-92-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>~/guide-trouble/kube-scheduler.yaml.bak<span class="w"> </span>/etc/kubernetes/manifests/kube-scheduler.yaml
+</span><span id="__span-92-2"><a id="__codelineno-92-2" name="__codelineno-92-2" href="#__codelineno-92-2"></a>sleep<span class="w"> </span><span class="m">30</span>
+</span><span id="__span-92-3"><a id="__codelineno-92-3" name="__codelineno-92-3" href="#__codelineno-92-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">component</span><span class="o">=</span>kube-scheduler
+</span><span id="__span-92-4"><a id="__codelineno-92-4" name="__codelineno-92-4" href="#__codelineno-92-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>after-break<span class="w"> </span>-n<span class="w"> </span>guide-trouble
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-93-1"><a id="__codelineno-93-1" name="__codelineno-93-1" href="#__codelineno-93-1"></a>NAME                           READY   STATUS    RESTARTS   AGE
+</span><span id="__span-93-2"><a id="__codelineno-93-2" name="__codelineno-93-2" href="#__codelineno-93-2"></a>kube-scheduler-control-plane   1/1     Running   0          20s
+</span><span id="__span-93-3"><a id="__codelineno-93-3" name="__codelineno-93-3" href="#__codelineno-93-3"></a>
+</span><span id="__span-93-4"><a id="__codelineno-93-4" name="__codelineno-93-4" href="#__codelineno-93-4"></a>NAME          READY   STATUS    RESTARTS   AGE
+</span><span id="__span-93-5"><a id="__codelineno-93-5" name="__codelineno-93-5" href="#__codelineno-93-5"></a>after-break   1/1     Running   0          1m        ← 스케줄러가 돌아오자 바로 배치됐다
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>구성 요소가 죽으면</th>
+<th>눈에 보이는 증상</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kube-apiserver</td>
+<td><code>kubectl</code> 전부 <code>The connection to the server … was refused</code></td>
+</tr>
+<tr>
+<td>etcd</td>
+<td>API 서버도 곧 실패 (etcd 에 못 붙어서)</td>
+</tr>
+<tr>
+<td>kube-scheduler</td>
+<td>새 파드가 <strong>이벤트 없이</strong> Pending</td>
+</tr>
+<tr>
+<td>kube-controller-manager</td>
+<td>Deployment 를 만들어도 ReplicaSet · 파드가 안 생긴다, 스케일이 안 먹는다</td>
+</tr>
+<tr>
+<td>kubelet (노드)</td>
+<td>그 노드 NotReady (9절)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">시험 팁 — API 서버가 죽었을 때의 순서</p>
+<p>① 컨트롤플레인에 ssh → ② <code>/etc/kubernetes/manifests/kube-apiserver.yaml</code> 을 직접 읽어 오타 확인 →
+③ <code>crictl ps -a | grep apiserver</code> · <code>crictl logs &lt;ID&gt;</code> → ④ 컨테이너조차 없으면 <code>journalctl -u kubelet</code> (YAML 문법 오류는 kubelet 로그에 남습니다).</p>
+</div>
+<hr />
+<h2 id="_23">시험에서 빠르게<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-94-1"><a id="__codelineno-94-1" name="__codelineno-94-1" href="#__codelineno-94-1"></a><span class="c1"># 네 개의 명령</span>
+</span><span id="__span-94-2"><a id="__codelineno-94-2" name="__codelineno-94-2" href="#__codelineno-94-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>&lt;p&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>-o<span class="w"> </span>wide
+</span><span id="__span-94-3"><a id="__codelineno-94-3" name="__codelineno-94-3" href="#__codelineno-94-3"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;p&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span>-n<span class="w"> </span><span class="s1">'/Events:/,$p'</span>
+</span><span id="__span-94-4"><a id="__codelineno-94-4" name="__codelineno-94-4" href="#__codelineno-94-4"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>&lt;p&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--previous<span class="w">            </span><span class="c1"># -c &lt;컨테이너&gt;</span>
+</span><span id="__span-94-5"><a id="__codelineno-94-5" name="__codelineno-94-5" href="#__codelineno-94-5"></a>kubectl<span class="w"> </span>events<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--for<span class="w"> </span>pod/&lt;p&gt;<span class="w">           </span><span class="c1"># 또는 get events --sort-by=.lastTimestamp</span>
+</span><span id="__span-94-6"><a id="__codelineno-94-6" name="__codelineno-94-6" href="#__codelineno-94-6"></a>
+</span><span id="__span-94-7"><a id="__codelineno-94-7" name="__codelineno-94-7" href="#__codelineno-94-7"></a><span class="c1"># 종료 이유 한 줄로</span>
+</span><span id="__span-94-8"><a id="__codelineno-94-8" name="__codelineno-94-8" href="#__codelineno-94-8"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>&lt;p&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.containerStatuses[0].lastState.terminated.reason}{"\n"}'</span>
+</span><span id="__span-94-9"><a id="__codelineno-94-9" name="__codelineno-94-9" href="#__codelineno-94-9"></a>
+</span><span id="__span-94-10"><a id="__codelineno-94-10" name="__codelineno-94-10" href="#__codelineno-94-10"></a><span class="c1"># Pending</span>
+</span><span id="__span-94-11"><a id="__codelineno-94-11" name="__codelineno-94-11" href="#__codelineno-94-11"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>node<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A6<span class="w"> </span><span class="s1">'Allocated resources'</span>
+</span><span id="__span-94-12"><a id="__codelineno-94-12" name="__codelineno-94-12" href="#__codelineno-94-12"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-L<span class="w"> </span>&lt;label&gt;<span class="w"> </span><span class="p">;</span><span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>node<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Taints
+</span><span id="__span-94-13"><a id="__codelineno-94-13" name="__codelineno-94-13" href="#__codelineno-94-13"></a>
+</span><span id="__span-94-14"><a id="__codelineno-94-14" name="__codelineno-94-14" href="#__codelineno-94-14"></a><span class="c1"># 이미지</span>
+</span><span id="__span-94-15"><a id="__codelineno-94-15" name="__codelineno-94-15" href="#__codelineno-94-15"></a>kubectl<span class="w"> </span><span class="nb">set</span><span class="w"> </span>image<span class="w"> </span>deployment/&lt;d&gt;<span class="w"> </span>&lt;container&gt;<span class="o">=</span>&lt;image&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
+</span><span id="__span-94-16"><a id="__codelineno-94-16" name="__codelineno-94-16" href="#__codelineno-94-16"></a>
+</span><span id="__span-94-17"><a id="__codelineno-94-17" name="__codelineno-94-17" href="#__codelineno-94-17"></a><span class="c1"># Service</span>
+</span><span id="__span-94-18"><a id="__codelineno-94-18" name="__codelineno-94-18" href="#__codelineno-94-18"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>&lt;svc&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
+</span><span id="__span-94-19"><a id="__codelineno-94-19" name="__codelineno-94-19" href="#__codelineno-94-19"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>&lt;svc&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.selector}'</span>
+</span><span id="__span-94-20"><a id="__codelineno-94-20" name="__codelineno-94-20" href="#__codelineno-94-20"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>-l<span class="w"> </span>&lt;서비스<span class="w"> </span>셀렉터<span class="w"> </span>그대로&gt;<span class="w"> </span>--show-labels
+</span><span id="__span-94-21"><a id="__codelineno-94-21" name="__codelineno-94-21" href="#__codelineno-94-21"></a>kubectl<span class="w"> </span>run<span class="w"> </span>t<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>busybox:1.28<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>&lt;svc&gt;
+</span><span id="__span-94-22"><a id="__codelineno-94-22" name="__codelineno-94-22" href="#__codelineno-94-22"></a>
+</span><span id="__span-94-23"><a id="__codelineno-94-23" name="__codelineno-94-23" href="#__codelineno-94-23"></a><span class="c1"># 노드</span>
+</span><span id="__span-94-24"><a id="__codelineno-94-24" name="__codelineno-94-24" href="#__codelineno-94-24"></a>ssh<span class="w"> </span>&lt;node&gt;<span class="p">;</span><span class="w"> </span>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>kubelet<span class="p">;</span><span class="w"> </span>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>kubelet<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span><span class="w"> </span>--no-pager
+</span><span id="__span-94-25"><a id="__codelineno-94-25" name="__codelineno-94-25" href="#__codelineno-94-25"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>kubelet
+</span><span id="__span-94-26"><a id="__codelineno-94-26" name="__codelineno-94-26" href="#__codelineno-94-26"></a>
+</span><span id="__span-94-27"><a id="__codelineno-94-27" name="__codelineno-94-27" href="#__codelineno-94-27"></a><span class="c1"># 컨트롤플레인</span>
+</span><span id="__span-94-28"><a id="__codelineno-94-28" name="__codelineno-94-28" href="#__codelineno-94-28"></a>sudo<span class="w"> </span>crictl<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span>--name<span class="w"> </span>&lt;component&gt;<span class="p">;</span><span class="w"> </span>sudo<span class="w"> </span>crictl<span class="w"> </span>logs<span class="w"> </span>&lt;ID&gt;
+</span><span id="__span-94-29"><a id="__codelineno-94-29" name="__codelineno-94-29" href="#__codelineno-94-29"></a>ls<span class="w"> </span>/var/log/pods/<span class="w"> </span><span class="p">;</span><span class="w"> </span>ls<span class="w"> </span>/etc/kubernetes/manifests/
+</span></code></pre></div>
+<hr />
+<h2 id="_24">정리<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
+<p><strong>먼저 노드와 컨트롤플레인이 정상인지</strong> 확인하고, 그다음 실습 리소스를 지웁니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-95-1"><a id="__codelineno-95-1" name="__codelineno-95-1" href="#__codelineno-95-1"></a><span class="c1"># 9) · 10) 을 되돌렸는지</span>
+</span><span id="__span-95-2"><a id="__codelineno-95-2" name="__codelineno-95-2" href="#__codelineno-95-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w">                                             </span><span class="c1"># 모두 Ready</span>
+</span><span id="__span-95-3"><a id="__codelineno-95-3" name="__codelineno-95-3" href="#__codelineno-95-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">component</span><span class="o">=</span>kube-scheduler<span class="w">   </span><span class="c1"># 1/1 Running</span>
+</span><span id="__span-95-4"><a id="__codelineno-95-4" name="__codelineno-95-4" href="#__codelineno-95-4"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span>no-such-flag<span class="w"> </span>/etc/kubernetes/manifests/kube-scheduler.yaml<span class="w">   </span><span class="c1"># 0</span>
+</span><span id="__span-95-5"><a id="__codelineno-95-5" name="__codelineno-95-5" href="#__codelineno-95-5"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deploy<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w">                     </span><span class="c1"># 8) 에서 되돌린 개수 (예: 2/2)</span>
+</span><span id="__span-95-6"><a id="__codelineno-95-6" name="__codelineno-95-6" href="#__codelineno-95-6"></a>
+</span><span id="__span-95-7"><a id="__codelineno-95-7" name="__codelineno-95-7" href="#__codelineno-95-7"></a><span class="c1"># 2) 에서 붙인 노드 레이블</span>
+</span><span id="__span-95-8"><a id="__codelineno-95-8" name="__codelineno-95-8" href="#__codelineno-95-8"></a>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>worker-1<span class="w"> </span>disktype-
+</span><span id="__span-95-9"><a id="__codelineno-95-9" name="__codelineno-95-9" href="#__codelineno-95-9"></a>
+</span><span id="__span-95-10"><a id="__codelineno-95-10" name="__codelineno-95-10" href="#__codelineno-95-10"></a><span class="c1"># 실습 리소스</span>
+</span><span id="__span-95-11"><a id="__codelineno-95-11" name="__codelineno-95-11" href="#__codelineno-95-11"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>namespace<span class="w"> </span>guide-trouble
+</span><span id="__span-95-12"><a id="__codelineno-95-12" name="__codelineno-95-12" href="#__codelineno-95-12"></a><span class="nb">cd</span><span class="w"> </span>~<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>~/guide-trouble
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">metrics-server 를 설치했다면</p>
+<p>남겨 두면 이후 강의에서도 <code>kubectl top</code> 을 쓸 수 있습니다. 지우려면
+<code>kubectl delete -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml</code>.</p>
+</div>
+<hr />
+<h2 id="_25">확인 질문<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
+<details class="question">
+<summary>1. 파드가 Pending 입니다. <code>kubectl logs</code> 를 보면 무엇이 나오나요? 어디를 봐야 하나요?</summary>
+<p>Pending 은 컨테이너가 시작도 안 했으므로 로그가 없습니다. <code>describe pod</code> 의 Events 에서 <code>FailedScheduling</code> 메시지를 봅니다.
+메시지가 노드마다 탈락 이유(자원 · taint · selector)를 나눠 알려 줍니다. 이벤트조차 없으면 스케줄러를 의심합니다.</p>
+</details>
+<details class="question">
+<summary>2. CrashLoopBackOff 파드에서 <code>kubectl logs</code> 가 비어 있습니다. 다음 명령은?</summary>
+<p><code>kubectl logs &lt;파드&gt; --previous</code> 로 죽은 컨테이너의 마지막 로그를 봅니다. 그래도 비어 있으면
+<code>describe</code> 의 Last State 에서 Reason(<code>StartError</code>, <code>OOMKilled</code>)과 Message 를 봅니다.</p>
+</details>
+<details class="question">
+<summary>3. STATUS 가 CrashLoopBackOff 인데 원인이 메모리인지 어떻게 확인하나요?</summary>
+<p><code>describe pod</code> 의 Last State 에 <code>Reason: OOMKilled</code>, <code>Exit Code: 137</code> 이 있으면 메모리 limit 초과입니다.
+jsonpath 로 <code>.status.containerStatuses[0].lastState.terminated.reason</code> 을 봐도 됩니다.</p>
+</details>
+<details class="question">
+<summary>4. 파드는 <code>Running</code> 인데 READY 가 <code>0/1</code> 이고 Service 로 접속이 안 됩니다. 원인은?</summary>
+<p>readinessProbe 실패입니다. 준비되지 않은 파드는 Endpoints 에서 빠집니다.
+<code>describe pod</code> 의 <code>Readiness probe failed</code> 이벤트에서 이유(404, 연결 거부 등)를 확인하고 프로브나 앱을 고칩니다.</p>
+</details>
+<details class="question">
+<summary>5. Service 의 Endpoints 에 IP 는 있는데 <code>Connection refused</code> 가 납니다. 무엇을 비교하나요?</summary>
+<p>Service 의 <code>targetPort</code> 와 파드의 <code>containerPort</code>(실제로 앱이 듣는 포트)를 비교합니다.
+Endpoints 가 <code>&lt;none&gt;</code> 이면 selector 쪽, IP 가 있으면 포트 쪽입니다.</p>
+</details>
+<details class="question">
+<summary>6. kubelet 을 멈춘 노드의 Ready 조건은 <code>False</code> 인가요 <code>Unknown</code> 인가요? 어떤 taint 가 붙나요?</summary>
+<p><code>Unknown</code> 입니다(Message: <code>Kubelet stopped posting node status.</code>). 노드 컨트롤러가
+<code>node.kubernetes.io/unreachable</code> 을 <code>NoSchedule</code> 과 <code>NoExecute</code> 두 가지로 붙이고, 기존 파드는 기본 300초 뒤 축출됩니다.</p>
+</details>
+<details class="question">
+<summary>7. kubectl 이 <code>connection refused</code> 로 전부 실패합니다. 어디서 무엇을 보나요?</summary>
+<p>컨트롤플레인 노드에 ssh 해서 <code>/etc/kubernetes/manifests/kube-apiserver.yaml</code> 을 확인하고,
+<code>crictl ps -a</code> 로 apiserver 컨테이너 상태를, <code>crictl logs &lt;ID&gt;</code> 나 <code>/var/log/pods/</code> 로 로그를 봅니다. 컨테이너가 아예 없으면 <code>journalctl -u kubelet</code> 입니다.</p>
+</details>
+<details class="question">
+<summary>8. 스태틱 파드 매니페스트 백업을 <code>/etc/kubernetes/manifests/kube-scheduler.yaml.bak</code> 으로 두면 무엇이 문제인가요?</summary>
+<p>kubelet 은 그 디렉터리의 파일을 모두 스태틱 파드로 읽으려 하므로 같은 이름의 파드가 중복 정의되어 문제가 생깁니다.
+백업은 반드시 manifests 디렉터리 <strong>밖</strong>에 둡니다.</p>
+</details>
+<hr />
+<h2 id="_26">다음 단계 — 채점 실습<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h2>
+<p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong> 시작하면 고장 난 리소스가 미리 만들어집니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-96-1"><a id="__codelineno-96-1" name="__codelineno-96-1" href="#__codelineno-96-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/19-troubleshooting
+</span><span id="__span-96-2"><a id="__codelineno-96-2" name="__codelineno-96-2" href="#__codelineno-96-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>문제</th>
+<th>이 페이지에서 연습한 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1 CrashLoopBackOff 진단</td>
+<td>4) <code>logs --previous</code> · Last State · Exit Code 표</td>
+</tr>
+<tr>
+<td>Q2 ImagePullBackOff 수정</td>
+<td>3) Events 의 pull 실패 메시지 · 이미지 교체</td>
+</tr>
+<tr>
+<td>Q3 Endpoints 가 비어 있는 Service</td>
+<td>7) ① 셀렉터 · 6) Ready 아닌 파드</td>
+</tr>
+<tr>
+<td>Q4 노드 상태 점검</td>
+<td>9) NotReady · Conditions · <code>systemctl</code> · <code>journalctl</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
+        
+          
+          <a href="../17-helm/" class="md-footer__link md-footer__link--prev" aria-label="이전: 17강 · Helm과 Kustomize">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                이전
+              </span>
+              <div class="md-ellipsis">
+                17강 · Helm과 Kustomize
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.tracking", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
