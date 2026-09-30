@@ -1,0 +1,75 @@
+site_name: CKA 실습 가이드
+site_description: 스킬잇 CKA 온라인 강의 — 강의가 끝나고 따라 하며 개념을 채우는 실습 가이드
+site_url: "https://skilleat-labs.github.io/cka-labs-2026/"
+repo_url: "https://github.com/skilleat-labs/cka-labs-2026"
+repo_name: skilleat-labs/cka-labs-2026
+
+theme:
+  name: material
+  language: ko
+  font:
+    text: Pretendard
+    code: JetBrains Mono
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: 다크 모드로 전환
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: 라이트 모드로 전환
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.tracking
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+
+nav:
+  - 홈: index.md
+  - 시작하기: start.md
+  - 강의별 실습:
+      - 3강 · 아키텍처: labs/03-architecture.md
+      - 4강 · 클러스터 구축 (VirtualBox): labs/04-cluster-build.md
+      - 6강 · 워크로드: labs/06-workloads.md
+      - 7강 · 스케줄링: labs/07-scheduling.md
+      - 8강 · 스토리지: labs/08-storage.md
+      - 9강 · 서비스와 내부 통신: labs/09-networking.md
+      - 10강 · NetworkPolicy: labs/10-networkpolicy.md
+      - 11강 · Ingress: labs/11-ingress.md
+      - 13강 · 클러스터 구축: labs/13-cluster-setup.md
+      - 14강 · RBAC: labs/14-rbac.md
+      - 15강 · 유지보수: labs/15-maintenance.md
+      - 16강 · 노드 운영: labs/16-node-ops.md
+      - 17강 · Helm과 Kustomize: labs/17-helm.md
+      - 19강 · 트러블슈팅: labs/19-troubleshooting.md
+
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
