@@ -1210,6 +1210,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        릴리스 이름 없이 template 하면?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#install-template" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1264,6 +1275,17 @@
     <span class="md-ellipsis">
       
         ② templates/ 형 — cert-manager 차트
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-crd-kubectl-get-crd-kubectl-explain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③ CRD 목록과 필드 설명을 파일로 — kubectl get crd · kubectl explain
       
     </span>
   </a>
@@ -1895,6 +1917,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        릴리스 이름 없이 template 하면?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#install-template" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1949,6 +1982,17 @@
     <span class="md-ellipsis">
       
         ② templates/ 형 — cert-manager 차트
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-crd-kubectl-get-crd-kubectl-explain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③ CRD 목록과 필드 설명을 파일로 — kubectl get crd · kubectl explain
       
     </span>
   </a>
@@ -2167,6 +2211,7 @@
 <li><code>--set</code> 과 <code>-f values.yaml</code> 의 <strong>우선순위</strong>, 그리고 upgrade 때 <strong>앞서 준 값이 사라지는 함정</strong>(<code>--reuse-values</code>)을 직접 겪어 본다.</li>
 <li><code>history</code> · <code>rollback</code> 으로 <strong>롤백도 새 리비전</strong>이라는 것을 확인한다.</li>
 <li><code>helm template</code> 으로 <strong>설치하지 않고 매니페스트만</strong> 뽑고, <code>--version</code> · <code>--skip-crds</code> · <code>--include-crds</code> 가 CRD 를 어떻게 다루는지 차트 구조와 함께 확인한다.</li>
+<li>릴리스 이름을 <strong>생략</strong>하면 <code>template</code> 은 <code>release-name</code> 을 쓴다는 것, 그리고 <code>kubectl get crd</code> · <code>kubectl explain</code> 결과를 <strong>파일로 저장</strong>하는 조회형 문제를 연습한다.</li>
 <li><code>helm pull --untar</code> 로 차트 속을 열어 보고, <code>Chart.yaml</code> 의 <strong>의존성 버전</strong>을 바꿔 <code>helm dependency update</code> 한다.</li>
 <li>Kustomize base/overlay 로 <strong>namePrefix · labels · images · patches · configMapGenerator</strong> 를 써 보고, <code>kubectl kustomize</code>(미리 보기)와 <code>kubectl apply -k</code>(적용)를 구분한다.</li>
 </ul>
@@ -3062,7 +3107,7 @@ Deployment 의 <code>rollout undo</code> 와 같은 원리입니다. 리비전 �
 <tbody>
 <tr>
 <td><code>preview</code> (첫 인자)</td>
-<td>릴리스 이름. 리소스 이름에 들어간다 (<code>preview-podinfo</code>)</td>
+<td>릴리스 이름. 리소스 이름에 들어간다 (<code>preview-podinfo</code>). <strong>생략할 수 있다</strong> — 바로 아래에서 확인</td>
 </tr>
 <tr>
 <td><code>--version</code></td>
@@ -3094,6 +3139,52 @@ Deployment 의 <code>rollout undo</code> 와 같은 원리입니다. 리비전 �
 <p class="admonition-title"><code>--skip-tests</code> 를 빼면</p>
 <p>podinfo 는 <code>helm test</code> 용 파드 템플릿을 갖고 있어서, 빼지 않으면 <code>kind: Pod</code> 가 세 개 더 나옵니다.
 <code>install</code> 은 이런 훅(hook) 리소스를 따로 다루지만 <code>template</code> 은 그냥 YAML 로 다 뱉습니다.</p>
+</div>
+<h3 id="template">릴리스 이름 없이 template 하면?<a class="headerlink" href="#template" title="Permanent link">&para;</a></h3>
+<p>시험에서 "릴리스 이름을 지정하지 말고 렌더링하라" 는 요구가 나올 수 있습니다. <code>template</code> 은 인자를 <strong>차트 하나만</strong> 줘도 됩니다.
+이름을 비워 두면 Helm 이 <code>release-name</code> 이라는 <strong>기본 이름</strong>을 채워 넣습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-61-1"><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a>helm<span class="w"> </span>template<span class="w"> </span>podinfo/podinfo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-61-2"><a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a><span class="w">  </span>--version<span class="w"> </span><span class="m">6</span>.14.0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-61-3"><a id="__codelineno-61-3" name="__codelineno-61-3" href="#__codelineno-61-3"></a><span class="w">  </span>--namespace<span class="w"> </span>guide-helm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-61-4"><a id="__codelineno-61-4" name="__codelineno-61-4" href="#__codelineno-61-4"></a><span class="w">  </span>--skip-tests<span class="w"> </span>&gt;<span class="w"> </span>~/guide-helm/podinfo-noname.yaml
+</span><span id="__span-61-5"><a id="__codelineno-61-5" name="__codelineno-61-5" href="#__codelineno-61-5"></a>
+</span><span id="__span-61-6"><a id="__codelineno-61-6" name="__codelineno-61-6" href="#__codelineno-61-6"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^kind:|^  name:'</span><span class="w"> </span>~/guide-helm/podinfo-noname.yaml
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-62-1"><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a>kind: Service
+</span><span id="__span-62-2"><a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a>  name: release-name-podinfo
+</span><span id="__span-62-3"><a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a>kind: Deployment
+</span><span id="__span-62-4"><a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a>  name: release-name-podinfo
+</span></code></pre></div>
+<p>관찰 포인트: 위의 <code>preview-podinfo</code> 와 비교하면 <strong>릴리스 이름 자리에 <code>release-name</code> 이 들어간 것</strong> 말고는 같습니다.
+차트의 레이블 <code>app.kubernetes.io/instance</code> 같은 곳에도 <code>{{ .Release.Name }}</code> 이 쓰이므로 똑같이 <code>release-name</code> 이 들어갑니다.</p>
+<p>같은 방식으로 <code>install</code> 을 하면 어떻게 될까요?</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-63-1"><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a>helm<span class="w"> </span>install<span class="w"> </span>podinfo/podinfo<span class="w"> </span>-n<span class="w"> </span>guide-helm
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-64-1"><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a>Error: INSTALLATION FAILED: must either provide a name or specify --generate-name
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>명령</th>
+<th>인자를 차트 하나만 주면</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>helm template &lt;차트&gt;</code></td>
+<td>릴리스 이름 <code>release-name</code> 으로 렌더링한다</td>
+</tr>
+<tr>
+<td><code>helm install &lt;차트&gt;</code></td>
+<td><strong>에러.</strong> 이름을 주거나 <code>--generate-name</code> 으로 무작위 이름(<code>podinfo-1759...</code>)을 받아야 한다</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">시험 팁 — 지문에 릴리스 이름이 없으면 넣지 않습니다</p>
+<p>"릴리스 이름 없이" 라는 지문에 습관처럼 이름을 붙이면 결과 YAML 의 이름·레이블이 전부 달라집니다.
+뽑은 뒤 <code>grep -m1 'release-name' &lt;파일&gt;</code> 로 기본 이름이 들어갔는지 한 번 확인합니다.
+버전이 주어졌다면 <code>--version</code> 도 빠뜨리지 않았는지 <code>grep -m1 'helm.sh/chart:' &lt;파일&gt;</code> 로 봅니다.</p>
 </div>
 <h3 id="install-template">install 과 template 비교<a class="headerlink" href="#install-template" title="Permanent link">&para;</a></h3>
 <table>
@@ -3165,31 +3256,31 @@ Deployment 의 <code>rollout undo</code> 와 같은 원리입니다. 리비전 �
 </table>
 <h3 id="1-crds-traefik">① <code>crds/</code> 폴더형 — Traefik 차트<a class="headerlink" href="#1-crds-traefik" title="Permanent link">&para;</a></h3>
 <p>Traefik(인그레스 컨트롤러) 차트는 CRD 를 <code>crds/</code> 폴더에 둡니다. 저장소는 <code>https://traefik.github.io/charts</code> 입니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-61-1"><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>traefik<span class="w"> </span>https://traefik.github.io/charts
-</span><span id="__span-61-2"><a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>update<span class="w"> </span>traefik
-</span><span id="__span-61-3"><a id="__codelineno-61-3" name="__codelineno-61-3" href="#__codelineno-61-3"></a>helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>traefik/traefik<span class="w"> </span>--versions<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
-</span><span id="__span-61-4"><a id="__codelineno-61-4" name="__codelineno-61-4" href="#__codelineno-61-4"></a>helm<span class="w"> </span>pull<span class="w"> </span>traefik/traefik<span class="w"> </span>--version<span class="w"> </span><span class="m">41</span>.5.0<span class="w"> </span>--untar<span class="w"> </span>-d<span class="w"> </span>~/guide-helm/charts
-</span><span id="__span-61-5"><a id="__codelineno-61-5" name="__codelineno-61-5" href="#__codelineno-61-5"></a>ls<span class="w"> </span>~/guide-helm/charts/traefik
-</span><span id="__span-61-6"><a id="__codelineno-61-6" name="__codelineno-61-6" href="#__codelineno-61-6"></a>ls<span class="w"> </span>~/guide-helm/charts/traefik/crds<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-65-1"><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>traefik<span class="w"> </span>https://traefik.github.io/charts
+</span><span id="__span-65-2"><a id="__codelineno-65-2" name="__codelineno-65-2" href="#__codelineno-65-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>update<span class="w"> </span>traefik
+</span><span id="__span-65-3"><a id="__codelineno-65-3" name="__codelineno-65-3" href="#__codelineno-65-3"></a>helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>traefik/traefik<span class="w"> </span>--versions<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
+</span><span id="__span-65-4"><a id="__codelineno-65-4" name="__codelineno-65-4" href="#__codelineno-65-4"></a>helm<span class="w"> </span>pull<span class="w"> </span>traefik/traefik<span class="w"> </span>--version<span class="w"> </span><span class="m">41</span>.5.0<span class="w"> </span>--untar<span class="w"> </span>-d<span class="w"> </span>~/guide-helm/charts
+</span><span id="__span-65-5"><a id="__codelineno-65-5" name="__codelineno-65-5" href="#__codelineno-65-5"></a>ls<span class="w"> </span>~/guide-helm/charts/traefik
+</span><span id="__span-65-6"><a id="__codelineno-65-6" name="__codelineno-65-6" href="#__codelineno-65-6"></a>ls<span class="w"> </span>~/guide-helm/charts/traefik/crds<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-62-1"><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a>NAME              CHART VERSION   APP VERSION   DESCRIPTION
-</span><span id="__span-62-2"><a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a>traefik/traefik   41.6.0          v3.7.13       A Traefik based Kubernetes ingress controller
-</span><span id="__span-62-3"><a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a>traefik/traefik   41.5.0          v3.7.13       A Traefik based Kubernetes ingress controller
-</span><span id="__span-62-4"><a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a>
-</span><span id="__span-62-5"><a id="__codelineno-62-5" name="__codelineno-62-5" href="#__codelineno-62-5"></a>Chart.yaml  Changelog.md  crds  EXAMPLES.md  ...  templates  values.schema.json  values.yaml
-</span><span id="__span-62-6"><a id="__codelineno-62-6" name="__codelineno-62-6" href="#__codelineno-62-6"></a>hub.traefik.io_accesscontrolpolicies.yaml
-</span><span id="__span-62-7"><a id="__codelineno-62-7" name="__codelineno-62-7" href="#__codelineno-62-7"></a>hub.traefik.io_aiservices.yaml
-</span><span id="__span-62-8"><a id="__codelineno-62-8" name="__codelineno-62-8" href="#__codelineno-62-8"></a>hub.traefik.io_apiauths.yaml
+<div class="language-text highlight"><pre><span></span><code><span id="__span-66-1"><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a>NAME              CHART VERSION   APP VERSION   DESCRIPTION
+</span><span id="__span-66-2"><a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a>traefik/traefik   41.6.0          v3.7.13       A Traefik based Kubernetes ingress controller
+</span><span id="__span-66-3"><a id="__codelineno-66-3" name="__codelineno-66-3" href="#__codelineno-66-3"></a>traefik/traefik   41.5.0          v3.7.13       A Traefik based Kubernetes ingress controller
+</span><span id="__span-66-4"><a id="__codelineno-66-4" name="__codelineno-66-4" href="#__codelineno-66-4"></a>
+</span><span id="__span-66-5"><a id="__codelineno-66-5" name="__codelineno-66-5" href="#__codelineno-66-5"></a>Chart.yaml  Changelog.md  crds  EXAMPLES.md  ...  templates  values.schema.json  values.yaml
+</span><span id="__span-66-6"><a id="__codelineno-66-6" name="__codelineno-66-6" href="#__codelineno-66-6"></a>hub.traefik.io_accesscontrolpolicies.yaml
+</span><span id="__span-66-7"><a id="__codelineno-66-7" name="__codelineno-66-7" href="#__codelineno-66-7"></a>hub.traefik.io_aiservices.yaml
+</span><span id="__span-66-8"><a id="__codelineno-66-8" name="__codelineno-66-8" href="#__codelineno-66-8"></a>hub.traefik.io_apiauths.yaml
 </span></code></pre></div>
 <p>세 가지 방법으로 뽑아 CRD 수를 셉니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-63-1"><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a><span class="nv">T</span><span class="o">=</span><span class="s2">"helm template edge traefik/traefik --version 41.5.0 -n guide-helm"</span>
-</span><span id="__span-63-2"><a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a><span class="nv">$T</span><span class="w">                </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
-</span><span id="__span-63-3"><a id="__codelineno-63-3" name="__codelineno-63-3" href="#__codelineno-63-3"></a><span class="nv">$T</span><span class="w"> </span>--include-crds<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
-</span><span id="__span-63-4"><a id="__codelineno-63-4" name="__codelineno-63-4" href="#__codelineno-63-4"></a><span class="nv">$T</span><span class="w"> </span>--skip-crds<span class="w">    </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-67-1"><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a><span class="nv">T</span><span class="o">=</span><span class="s2">"helm template edge traefik/traefik --version 41.5.0 -n guide-helm"</span>
+</span><span id="__span-67-2"><a id="__codelineno-67-2" name="__codelineno-67-2" href="#__codelineno-67-2"></a><span class="nv">$T</span><span class="w">                </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
+</span><span id="__span-67-3"><a id="__codelineno-67-3" name="__codelineno-67-3" href="#__codelineno-67-3"></a><span class="nv">$T</span><span class="w"> </span>--include-crds<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
+</span><span id="__span-67-4"><a id="__codelineno-67-4" name="__codelineno-67-4" href="#__codelineno-67-4"></a><span class="nv">$T</span><span class="w"> </span>--skip-crds<span class="w">    </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-64-1"><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a>0      ← template 은 crds/ 폴더를 기본으로 출력하지 않는다
-</span><span id="__span-64-2"><a id="__codelineno-64-2" name="__codelineno-64-2" href="#__codelineno-64-2"></a>25     ← --include-crds 를 줘야 나온다
-</span><span id="__span-64-3"><a id="__codelineno-64-3" name="__codelineno-64-3" href="#__codelineno-64-3"></a>0      ← --skip-crds: crds/ 폴더를 건너뛴다
+<div class="language-text highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a>0      ← template 은 crds/ 폴더를 기본으로 출력하지 않는다
+</span><span id="__span-68-2"><a id="__codelineno-68-2" name="__codelineno-68-2" href="#__codelineno-68-2"></a>25     ← --include-crds 를 줘야 나온다
+</span><span id="__span-68-3"><a id="__codelineno-68-3" name="__codelineno-68-3" href="#__codelineno-68-3"></a>0      ← --skip-crds: crds/ 폴더를 건너뛴다
 </span></code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">시험 팁 — <code>--skip-crds</code> 를 붙여 두면 안전합니다</p>
@@ -3198,23 +3289,23 @@ Deployment 의 <code>rollout undo</code> 와 같은 원리입니다. 리비전 �
 </div>
 <h3 id="2-templates-cert-manager">② <code>templates/</code> 형 — cert-manager 차트<a class="headerlink" href="#2-templates-cert-manager" title="Permanent link">&para;</a></h3>
 <p>cert-manager 는 CRD 를 <strong>템플릿 안</strong>에 두고 <code>crds.enabled</code> 값으로 켜고 끕니다. 저장소는 <code>https://charts.jetstack.io</code> 입니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-65-1"><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>jetstack<span class="w"> </span>https://charts.jetstack.io
-</span><span id="__span-65-2"><a id="__codelineno-65-2" name="__codelineno-65-2" href="#__codelineno-65-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>update<span class="w"> </span>jetstack
-</span><span id="__span-65-3"><a id="__codelineno-65-3" name="__codelineno-65-3" href="#__codelineno-65-3"></a>helm<span class="w"> </span>show<span class="w"> </span>values<span class="w"> </span>jetstack/cert-manager<span class="w"> </span>--version<span class="w"> </span>v1.21.2<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-n<span class="w"> </span>-A3<span class="w"> </span><span class="s1">'^crds:'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-69-1"><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>jetstack<span class="w"> </span>https://charts.jetstack.io
+</span><span id="__span-69-2"><a id="__codelineno-69-2" name="__codelineno-69-2" href="#__codelineno-69-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>update<span class="w"> </span>jetstack
+</span><span id="__span-69-3"><a id="__codelineno-69-3" name="__codelineno-69-3" href="#__codelineno-69-3"></a>helm<span class="w"> </span>show<span class="w"> </span>values<span class="w"> </span>jetstack/cert-manager<span class="w"> </span>--version<span class="w"> </span>v1.21.2<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-n<span class="w"> </span>-A3<span class="w"> </span><span class="s1">'^crds:'</span>
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-66-1"><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a>106:crds:
-</span><span id="__span-66-2"><a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a>107-  # This option decides if the CRDs should be installed
-</span><span id="__span-66-3"><a id="__codelineno-66-3" name="__codelineno-66-3" href="#__codelineno-66-3"></a>108-  # as part of the Helm installation.
-</span><span id="__span-66-4"><a id="__codelineno-66-4" name="__codelineno-66-4" href="#__codelineno-66-4"></a>109-  enabled: false
+<div class="language-text highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a>106:crds:
+</span><span id="__span-70-2"><a id="__codelineno-70-2" name="__codelineno-70-2" href="#__codelineno-70-2"></a>107-  # This option decides if the CRDs should be installed
+</span><span id="__span-70-3"><a id="__codelineno-70-3" name="__codelineno-70-3" href="#__codelineno-70-3"></a>108-  # as part of the Helm installation.
+</span><span id="__span-70-4"><a id="__codelineno-70-4" name="__codelineno-70-4" href="#__codelineno-70-4"></a>109-  enabled: false
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-67-1"><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a><span class="nv">C</span><span class="o">=</span><span class="s2">"helm template cm jetstack/cert-manager --version v1.21.2 -n guide-helm"</span>
-</span><span id="__span-67-2"><a id="__codelineno-67-2" name="__codelineno-67-2" href="#__codelineno-67-2"></a><span class="nv">$C</span><span class="w"> </span>--set<span class="w"> </span>crds.enabled<span class="o">=</span><span class="nb">true</span><span class="w">              </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
-</span><span id="__span-67-3"><a id="__codelineno-67-3" name="__codelineno-67-3" href="#__codelineno-67-3"></a><span class="nv">$C</span><span class="w"> </span>--set<span class="w"> </span>crds.enabled<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--skip-crds<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
-</span><span id="__span-67-4"><a id="__codelineno-67-4" name="__codelineno-67-4" href="#__codelineno-67-4"></a><span class="nv">$C</span><span class="w"> </span>--set<span class="w"> </span>crds.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--skip-crds<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a><span class="nv">C</span><span class="o">=</span><span class="s2">"helm template cm jetstack/cert-manager --version v1.21.2 -n guide-helm"</span>
+</span><span id="__span-71-2"><a id="__codelineno-71-2" name="__codelineno-71-2" href="#__codelineno-71-2"></a><span class="nv">$C</span><span class="w"> </span>--set<span class="w"> </span>crds.enabled<span class="o">=</span><span class="nb">true</span><span class="w">              </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
+</span><span id="__span-71-3"><a id="__codelineno-71-3" name="__codelineno-71-3" href="#__codelineno-71-3"></a><span class="nv">$C</span><span class="w"> </span>--set<span class="w"> </span>crds.enabled<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--skip-crds<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
+</span><span id="__span-71-4"><a id="__codelineno-71-4" name="__codelineno-71-4" href="#__codelineno-71-4"></a><span class="nv">$C</span><span class="w"> </span>--set<span class="w"> </span>crds.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--skip-crds<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span>
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a>6
-</span><span id="__span-68-2"><a id="__codelineno-68-2" name="__codelineno-68-2" href="#__codelineno-68-2"></a>6      ← --skip-crds 를 줘도 그대로다. crds/ 폴더가 아니라 templates/ 에 있기 때문
-</span><span id="__span-68-3"><a id="__codelineno-68-3" name="__codelineno-68-3" href="#__codelineno-68-3"></a>0      ← 차트의 값으로 꺼야 빠진다
+<div class="language-text highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a>6
+</span><span id="__span-72-2"><a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a>6      ← --skip-crds 를 줘도 그대로다. crds/ 폴더가 아니라 templates/ 에 있기 때문
+</span><span id="__span-72-3"><a id="__codelineno-72-3" name="__codelineno-72-3" href="#__codelineno-72-3"></a>0      ← 차트의 값으로 꺼야 빠진다
 </span></code></pre></div>
 <p>관찰 포인트: <code>--skip-crds</code> 는 <strong><code>crds/</code> 폴더만</strong> 다룹니다. 템플릿 안의 CRD 는 Helm 입장에서 그냥 리소스입니다.
 CRD 가 어디 있는지는 <code>helm pull --untar</code> 후 <code>ls crds/ templates/ | grep -i crd</code> 로 바로 알 수 있고,
@@ -3223,33 +3314,127 @@ CRD 가 어디 있는지는 <code>helm pull --untar</code> 후 <code>ls crds/ te
 <p class="admonition-title">CRD 자체가 궁금하다면</p>
 <p>CRD 와 오퍼레이터가 무엇인지는 <strong>18강 (CRD 와 오퍼레이터)</strong> 에서 다룹니다. 여기서는 "차트가 CRD 를 함께 가져올 수 있다" 까지만 알면 충분합니다.</p>
 </div>
+<h3 id="3-crd-kubectl-get-crd-kubectl-explain">③ CRD 목록과 필드 설명을 파일로 — <code>kubectl get crd</code> · <code>kubectl explain</code><a class="headerlink" href="#3-crd-kubectl-get-crd-kubectl-explain" title="Permanent link">&para;</a></h3>
+<p>차트로 설치한 프로젝트는 CRD 를 여러 개 남깁니다. 시험에는 <strong>"이 프로젝트의 CRD 목록을 기본 출력 형식으로 파일에 저장하라"</strong>,
+<strong>"이 CRD 의 특정 필드 설명을 파일에 저장하라"</strong> 같은 조회형 문제가 나옵니다. 설치는 필요 없고 <strong>CRD 만 있으면</strong> 됩니다.</p>
+<p>여기서는 Prometheus Operator 의 CRD 두 개(ServiceMonitor · PodMonitor)만 설치해서 연습합니다. 오퍼레이터 본체는 설치하지 않으므로 파드는 생기지 않습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a><span class="nv">P</span><span class="o">=</span>https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.77.1/example/prometheus-operator-crd
+</span><span id="__span-73-2"><a id="__codelineno-73-2" name="__codelineno-73-2" href="#__codelineno-73-2"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>--server-side<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-73-3"><a id="__codelineno-73-3" name="__codelineno-73-3" href="#__codelineno-73-3"></a><span class="w">  </span>-f<span class="w"> </span><span class="nv">$P</span>/monitoring.coreos.com_servicemonitors.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-73-4"><a id="__codelineno-73-4" name="__codelineno-73-4" href="#__codelineno-73-4"></a><span class="w">  </span>-f<span class="w"> </span><span class="nv">$P</span>/monitoring.coreos.com_podmonitors.yaml
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-74-1"><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a>customresourcedefinition.apiextensions.k8s.io/servicemonitors.monitoring.coreos.com serverside-applied
+</span><span id="__span-74-2"><a id="__codelineno-74-2" name="__codelineno-74-2" href="#__codelineno-74-2"></a>customresourcedefinition.apiextensions.k8s.io/podmonitors.monitoring.coreos.com serverside-applied
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">왜 <code>--server-side</code> 인가요?</p>
+<p>일반 <code>kubectl apply</code> 는 적용한 YAML 전체를 <code>last-applied-configuration</code> 주석에 넣는데, 주석 크기 한도가 256KiB 입니다.
+CRD 는 스키마가 길어서 이 한도를 넘는 경우가 많습니다. 서버 쪽 적용은 그 주석을 쓰지 않습니다.</p>
+</div>
+<p><strong>1) 목록을 기본 출력 형식으로</strong> — <code>-o</code> 를 붙이지 않은 그대로가 "기본 출력" 입니다. 프로젝트의 API 그룹 이름으로 거릅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-75-1"><a id="__codelineno-75-1" name="__codelineno-75-1" href="#__codelineno-75-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>crd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>monitoring.coreos.com<span class="w"> </span>&gt;<span class="w"> </span>~/guide-helm/monitoring-crds.txt
+</span><span id="__span-75-2"><a id="__codelineno-75-2" name="__codelineno-75-2" href="#__codelineno-75-2"></a>cat<span class="w"> </span>~/guide-helm/monitoring-crds.txt
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-76-1"><a id="__codelineno-76-1" name="__codelineno-76-1" href="#__codelineno-76-1"></a>podmonitors.monitoring.coreos.com       2026-10-04T05:20:11Z
+</span><span id="__span-76-2"><a id="__codelineno-76-2" name="__codelineno-76-2" href="#__codelineno-76-2"></a>servicemonitors.monitoring.coreos.com   2026-10-04T05:20:11Z
+</span></code></pre></div>
+<p>같은 목록을 다른 형식으로 뽑으면 무엇이 다른지 봅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-77-1"><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>crd<span class="w"> </span>-o<span class="w"> </span>name<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>monitoring.coreos.com
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-78-1"><a id="__codelineno-78-1" name="__codelineno-78-1" href="#__codelineno-78-1"></a>customresourcedefinition.apiextensions.k8s.io/podmonitors.monitoring.coreos.com
+</span><span id="__span-78-2"><a id="__codelineno-78-2" name="__codelineno-78-2" href="#__codelineno-78-2"></a>customresourcedefinition.apiextensions.k8s.io/servicemonitors.monitoring.coreos.com
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>명령</th>
+<th>한 줄의 모양</th>
+<th>"기본 출력 형식" 인가</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kubectl get crd</code></td>
+<td><code>이름   생성 시각</code> (머리줄 <code>NAME  CREATED AT</code>)</td>
+<td><strong>예</strong></td>
+</tr>
+<tr>
+<td><code>kubectl get crd -o name</code></td>
+<td><code>customresourcedefinition.apiextensions.k8s.io/이름</code></td>
+<td>아니오</td>
+</tr>
+<tr>
+<td><code>kubectl get crd -o yaml</code></td>
+<td>스키마 전체</td>
+<td>아니오</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">시험 팁 — 거른 결과를 그대로 저장하고, 다른 CRD 가 섞이지 않았는지 봅니다</p>
+<p><code>grep</code> 의 단어는 <strong>API 그룹</strong>(예: <code>monitoring.coreos.com</code>)으로 고르면 다른 프로젝트의 CRD 가 섞이지 않습니다.
+<code>grep</code> 을 쓰면 머리줄(<code>NAME ...</code>)은 빠집니다. 머리줄까지 요구하면 <code>kubectl get crd | head -1</code> 을 먼저 붙입니다.
+저장한 뒤 <code>wc -l</code> 로 줄 수가 <code>kubectl get crd -o name | grep -c &lt;그룹&gt;</code> 과 같은지 맞춰 봅니다.</p>
+</div>
+<p><strong>2) 필드 설명을 파일로</strong> — <code>kubectl explain &lt;리소스&gt;.&lt;필드&gt;.&lt;필드&gt;</code> 입니다. 리소스 이름은 단수·복수·짧은 이름 모두 됩니다.
+먼저 그 그룹에 어떤 리소스가 있는지 확인합니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-79-1"><a id="__codelineno-79-1" name="__codelineno-79-1" href="#__codelineno-79-1"></a>kubectl<span class="w"> </span>api-resources<span class="w"> </span>--api-group<span class="o">=</span>monitoring.coreos.com
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-80-1"><a id="__codelineno-80-1" name="__codelineno-80-1" href="#__codelineno-80-1"></a>NAME              SHORTNAMES   APIVERSION                 NAMESPACED   KIND
+</span><span id="__span-80-2"><a id="__codelineno-80-2" name="__codelineno-80-2" href="#__codelineno-80-2"></a>podmonitors       pmon         monitoring.coreos.com/v1   true         PodMonitor
+</span><span id="__span-80-3"><a id="__codelineno-80-3" name="__codelineno-80-3" href="#__codelineno-80-3"></a>servicemonitors   smon         monitoring.coreos.com/v1   true         ServiceMonitor
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-81-1"><a id="__codelineno-81-1" name="__codelineno-81-1" href="#__codelineno-81-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>servicemonitor.spec.endpoints<span class="w"> </span>&gt;<span class="w"> </span>~/guide-helm/servicemonitor-endpoints.txt
+</span><span id="__span-81-2"><a id="__codelineno-81-2" name="__codelineno-81-2" href="#__codelineno-81-2"></a>head<span class="w"> </span>-5<span class="w"> </span>~/guide-helm/servicemonitor-endpoints.txt
+</span><span id="__span-81-3"><a id="__codelineno-81-3" name="__codelineno-81-3" href="#__codelineno-81-3"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^  (interval|path|port)\b'</span><span class="w"> </span>~/guide-helm/servicemonitor-endpoints.txt
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-82-1"><a id="__codelineno-82-1" name="__codelineno-82-1" href="#__codelineno-82-1"></a>GROUP:      monitoring.coreos.com
+</span><span id="__span-82-2"><a id="__codelineno-82-2" name="__codelineno-82-2" href="#__codelineno-82-2"></a>KIND:       ServiceMonitor
+</span><span id="__span-82-3"><a id="__codelineno-82-3" name="__codelineno-82-3" href="#__codelineno-82-3"></a>VERSION:    v1
+</span><span id="__span-82-4"><a id="__codelineno-82-4" name="__codelineno-82-4" href="#__codelineno-82-4"></a>
+</span><span id="__span-82-5"><a id="__codelineno-82-5" name="__codelineno-82-5" href="#__codelineno-82-5"></a>FIELD: endpoints &lt;[]Object&gt;
+</span><span id="__span-82-6"><a id="__codelineno-82-6" name="__codelineno-82-6" href="#__codelineno-82-6"></a>  interval      &lt;string&gt;
+</span><span id="__span-82-7"><a id="__codelineno-82-7" name="__codelineno-82-7" href="#__codelineno-82-7"></a>  path          &lt;string&gt;
+</span><span id="__span-82-8"><a id="__codelineno-82-8" name="__codelineno-82-8" href="#__codelineno-82-8"></a>  port          &lt;string&gt;
+</span></code></pre></div>
+<p>관찰 포인트: 맨 위 <code>KIND</code> · <code>FIELD</code> 두 줄이 "무엇의 어느 필드인지" 를 말해 줍니다. 그 아래 <code>DESCRIPTION</code> 과 <code>FIELDS</code>(하위 필드 목록)가 이어집니다.
+CRD 의 설명은 <strong>CRD 안의 스키마(openAPIV3Schema)</strong> 에서 나옵니다. 그래서 컨트롤러가 없어도 CRD 만 있으면 <code>explain</code> 이 됩니다.</p>
+<div class="admonition warning">
+<p class="admonition-title">깨 보기 — 필드 이름 오타</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-83-1"><a id="__codelineno-83-1" name="__codelineno-83-1" href="#__codelineno-83-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>servicemonitor.spec.endpoint
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-84-1"><a id="__codelineno-84-1" name="__codelineno-84-1" href="#__codelineno-84-1"></a>error: field "endpoint" does not exist
+</span></code></pre></div>
+필드 이름은 스키마 그대로(대소문자·복수형 포함) 써야 합니다. 모르면 한 단계 위(<code>servicemonitor.spec</code>)를 먼저 explain 해서 이름을 확인합니다.
+하위 필드까지 한 번에 보고 싶으면 <code>--recursive</code> 를 붙입니다.</p>
+</div>
 <hr />
 <h2 id="8-helm-pull">8) 차트 속 들여다보기 — <code>helm pull</code> 과 의존성<a class="headerlink" href="#8-helm-pull" title="Permanent link">&para;</a></h2>
 <h3 id="_17">차트 구조<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-69-1"><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a>helm<span class="w"> </span>pull<span class="w"> </span>podinfo/podinfo<span class="w"> </span>--version<span class="w"> </span><span class="m">6</span>.14.0<span class="w"> </span>--untar<span class="w"> </span>-d<span class="w"> </span>~/guide-helm/charts
-</span><span id="__span-69-2"><a id="__codelineno-69-2" name="__codelineno-69-2" href="#__codelineno-69-2"></a><span class="nb">cd</span><span class="w"> </span>~/guide-helm/charts/podinfo<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ls
-</span><span id="__span-69-3"><a id="__codelineno-69-3" name="__codelineno-69-3" href="#__codelineno-69-3"></a>cat<span class="w"> </span>Chart.yaml
-</span><span id="__span-69-4"><a id="__codelineno-69-4" name="__codelineno-69-4" href="#__codelineno-69-4"></a>ls<span class="w"> </span>templates
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-85-1"><a id="__codelineno-85-1" name="__codelineno-85-1" href="#__codelineno-85-1"></a>helm<span class="w"> </span>pull<span class="w"> </span>podinfo/podinfo<span class="w"> </span>--version<span class="w"> </span><span class="m">6</span>.14.0<span class="w"> </span>--untar<span class="w"> </span>-d<span class="w"> </span>~/guide-helm/charts
+</span><span id="__span-85-2"><a id="__codelineno-85-2" name="__codelineno-85-2" href="#__codelineno-85-2"></a><span class="nb">cd</span><span class="w"> </span>~/guide-helm/charts/podinfo<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ls
+</span><span id="__span-85-3"><a id="__codelineno-85-3" name="__codelineno-85-3" href="#__codelineno-85-3"></a>cat<span class="w"> </span>Chart.yaml
+</span><span id="__span-85-4"><a id="__codelineno-85-4" name="__codelineno-85-4" href="#__codelineno-85-4"></a>ls<span class="w"> </span>templates
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a>Chart.yaml  LICENSE  README.md  templates  values-prod.yaml  values.yaml
-</span><span id="__span-70-2"><a id="__codelineno-70-2" name="__codelineno-70-2" href="#__codelineno-70-2"></a>
-</span><span id="__span-70-3"><a id="__codelineno-70-3" name="__codelineno-70-3" href="#__codelineno-70-3"></a>apiVersion: v1
-</span><span id="__span-70-4"><a id="__codelineno-70-4" name="__codelineno-70-4" href="#__codelineno-70-4"></a>appVersion: 6.14.0          ← 앱 버전
-</span><span id="__span-70-5"><a id="__codelineno-70-5" name="__codelineno-70-5" href="#__codelineno-70-5"></a>description: Podinfo Helm chart for Kubernetes
-</span><span id="__span-70-6"><a id="__codelineno-70-6" name="__codelineno-70-6" href="#__codelineno-70-6"></a>kubeVersion: '&gt;=1.23.0-0'
-</span><span id="__span-70-7"><a id="__codelineno-70-7" name="__codelineno-70-7" href="#__codelineno-70-7"></a>name: podinfo
-</span><span id="__span-70-8"><a id="__codelineno-70-8" name="__codelineno-70-8" href="#__codelineno-70-8"></a>version: 6.14.0             ← 차트 버전 (--version 이 가리키는 값)
-</span><span id="__span-70-9"><a id="__codelineno-70-9" name="__codelineno-70-9" href="#__codelineno-70-9"></a>...
-</span><span id="__span-70-10"><a id="__codelineno-70-10" name="__codelineno-70-10" href="#__codelineno-70-10"></a>
-</span><span id="__span-70-11"><a id="__codelineno-70-11" name="__codelineno-70-11" href="#__codelineno-70-11"></a>NOTES.txt  _helpers.tpl  certificate.yaml  deployment.yaml  hpa.yaml  ingress.yaml  service.yaml  ...
+<div class="language-text highlight"><pre><span></span><code><span id="__span-86-1"><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a>Chart.yaml  LICENSE  README.md  templates  values-prod.yaml  values.yaml
+</span><span id="__span-86-2"><a id="__codelineno-86-2" name="__codelineno-86-2" href="#__codelineno-86-2"></a>
+</span><span id="__span-86-3"><a id="__codelineno-86-3" name="__codelineno-86-3" href="#__codelineno-86-3"></a>apiVersion: v1
+</span><span id="__span-86-4"><a id="__codelineno-86-4" name="__codelineno-86-4" href="#__codelineno-86-4"></a>appVersion: 6.14.0          ← 앱 버전
+</span><span id="__span-86-5"><a id="__codelineno-86-5" name="__codelineno-86-5" href="#__codelineno-86-5"></a>description: Podinfo Helm chart for Kubernetes
+</span><span id="__span-86-6"><a id="__codelineno-86-6" name="__codelineno-86-6" href="#__codelineno-86-6"></a>kubeVersion: '&gt;=1.23.0-0'
+</span><span id="__span-86-7"><a id="__codelineno-86-7" name="__codelineno-86-7" href="#__codelineno-86-7"></a>name: podinfo
+</span><span id="__span-86-8"><a id="__codelineno-86-8" name="__codelineno-86-8" href="#__codelineno-86-8"></a>version: 6.14.0             ← 차트 버전 (--version 이 가리키는 값)
+</span><span id="__span-86-9"><a id="__codelineno-86-9" name="__codelineno-86-9" href="#__codelineno-86-9"></a>...
+</span><span id="__span-86-10"><a id="__codelineno-86-10" name="__codelineno-86-10" href="#__codelineno-86-10"></a>
+</span><span id="__span-86-11"><a id="__codelineno-86-11" name="__codelineno-86-11" href="#__codelineno-86-11"></a>NOTES.txt  _helpers.tpl  certificate.yaml  deployment.yaml  hpa.yaml  ingress.yaml  service.yaml  ...
 </span></code></pre></div>
 <p>템플릿 한 조각을 보면 값이 어디로 들어가는지 보입니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a>grep<span class="w"> </span>-n<span class="w"> </span>-E<span class="w"> </span><span class="s1">'replicas|UI_MESSAGE'</span><span class="w"> </span>-A1<span class="w"> </span>templates/deployment.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-8
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-87-1"><a id="__codelineno-87-1" name="__codelineno-87-1" href="#__codelineno-87-1"></a>grep<span class="w"> </span>-n<span class="w"> </span>-E<span class="w"> </span><span class="s1">'replicas|UI_MESSAGE'</span><span class="w"> </span>-A1<span class="w"> </span>templates/deployment.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-8
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a>10:  replicas: {{ .Values.replicaCount }}          ← values.yaml 의 replicaCount
-</span><span id="__span-72-2"><a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a>...
-</span><span id="__span-72-3"><a id="__codelineno-72-3" name="__codelineno-72-3" href="#__codelineno-72-3"></a>          - name: PODINFO_UI_MESSAGE
-</span><span id="__span-72-4"><a id="__codelineno-72-4" name="__codelineno-72-4" href="#__codelineno-72-4"></a>            value: {{ quote .Values.ui.message }}  ← ui.message
+<div class="language-text highlight"><pre><span></span><code><span id="__span-88-1"><a id="__codelineno-88-1" name="__codelineno-88-1" href="#__codelineno-88-1"></a>10:  replicas: {{ .Values.replicaCount }}          ← values.yaml 의 replicaCount
+</span><span id="__span-88-2"><a id="__codelineno-88-2" name="__codelineno-88-2" href="#__codelineno-88-2"></a>...
+</span><span id="__span-88-3"><a id="__codelineno-88-3" name="__codelineno-88-3" href="#__codelineno-88-3"></a>          - name: PODINFO_UI_MESSAGE
+</span><span id="__span-88-4"><a id="__codelineno-88-4" name="__codelineno-88-4" href="#__codelineno-88-4"></a>            value: {{ quote .Values.ui.message }}  ← ui.message
 </span></code></pre></div>
 <table>
 <thead>
@@ -3282,68 +3467,68 @@ CRD 가 어디 있는지는 <code>helm pull --untar</code> 후 <code>ls crds/ te
 </tbody>
 </table>
 <p>내려받은 차트 디렉터리는 그대로 설치 · 렌더링할 수 있습니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a>helm<span class="w"> </span>template<span class="w"> </span>local-copy<span class="w"> </span>~/guide-helm/charts/podinfo<span class="w"> </span>--skip-tests<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'^kind:'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-89-1"><a id="__codelineno-89-1" name="__codelineno-89-1" href="#__codelineno-89-1"></a>helm<span class="w"> </span>template<span class="w"> </span>local-copy<span class="w"> </span>~/guide-helm/charts/podinfo<span class="w"> </span>--skip-tests<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'^kind:'</span>
 </span></code></pre></div>
 <h3 id="_18">의존성 — 다른 차트를 부품으로 쓰기<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <p>podinfo 를 부품으로 쓰는 작은 상위 차트 <code>shop-stack</code> 을 직접 만듭니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-74-1"><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/guide-helm/shop-stack<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/guide-helm/shop-stack
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-90-1"><a id="__codelineno-90-1" name="__codelineno-90-1" href="#__codelineno-90-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/guide-helm/shop-stack<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/guide-helm/shop-stack
 </span></code></pre></div>
 <p><code>Chart.yaml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-75-1"><a id="__codelineno-75-1" name="__codelineno-75-1" href="#__codelineno-75-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w">                 </span><span class="c1"># ← dependencies 는 apiVersion v2 차트에서 Chart.yaml 에 적는다</span>
-</span><span id="__span-75-2"><a id="__codelineno-75-2" name="__codelineno-75-2" href="#__codelineno-75-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shop-stack</span>
-</span><span id="__span-75-3"><a id="__codelineno-75-3" name="__codelineno-75-3" href="#__codelineno-75-3"></a><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1.0</span>
-</span><span id="__span-75-4"><a id="__codelineno-75-4" name="__codelineno-75-4" href="#__codelineno-75-4"></a><span class="nt">dependencies</span><span class="p">:</span>
-</span><span id="__span-75-5"><a id="__codelineno-75-5" name="__codelineno-75-5" href="#__codelineno-75-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">podinfo</span><span class="w">              </span><span class="c1"># ← 의존 차트 이름</span>
-</span><span id="__span-75-6"><a id="__codelineno-75-6" name="__codelineno-75-6" href="#__codelineno-75-6"></a><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">"6.13.0"</span><span class="w">          </span><span class="c1"># ← 의존 차트 버전 (범위도 가능: "~6.13.0", "&gt;=6.13.0 &lt;7")</span>
-</span><span id="__span-75-7"><a id="__codelineno-75-7" name="__codelineno-75-7" href="#__codelineno-75-7"></a><span class="w">    </span><span class="nt">repository</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://stefanprodan.github.io/podinfo</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-91-1"><a id="__codelineno-91-1" name="__codelineno-91-1" href="#__codelineno-91-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w">                 </span><span class="c1"># ← dependencies 는 apiVersion v2 차트에서 Chart.yaml 에 적는다</span>
+</span><span id="__span-91-2"><a id="__codelineno-91-2" name="__codelineno-91-2" href="#__codelineno-91-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shop-stack</span>
+</span><span id="__span-91-3"><a id="__codelineno-91-3" name="__codelineno-91-3" href="#__codelineno-91-3"></a><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1.0</span>
+</span><span id="__span-91-4"><a id="__codelineno-91-4" name="__codelineno-91-4" href="#__codelineno-91-4"></a><span class="nt">dependencies</span><span class="p">:</span>
+</span><span id="__span-91-5"><a id="__codelineno-91-5" name="__codelineno-91-5" href="#__codelineno-91-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">podinfo</span><span class="w">              </span><span class="c1"># ← 의존 차트 이름</span>
+</span><span id="__span-91-6"><a id="__codelineno-91-6" name="__codelineno-91-6" href="#__codelineno-91-6"></a><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">"6.13.0"</span><span class="w">          </span><span class="c1"># ← 의존 차트 버전 (범위도 가능: "~6.13.0", "&gt;=6.13.0 &lt;7")</span>
+</span><span id="__span-91-7"><a id="__codelineno-91-7" name="__codelineno-91-7" href="#__codelineno-91-7"></a><span class="w">    </span><span class="nt">repository</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://stefanprodan.github.io/podinfo</span>
 </span></code></pre></div>
 <p><code>values.yaml</code> — 하위 차트의 값은 <strong>차트 이름 아래에</strong> 적습니다.</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-76-1"><a id="__codelineno-76-1" name="__codelineno-76-1" href="#__codelineno-76-1"></a><span class="nt">podinfo</span><span class="p">:</span><span class="w">                       </span><span class="c1"># ← 의존 차트 이름이 최상위 키</span>
-</span><span id="__span-76-2"><a id="__codelineno-76-2" name="__codelineno-76-2" href="#__codelineno-76-2"></a><span class="w">  </span><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-</span><span id="__span-76-3"><a id="__codelineno-76-3" name="__codelineno-76-3" href="#__codelineno-76-3"></a><span class="w">  </span><span class="nt">ui</span><span class="p">:</span>
-</span><span id="__span-76-4"><a id="__codelineno-76-4" name="__codelineno-76-4" href="#__codelineno-76-4"></a><span class="w">    </span><span class="nt">message</span><span class="p">:</span><span class="w"> </span><span class="s">"from</span><span class="nv"> </span><span class="s">shop-stack"</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-92-1"><a id="__codelineno-92-1" name="__codelineno-92-1" href="#__codelineno-92-1"></a><span class="nt">podinfo</span><span class="p">:</span><span class="w">                       </span><span class="c1"># ← 의존 차트 이름이 최상위 키</span>
+</span><span id="__span-92-2"><a id="__codelineno-92-2" name="__codelineno-92-2" href="#__codelineno-92-2"></a><span class="w">  </span><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-92-3"><a id="__codelineno-92-3" name="__codelineno-92-3" href="#__codelineno-92-3"></a><span class="w">  </span><span class="nt">ui</span><span class="p">:</span>
+</span><span id="__span-92-4"><a id="__codelineno-92-4" name="__codelineno-92-4" href="#__codelineno-92-4"></a><span class="w">    </span><span class="nt">message</span><span class="p">:</span><span class="w"> </span><span class="s">"from</span><span class="nv"> </span><span class="s">shop-stack"</span>
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-77-1"><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a>helm<span class="w"> </span>dependency<span class="w"> </span>list<span class="w"> </span>.
-</span><span id="__span-77-2"><a id="__codelineno-77-2" name="__codelineno-77-2" href="#__codelineno-77-2"></a>helm<span class="w"> </span>dependency<span class="w"> </span>update<span class="w"> </span>.
-</span><span id="__span-77-3"><a id="__codelineno-77-3" name="__codelineno-77-3" href="#__codelineno-77-3"></a>ls<span class="w"> </span>charts/<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>cat<span class="w"> </span>Chart.lock
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-93-1"><a id="__codelineno-93-1" name="__codelineno-93-1" href="#__codelineno-93-1"></a>helm<span class="w"> </span>dependency<span class="w"> </span>list<span class="w"> </span>.
+</span><span id="__span-93-2"><a id="__codelineno-93-2" name="__codelineno-93-2" href="#__codelineno-93-2"></a>helm<span class="w"> </span>dependency<span class="w"> </span>update<span class="w"> </span>.
+</span><span id="__span-93-3"><a id="__codelineno-93-3" name="__codelineno-93-3" href="#__codelineno-93-3"></a>ls<span class="w"> </span>charts/<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>cat<span class="w"> </span>Chart.lock
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-78-1"><a id="__codelineno-78-1" name="__codelineno-78-1" href="#__codelineno-78-1"></a>NAME      VERSION   REPOSITORY                               STATUS
-</span><span id="__span-78-2"><a id="__codelineno-78-2" name="__codelineno-78-2" href="#__codelineno-78-2"></a>podinfo   6.13.0    https://stefanprodan.github.io/podinfo   missing
-</span><span id="__span-78-3"><a id="__codelineno-78-3" name="__codelineno-78-3" href="#__codelineno-78-3"></a>
-</span><span id="__span-78-4"><a id="__codelineno-78-4" name="__codelineno-78-4" href="#__codelineno-78-4"></a>Saving 1 charts
-</span><span id="__span-78-5"><a id="__codelineno-78-5" name="__codelineno-78-5" href="#__codelineno-78-5"></a>Downloading podinfo from repo https://stefanprodan.github.io/podinfo
-</span><span id="__span-78-6"><a id="__codelineno-78-6" name="__codelineno-78-6" href="#__codelineno-78-6"></a>Deleting outdated charts
-</span><span id="__span-78-7"><a id="__codelineno-78-7" name="__codelineno-78-7" href="#__codelineno-78-7"></a>
-</span><span id="__span-78-8"><a id="__codelineno-78-8" name="__codelineno-78-8" href="#__codelineno-78-8"></a>podinfo-6.13.0.tgz
-</span><span id="__span-78-9"><a id="__codelineno-78-9" name="__codelineno-78-9" href="#__codelineno-78-9"></a>dependencies:
-</span><span id="__span-78-10"><a id="__codelineno-78-10" name="__codelineno-78-10" href="#__codelineno-78-10"></a>- name: podinfo
-</span><span id="__span-78-11"><a id="__codelineno-78-11" name="__codelineno-78-11" href="#__codelineno-78-11"></a>  repository: https://stefanprodan.github.io/podinfo
-</span><span id="__span-78-12"><a id="__codelineno-78-12" name="__codelineno-78-12" href="#__codelineno-78-12"></a>  version: 6.13.0
-</span><span id="__span-78-13"><a id="__codelineno-78-13" name="__codelineno-78-13" href="#__codelineno-78-13"></a>digest: sha256:14b49cf1...
-</span><span id="__span-78-14"><a id="__codelineno-78-14" name="__codelineno-78-14" href="#__codelineno-78-14"></a>generated: "2026-09-29T07:30:12Z"
+<div class="language-text highlight"><pre><span></span><code><span id="__span-94-1"><a id="__codelineno-94-1" name="__codelineno-94-1" href="#__codelineno-94-1"></a>NAME      VERSION   REPOSITORY                               STATUS
+</span><span id="__span-94-2"><a id="__codelineno-94-2" name="__codelineno-94-2" href="#__codelineno-94-2"></a>podinfo   6.13.0    https://stefanprodan.github.io/podinfo   missing
+</span><span id="__span-94-3"><a id="__codelineno-94-3" name="__codelineno-94-3" href="#__codelineno-94-3"></a>
+</span><span id="__span-94-4"><a id="__codelineno-94-4" name="__codelineno-94-4" href="#__codelineno-94-4"></a>Saving 1 charts
+</span><span id="__span-94-5"><a id="__codelineno-94-5" name="__codelineno-94-5" href="#__codelineno-94-5"></a>Downloading podinfo from repo https://stefanprodan.github.io/podinfo
+</span><span id="__span-94-6"><a id="__codelineno-94-6" name="__codelineno-94-6" href="#__codelineno-94-6"></a>Deleting outdated charts
+</span><span id="__span-94-7"><a id="__codelineno-94-7" name="__codelineno-94-7" href="#__codelineno-94-7"></a>
+</span><span id="__span-94-8"><a id="__codelineno-94-8" name="__codelineno-94-8" href="#__codelineno-94-8"></a>podinfo-6.13.0.tgz
+</span><span id="__span-94-9"><a id="__codelineno-94-9" name="__codelineno-94-9" href="#__codelineno-94-9"></a>dependencies:
+</span><span id="__span-94-10"><a id="__codelineno-94-10" name="__codelineno-94-10" href="#__codelineno-94-10"></a>- name: podinfo
+</span><span id="__span-94-11"><a id="__codelineno-94-11" name="__codelineno-94-11" href="#__codelineno-94-11"></a>  repository: https://stefanprodan.github.io/podinfo
+</span><span id="__span-94-12"><a id="__codelineno-94-12" name="__codelineno-94-12" href="#__codelineno-94-12"></a>  version: 6.13.0
+</span><span id="__span-94-13"><a id="__codelineno-94-13" name="__codelineno-94-13" href="#__codelineno-94-13"></a>digest: sha256:14b49cf1...
+</span><span id="__span-94-14"><a id="__codelineno-94-14" name="__codelineno-94-14" href="#__codelineno-94-14"></a>generated: "2026-09-29T07:30:12Z"
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-79-1"><a id="__codelineno-79-1" name="__codelineno-79-1" href="#__codelineno-79-1"></a>helm<span class="w"> </span>template<span class="w"> </span>shop<span class="w"> </span>.<span class="w"> </span>--skip-tests<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^kind:|replicas:|image:|from shop'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-95-1"><a id="__codelineno-95-1" name="__codelineno-95-1" href="#__codelineno-95-1"></a>helm<span class="w"> </span>template<span class="w"> </span>shop<span class="w"> </span>.<span class="w"> </span>--skip-tests<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^kind:|replicas:|image:|from shop'</span>
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-80-1"><a id="__codelineno-80-1" name="__codelineno-80-1" href="#__codelineno-80-1"></a>kind: Service
-</span><span id="__span-80-2"><a id="__codelineno-80-2" name="__codelineno-80-2" href="#__codelineno-80-2"></a>kind: Deployment
-</span><span id="__span-80-3"><a id="__codelineno-80-3" name="__codelineno-80-3" href="#__codelineno-80-3"></a>  replicas: 2
-</span><span id="__span-80-4"><a id="__codelineno-80-4" name="__codelineno-80-4" href="#__codelineno-80-4"></a>          image: "ghcr.io/stefanprodan/podinfo:6.13.0"
-</span><span id="__span-80-5"><a id="__codelineno-80-5" name="__codelineno-80-5" href="#__codelineno-80-5"></a>            value: "from shop-stack"
+<div class="language-text highlight"><pre><span></span><code><span id="__span-96-1"><a id="__codelineno-96-1" name="__codelineno-96-1" href="#__codelineno-96-1"></a>kind: Service
+</span><span id="__span-96-2"><a id="__codelineno-96-2" name="__codelineno-96-2" href="#__codelineno-96-2"></a>kind: Deployment
+</span><span id="__span-96-3"><a id="__codelineno-96-3" name="__codelineno-96-3" href="#__codelineno-96-3"></a>  replicas: 2
+</span><span id="__span-96-4"><a id="__codelineno-96-4" name="__codelineno-96-4" href="#__codelineno-96-4"></a>          image: "ghcr.io/stefanprodan/podinfo:6.13.0"
+</span><span id="__span-96-5"><a id="__codelineno-96-5" name="__codelineno-96-5" href="#__codelineno-96-5"></a>            value: "from shop-stack"
 </span></code></pre></div>
 <h3 id="update">깨 보기 — 의존성 버전만 바꾸고 update 를 안 하면<a class="headerlink" href="#update" title="Permanent link">&para;</a></h3>
 <p><code>Chart.yaml</code> 의 <code>version: "6.13.0"</code> 을 <code>"6.14.0"</code> 으로 바꿉니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-81-1"><a id="__codelineno-81-1" name="__codelineno-81-1" href="#__codelineno-81-1"></a>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/version: "6.13.0"/version: "6.14.0"/'</span><span class="w"> </span>Chart.yaml
-</span><span id="__span-81-2"><a id="__codelineno-81-2" name="__codelineno-81-2" href="#__codelineno-81-2"></a>helm<span class="w"> </span>dependency<span class="w"> </span>list<span class="w"> </span>.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-97-1"><a id="__codelineno-97-1" name="__codelineno-97-1" href="#__codelineno-97-1"></a>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/version: "6.13.0"/version: "6.14.0"/'</span><span class="w"> </span>Chart.yaml
+</span><span id="__span-97-2"><a id="__codelineno-97-2" name="__codelineno-97-2" href="#__codelineno-97-2"></a>helm<span class="w"> </span>dependency<span class="w"> </span>list<span class="w"> </span>.
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-82-1"><a id="__codelineno-82-1" name="__codelineno-82-1" href="#__codelineno-82-1"></a>NAME      VERSION   REPOSITORY                               STATUS
-</span><span id="__span-82-2"><a id="__codelineno-82-2" name="__codelineno-82-2" href="#__codelineno-82-2"></a>podinfo   6.14.0    https://stefanprodan.github.io/podinfo   wrong version
+<div class="language-text highlight"><pre><span></span><code><span id="__span-98-1"><a id="__codelineno-98-1" name="__codelineno-98-1" href="#__codelineno-98-1"></a>NAME      VERSION   REPOSITORY                               STATUS
+</span><span id="__span-98-2"><a id="__codelineno-98-2" name="__codelineno-98-2" href="#__codelineno-98-2"></a>podinfo   6.14.0    https://stefanprodan.github.io/podinfo   wrong version
 </span></code></pre></div>
 <p><code>charts/</code> 에는 아직 6.13.0 이 들어 있습니다. <strong><code>helm dependency update</code> 를 해야</strong> 새 버전을 받아 옵니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-83-1"><a id="__codelineno-83-1" name="__codelineno-83-1" href="#__codelineno-83-1"></a>helm<span class="w"> </span>dependency<span class="w"> </span>update<span class="w"> </span>.<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ls<span class="w"> </span>charts/
-</span><span id="__span-83-2"><a id="__codelineno-83-2" name="__codelineno-83-2" href="#__codelineno-83-2"></a>helm<span class="w"> </span>template<span class="w"> </span>shop<span class="w"> </span>.<span class="w"> </span>--skip-tests<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'image: "ghcr'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-99-1"><a id="__codelineno-99-1" name="__codelineno-99-1" href="#__codelineno-99-1"></a>helm<span class="w"> </span>dependency<span class="w"> </span>update<span class="w"> </span>.<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ls<span class="w"> </span>charts/
+</span><span id="__span-99-2"><a id="__codelineno-99-2" name="__codelineno-99-2" href="#__codelineno-99-2"></a>helm<span class="w"> </span>template<span class="w"> </span>shop<span class="w"> </span>.<span class="w"> </span>--skip-tests<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'image: "ghcr'</span>
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-84-1"><a id="__codelineno-84-1" name="__codelineno-84-1" href="#__codelineno-84-1"></a>podinfo-6.14.0.tgz
-</span><span id="__span-84-2"><a id="__codelineno-84-2" name="__codelineno-84-2" href="#__codelineno-84-2"></a>          image: "ghcr.io/stefanprodan/podinfo:6.14.0"
+<div class="language-text highlight"><pre><span></span><code><span id="__span-100-1"><a id="__codelineno-100-1" name="__codelineno-100-1" href="#__codelineno-100-1"></a>podinfo-6.14.0.tgz
+</span><span id="__span-100-2"><a id="__codelineno-100-2" name="__codelineno-100-2" href="#__codelineno-100-2"></a>          image: "ghcr.io/stefanprodan/podinfo:6.14.0"
 </span></code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">시험 팁</p>
@@ -3355,243 +3540,243 @@ CRD 가 어디 있는지는 <code>helm pull --untar</code> 후 <code>ls crds/ te
 <h3 id="_19">왜<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <p>Helm 은 <strong>템플릿에 값을 채우는</strong> 방식이고, Kustomize 는 <strong>완성된 YAML 위에 덮어쓰는</strong> 방식입니다.
 kubectl 에 들어 있어서 따로 설치할 것이 없습니다(<code>kubectl kustomize</code>, <code>kubectl apply -k</code>).</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-85-1"><a id="__codelineno-85-1" name="__codelineno-85-1" href="#__codelineno-85-1"></a>~/guide-helm/kustomize/
-</span><span id="__span-85-2"><a id="__codelineno-85-2" name="__codelineno-85-2" href="#__codelineno-85-2"></a>├── base/
-</span><span id="__span-85-3"><a id="__codelineno-85-3" name="__codelineno-85-3" href="#__codelineno-85-3"></a>│   ├── kustomization.yaml
-</span><span id="__span-85-4"><a id="__codelineno-85-4" name="__codelineno-85-4" href="#__codelineno-85-4"></a>│   ├── deployment.yaml
-</span><span id="__span-85-5"><a id="__codelineno-85-5" name="__codelineno-85-5" href="#__codelineno-85-5"></a>│   └── service.yaml
-</span><span id="__span-85-6"><a id="__codelineno-85-6" name="__codelineno-85-6" href="#__codelineno-85-6"></a>└── overlays/
-</span><span id="__span-85-7"><a id="__codelineno-85-7" name="__codelineno-85-7" href="#__codelineno-85-7"></a>    ├── staging/
-</span><span id="__span-85-8"><a id="__codelineno-85-8" name="__codelineno-85-8" href="#__codelineno-85-8"></a>    │   └── kustomization.yaml
-</span><span id="__span-85-9"><a id="__codelineno-85-9" name="__codelineno-85-9" href="#__codelineno-85-9"></a>    └── prod/
-</span><span id="__span-85-10"><a id="__codelineno-85-10" name="__codelineno-85-10" href="#__codelineno-85-10"></a>        ├── kustomization.yaml
-</span><span id="__span-85-11"><a id="__codelineno-85-11" name="__codelineno-85-11" href="#__codelineno-85-11"></a>        └── replicas-and-resources.yaml
+<div class="language-text highlight"><pre><span></span><code><span id="__span-101-1"><a id="__codelineno-101-1" name="__codelineno-101-1" href="#__codelineno-101-1"></a>~/guide-helm/kustomize/
+</span><span id="__span-101-2"><a id="__codelineno-101-2" name="__codelineno-101-2" href="#__codelineno-101-2"></a>├── base/
+</span><span id="__span-101-3"><a id="__codelineno-101-3" name="__codelineno-101-3" href="#__codelineno-101-3"></a>│   ├── kustomization.yaml
+</span><span id="__span-101-4"><a id="__codelineno-101-4" name="__codelineno-101-4" href="#__codelineno-101-4"></a>│   ├── deployment.yaml
+</span><span id="__span-101-5"><a id="__codelineno-101-5" name="__codelineno-101-5" href="#__codelineno-101-5"></a>│   └── service.yaml
+</span><span id="__span-101-6"><a id="__codelineno-101-6" name="__codelineno-101-6" href="#__codelineno-101-6"></a>└── overlays/
+</span><span id="__span-101-7"><a id="__codelineno-101-7" name="__codelineno-101-7" href="#__codelineno-101-7"></a>    ├── staging/
+</span><span id="__span-101-8"><a id="__codelineno-101-8" name="__codelineno-101-8" href="#__codelineno-101-8"></a>    │   └── kustomization.yaml
+</span><span id="__span-101-9"><a id="__codelineno-101-9" name="__codelineno-101-9" href="#__codelineno-101-9"></a>    └── prod/
+</span><span id="__span-101-10"><a id="__codelineno-101-10" name="__codelineno-101-10" href="#__codelineno-101-10"></a>        ├── kustomization.yaml
+</span><span id="__span-101-11"><a id="__codelineno-101-11" name="__codelineno-101-11" href="#__codelineno-101-11"></a>        └── replicas-and-resources.yaml
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-86-1"><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/guide-helm/kustomize/<span class="o">{</span>base,overlays/staging,overlays/prod<span class="o">}</span>
-</span><span id="__span-86-2"><a id="__codelineno-86-2" name="__codelineno-86-2" href="#__codelineno-86-2"></a><span class="nb">cd</span><span class="w"> </span>~/guide-helm/kustomize
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-102-1"><a id="__codelineno-102-1" name="__codelineno-102-1" href="#__codelineno-102-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/guide-helm/kustomize/<span class="o">{</span>base,overlays/staging,overlays/prod<span class="o">}</span>
+</span><span id="__span-102-2"><a id="__codelineno-102-2" name="__codelineno-102-2" href="#__codelineno-102-2"></a><span class="nb">cd</span><span class="w"> </span>~/guide-helm/kustomize
 </span></code></pre></div>
 <h3 id="base">base<a class="headerlink" href="#base" title="Permanent link">&para;</a></h3>
 <p><code>base/deployment.yaml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-87-1"><a id="__codelineno-87-1" name="__codelineno-87-1" href="#__codelineno-87-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
-</span><span id="__span-87-2"><a id="__codelineno-87-2" name="__codelineno-87-2" href="#__codelineno-87-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
-</span><span id="__span-87-3"><a id="__codelineno-87-3" name="__codelineno-87-3" href="#__codelineno-87-3"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-87-4"><a id="__codelineno-87-4" name="__codelineno-87-4" href="#__codelineno-87-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
-</span><span id="__span-87-5"><a id="__codelineno-87-5" name="__codelineno-87-5" href="#__codelineno-87-5"></a><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-87-6"><a id="__codelineno-87-6" name="__codelineno-87-6" href="#__codelineno-87-6"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-</span><span id="__span-87-7"><a id="__codelineno-87-7" name="__codelineno-87-7" href="#__codelineno-87-7"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
-</span><span id="__span-87-8"><a id="__codelineno-87-8" name="__codelineno-87-8" href="#__codelineno-87-8"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
-</span><span id="__span-87-9"><a id="__codelineno-87-9" name="__codelineno-87-9" href="#__codelineno-87-9"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
-</span><span id="__span-87-10"><a id="__codelineno-87-10" name="__codelineno-87-10" href="#__codelineno-87-10"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
-</span><span id="__span-87-11"><a id="__codelineno-87-11" name="__codelineno-87-11" href="#__codelineno-87-11"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-87-12"><a id="__codelineno-87-12" name="__codelineno-87-12" href="#__codelineno-87-12"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-87-13"><a id="__codelineno-87-13" name="__codelineno-87-13" href="#__codelineno-87-13"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
-</span><span id="__span-87-14"><a id="__codelineno-87-14" name="__codelineno-87-14" href="#__codelineno-87-14"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-87-15"><a id="__codelineno-87-15" name="__codelineno-87-15" href="#__codelineno-87-15"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
-</span><span id="__span-87-16"><a id="__codelineno-87-16" name="__codelineno-87-16" href="#__codelineno-87-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="w">                 </span><span class="c1"># ← patch 가 이 이름으로 컨테이너를 찾는다</span>
-</span><span id="__span-87-17"><a id="__codelineno-87-17" name="__codelineno-87-17" href="#__codelineno-87-17"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd:2.4.62</span>
-</span><span id="__span-87-18"><a id="__codelineno-87-18" name="__codelineno-87-18" href="#__codelineno-87-18"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
-</span><span id="__span-87-19"><a id="__codelineno-87-19" name="__codelineno-87-19" href="#__codelineno-87-19"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-103-1"><a id="__codelineno-103-1" name="__codelineno-103-1" href="#__codelineno-103-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-103-2"><a id="__codelineno-103-2" name="__codelineno-103-2" href="#__codelineno-103-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-103-3"><a id="__codelineno-103-3" name="__codelineno-103-3" href="#__codelineno-103-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-103-4"><a id="__codelineno-103-4" name="__codelineno-103-4" href="#__codelineno-103-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
+</span><span id="__span-103-5"><a id="__codelineno-103-5" name="__codelineno-103-5" href="#__codelineno-103-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-103-6"><a id="__codelineno-103-6" name="__codelineno-103-6" href="#__codelineno-103-6"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-103-7"><a id="__codelineno-103-7" name="__codelineno-103-7" href="#__codelineno-103-7"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-103-8"><a id="__codelineno-103-8" name="__codelineno-103-8" href="#__codelineno-103-8"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-103-9"><a id="__codelineno-103-9" name="__codelineno-103-9" href="#__codelineno-103-9"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
+</span><span id="__span-103-10"><a id="__codelineno-103-10" name="__codelineno-103-10" href="#__codelineno-103-10"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-103-11"><a id="__codelineno-103-11" name="__codelineno-103-11" href="#__codelineno-103-11"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-103-12"><a id="__codelineno-103-12" name="__codelineno-103-12" href="#__codelineno-103-12"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-103-13"><a id="__codelineno-103-13" name="__codelineno-103-13" href="#__codelineno-103-13"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
+</span><span id="__span-103-14"><a id="__codelineno-103-14" name="__codelineno-103-14" href="#__codelineno-103-14"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-103-15"><a id="__codelineno-103-15" name="__codelineno-103-15" href="#__codelineno-103-15"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-103-16"><a id="__codelineno-103-16" name="__codelineno-103-16" href="#__codelineno-103-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="w">                 </span><span class="c1"># ← patch 가 이 이름으로 컨테이너를 찾는다</span>
+</span><span id="__span-103-17"><a id="__codelineno-103-17" name="__codelineno-103-17" href="#__codelineno-103-17"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd:2.4.62</span>
+</span><span id="__span-103-18"><a id="__codelineno-103-18" name="__codelineno-103-18" href="#__codelineno-103-18"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-103-19"><a id="__codelineno-103-19" name="__codelineno-103-19" href="#__codelineno-103-19"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
 </span></code></pre></div>
 <p><code>base/service.yaml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-88-1"><a id="__codelineno-88-1" name="__codelineno-88-1" href="#__codelineno-88-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
-</span><span id="__span-88-2"><a id="__codelineno-88-2" name="__codelineno-88-2" href="#__codelineno-88-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
-</span><span id="__span-88-3"><a id="__codelineno-88-3" name="__codelineno-88-3" href="#__codelineno-88-3"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-88-4"><a id="__codelineno-88-4" name="__codelineno-88-4" href="#__codelineno-88-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
-</span><span id="__span-88-5"><a id="__codelineno-88-5" name="__codelineno-88-5" href="#__codelineno-88-5"></a><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-88-6"><a id="__codelineno-88-6" name="__codelineno-88-6" href="#__codelineno-88-6"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
-</span><span id="__span-88-7"><a id="__codelineno-88-7" name="__codelineno-88-7" href="#__codelineno-88-7"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
-</span><span id="__span-88-8"><a id="__codelineno-88-8" name="__codelineno-88-8" href="#__codelineno-88-8"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
-</span><span id="__span-88-9"><a id="__codelineno-88-9" name="__codelineno-88-9" href="#__codelineno-88-9"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
-</span><span id="__span-88-10"><a id="__codelineno-88-10" name="__codelineno-88-10" href="#__codelineno-88-10"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-104-1"><a id="__codelineno-104-1" name="__codelineno-104-1" href="#__codelineno-104-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-104-2"><a id="__codelineno-104-2" name="__codelineno-104-2" href="#__codelineno-104-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-104-3"><a id="__codelineno-104-3" name="__codelineno-104-3" href="#__codelineno-104-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-104-4"><a id="__codelineno-104-4" name="__codelineno-104-4" href="#__codelineno-104-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
+</span><span id="__span-104-5"><a id="__codelineno-104-5" name="__codelineno-104-5" href="#__codelineno-104-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-104-6"><a id="__codelineno-104-6" name="__codelineno-104-6" href="#__codelineno-104-6"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-104-7"><a id="__codelineno-104-7" name="__codelineno-104-7" href="#__codelineno-104-7"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
+</span><span id="__span-104-8"><a id="__codelineno-104-8" name="__codelineno-104-8" href="#__codelineno-104-8"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-104-9"><a id="__codelineno-104-9" name="__codelineno-104-9" href="#__codelineno-104-9"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-104-10"><a id="__codelineno-104-10" name="__codelineno-104-10" href="#__codelineno-104-10"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
 </span></code></pre></div>
 <p><code>base/kustomization.yaml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-89-1"><a id="__codelineno-89-1" name="__codelineno-89-1" href="#__codelineno-89-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kustomize.config.k8s.io/v1beta1</span>
-</span><span id="__span-89-2"><a id="__codelineno-89-2" name="__codelineno-89-2" href="#__codelineno-89-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kustomization</span>
-</span><span id="__span-89-3"><a id="__codelineno-89-3" name="__codelineno-89-3" href="#__codelineno-89-3"></a><span class="nt">resources</span><span class="p">:</span><span class="w">                        </span><span class="c1"># ← 이 디렉터리에서 묶을 파일</span>
-</span><span id="__span-89-4"><a id="__codelineno-89-4" name="__codelineno-89-4" href="#__codelineno-89-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployment.yaml</span>
-</span><span id="__span-89-5"><a id="__codelineno-89-5" name="__codelineno-89-5" href="#__codelineno-89-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service.yaml</span>
-</span><span id="__span-89-6"><a id="__codelineno-89-6" name="__codelineno-89-6" href="#__codelineno-89-6"></a><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-89-7"><a id="__codelineno-89-7" name="__codelineno-89-7" href="#__codelineno-89-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pairs</span><span class="p">:</span>
-</span><span id="__span-89-8"><a id="__codelineno-89-8" name="__codelineno-89-8" href="#__codelineno-89-8"></a><span class="w">      </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
-</span><span id="__span-89-9"><a id="__codelineno-89-9" name="__codelineno-89-9" href="#__codelineno-89-9"></a><span class="w">    </span><span class="nt">includeSelectors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">       </span><span class="c1"># ← metadata.labels 에만 붙이고 selector 는 건드리지 않는다</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-105-1"><a id="__codelineno-105-1" name="__codelineno-105-1" href="#__codelineno-105-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kustomize.config.k8s.io/v1beta1</span>
+</span><span id="__span-105-2"><a id="__codelineno-105-2" name="__codelineno-105-2" href="#__codelineno-105-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kustomization</span>
+</span><span id="__span-105-3"><a id="__codelineno-105-3" name="__codelineno-105-3" href="#__codelineno-105-3"></a><span class="nt">resources</span><span class="p">:</span><span class="w">                        </span><span class="c1"># ← 이 디렉터리에서 묶을 파일</span>
+</span><span id="__span-105-4"><a id="__codelineno-105-4" name="__codelineno-105-4" href="#__codelineno-105-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployment.yaml</span>
+</span><span id="__span-105-5"><a id="__codelineno-105-5" name="__codelineno-105-5" href="#__codelineno-105-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service.yaml</span>
+</span><span id="__span-105-6"><a id="__codelineno-105-6" name="__codelineno-105-6" href="#__codelineno-105-6"></a><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-105-7"><a id="__codelineno-105-7" name="__codelineno-105-7" href="#__codelineno-105-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pairs</span><span class="p">:</span>
+</span><span id="__span-105-8"><a id="__codelineno-105-8" name="__codelineno-105-8" href="#__codelineno-105-8"></a><span class="w">      </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
+</span><span id="__span-105-9"><a id="__codelineno-105-9" name="__codelineno-105-9" href="#__codelineno-105-9"></a><span class="w">    </span><span class="nt">includeSelectors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">       </span><span class="c1"># ← metadata.labels 에만 붙이고 selector 는 건드리지 않는다</span>
 </span></code></pre></div>
 <h3 id="staging-overlay-nameprefix">staging overlay — namePrefix 하나<a class="headerlink" href="#staging-overlay-nameprefix" title="Permanent link">&para;</a></h3>
 <p><code>overlays/staging/kustomization.yaml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-90-1"><a id="__codelineno-90-1" name="__codelineno-90-1" href="#__codelineno-90-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kustomize.config.k8s.io/v1beta1</span>
-</span><span id="__span-90-2"><a id="__codelineno-90-2" name="__codelineno-90-2" href="#__codelineno-90-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kustomization</span>
-</span><span id="__span-90-3"><a id="__codelineno-90-3" name="__codelineno-90-3" href="#__codelineno-90-3"></a><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span><span class="w">             </span><span class="c1"># ← 모든 리소스의 네임스페이스</span>
-</span><span id="__span-90-4"><a id="__codelineno-90-4" name="__codelineno-90-4" href="#__codelineno-90-4"></a><span class="nt">namePrefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stg-</span><span class="w">                  </span><span class="c1"># ← 모든 리소스 이름 앞에</span>
-</span><span id="__span-90-5"><a id="__codelineno-90-5" name="__codelineno-90-5" href="#__codelineno-90-5"></a><span class="nt">resources</span><span class="p">:</span>
-</span><span id="__span-90-6"><a id="__codelineno-90-6" name="__codelineno-90-6" href="#__codelineno-90-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">../../base</span><span class="w">                    </span><span class="c1"># ← 파일이 아니라 base 디렉터리를 가리킨다</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-106-1"><a id="__codelineno-106-1" name="__codelineno-106-1" href="#__codelineno-106-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kustomize.config.k8s.io/v1beta1</span>
+</span><span id="__span-106-2"><a id="__codelineno-106-2" name="__codelineno-106-2" href="#__codelineno-106-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kustomization</span>
+</span><span id="__span-106-3"><a id="__codelineno-106-3" name="__codelineno-106-3" href="#__codelineno-106-3"></a><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span><span class="w">             </span><span class="c1"># ← 모든 리소스의 네임스페이스</span>
+</span><span id="__span-106-4"><a id="__codelineno-106-4" name="__codelineno-106-4" href="#__codelineno-106-4"></a><span class="nt">namePrefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stg-</span><span class="w">                  </span><span class="c1"># ← 모든 리소스 이름 앞에</span>
+</span><span id="__span-106-5"><a id="__codelineno-106-5" name="__codelineno-106-5" href="#__codelineno-106-5"></a><span class="nt">resources</span><span class="p">:</span>
+</span><span id="__span-106-6"><a id="__codelineno-106-6" name="__codelineno-106-6" href="#__codelineno-106-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">../../base</span><span class="w">                    </span><span class="c1"># ← 파일이 아니라 base 디렉터리를 가리킨다</span>
 </span></code></pre></div>
 <p>적용하기 전에 <strong>결과부터</strong> 봅니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-91-1"><a id="__codelineno-91-1" name="__codelineno-91-1" href="#__codelineno-91-1"></a>kubectl<span class="w"> </span>kustomize<span class="w"> </span>overlays/staging
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-107-1"><a id="__codelineno-107-1" name="__codelineno-107-1" href="#__codelineno-107-1"></a>kubectl<span class="w"> </span>kustomize<span class="w"> </span>overlays/staging
 </span></code></pre></div>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-92-1"><a id="__codelineno-92-1" name="__codelineno-92-1" href="#__codelineno-92-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
-</span><span id="__span-92-2"><a id="__codelineno-92-2" name="__codelineno-92-2" href="#__codelineno-92-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
-</span><span id="__span-92-3"><a id="__codelineno-92-3" name="__codelineno-92-3" href="#__codelineno-92-3"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-92-4"><a id="__codelineno-92-4" name="__codelineno-92-4" href="#__codelineno-92-4"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-92-5"><a id="__codelineno-92-5" name="__codelineno-92-5" href="#__codelineno-92-5"></a><span class="w">    </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
-</span><span id="__span-92-6"><a id="__codelineno-92-6" name="__codelineno-92-6" href="#__codelineno-92-6"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stg-catalog</span><span class="w">               </span><span class="c1"># ← 접두사</span>
-</span><span id="__span-92-7"><a id="__codelineno-92-7" name="__codelineno-92-7" href="#__codelineno-92-7"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
-</span><span id="__span-92-8"><a id="__codelineno-92-8" name="__codelineno-92-8" href="#__codelineno-92-8"></a><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-92-9"><a id="__codelineno-92-9" name="__codelineno-92-9" href="#__codelineno-92-9"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
-</span><span id="__span-92-10"><a id="__codelineno-92-10" name="__codelineno-92-10" href="#__codelineno-92-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
-</span><span id="__span-92-11"><a id="__codelineno-92-11" name="__codelineno-92-11" href="#__codelineno-92-11"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
-</span><span id="__span-92-12"><a id="__codelineno-92-12" name="__codelineno-92-12" href="#__codelineno-92-12"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
-</span><span id="__span-92-13"><a id="__codelineno-92-13" name="__codelineno-92-13" href="#__codelineno-92-13"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
-</span><span id="__span-92-14"><a id="__codelineno-92-14" name="__codelineno-92-14" href="#__codelineno-92-14"></a><span class="nn">---</span>
-</span><span id="__span-92-15"><a id="__codelineno-92-15" name="__codelineno-92-15" href="#__codelineno-92-15"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
-</span><span id="__span-92-16"><a id="__codelineno-92-16" name="__codelineno-92-16" href="#__codelineno-92-16"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
-</span><span id="__span-92-17"><a id="__codelineno-92-17" name="__codelineno-92-17" href="#__codelineno-92-17"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-92-18"><a id="__codelineno-92-18" name="__codelineno-92-18" href="#__codelineno-92-18"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-92-19"><a id="__codelineno-92-19" name="__codelineno-92-19" href="#__codelineno-92-19"></a><span class="w">    </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
-</span><span id="__span-92-20"><a id="__codelineno-92-20" name="__codelineno-92-20" href="#__codelineno-92-20"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stg-catalog</span>
-</span><span id="__span-92-21"><a id="__codelineno-92-21" name="__codelineno-92-21" href="#__codelineno-92-21"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
-</span><span id="__span-92-22"><a id="__codelineno-92-22" name="__codelineno-92-22" href="#__codelineno-92-22"></a><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-92-23"><a id="__codelineno-92-23" name="__codelineno-92-23" href="#__codelineno-92-23"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-</span><span id="__span-92-24"><a id="__codelineno-92-24" name="__codelineno-92-24" href="#__codelineno-92-24"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-</span><span id="__span-92-25"><a id="__codelineno-92-25" name="__codelineno-92-25" href="#__codelineno-92-25"></a><span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">containers</span><span class="p p-Indicator">:</span>
-</span><span id="__span-92-26"><a id="__codelineno-92-26" name="__codelineno-92-26" href="#__codelineno-92-26"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd:2.4.62</span>
-</span><span id="__span-92-27"><a id="__codelineno-92-27" name="__codelineno-92-27" href="#__codelineno-92-27"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-108-1"><a id="__codelineno-108-1" name="__codelineno-108-1" href="#__codelineno-108-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-108-2"><a id="__codelineno-108-2" name="__codelineno-108-2" href="#__codelineno-108-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-108-3"><a id="__codelineno-108-3" name="__codelineno-108-3" href="#__codelineno-108-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-108-4"><a id="__codelineno-108-4" name="__codelineno-108-4" href="#__codelineno-108-4"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-108-5"><a id="__codelineno-108-5" name="__codelineno-108-5" href="#__codelineno-108-5"></a><span class="w">    </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
+</span><span id="__span-108-6"><a id="__codelineno-108-6" name="__codelineno-108-6" href="#__codelineno-108-6"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stg-catalog</span><span class="w">               </span><span class="c1"># ← 접두사</span>
+</span><span id="__span-108-7"><a id="__codelineno-108-7" name="__codelineno-108-7" href="#__codelineno-108-7"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
+</span><span id="__span-108-8"><a id="__codelineno-108-8" name="__codelineno-108-8" href="#__codelineno-108-8"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-108-9"><a id="__codelineno-108-9" name="__codelineno-108-9" href="#__codelineno-108-9"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-108-10"><a id="__codelineno-108-10" name="__codelineno-108-10" href="#__codelineno-108-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-108-11"><a id="__codelineno-108-11" name="__codelineno-108-11" href="#__codelineno-108-11"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-108-12"><a id="__codelineno-108-12" name="__codelineno-108-12" href="#__codelineno-108-12"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-108-13"><a id="__codelineno-108-13" name="__codelineno-108-13" href="#__codelineno-108-13"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
+</span><span id="__span-108-14"><a id="__codelineno-108-14" name="__codelineno-108-14" href="#__codelineno-108-14"></a><span class="nn">---</span>
+</span><span id="__span-108-15"><a id="__codelineno-108-15" name="__codelineno-108-15" href="#__codelineno-108-15"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-108-16"><a id="__codelineno-108-16" name="__codelineno-108-16" href="#__codelineno-108-16"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-108-17"><a id="__codelineno-108-17" name="__codelineno-108-17" href="#__codelineno-108-17"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-108-18"><a id="__codelineno-108-18" name="__codelineno-108-18" href="#__codelineno-108-18"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-108-19"><a id="__codelineno-108-19" name="__codelineno-108-19" href="#__codelineno-108-19"></a><span class="w">    </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
+</span><span id="__span-108-20"><a id="__codelineno-108-20" name="__codelineno-108-20" href="#__codelineno-108-20"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stg-catalog</span>
+</span><span id="__span-108-21"><a id="__codelineno-108-21" name="__codelineno-108-21" href="#__codelineno-108-21"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
+</span><span id="__span-108-22"><a id="__codelineno-108-22" name="__codelineno-108-22" href="#__codelineno-108-22"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-108-23"><a id="__codelineno-108-23" name="__codelineno-108-23" href="#__codelineno-108-23"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-108-24"><a id="__codelineno-108-24" name="__codelineno-108-24" href="#__codelineno-108-24"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="__span-108-25"><a id="__codelineno-108-25" name="__codelineno-108-25" href="#__codelineno-108-25"></a><span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">containers</span><span class="p p-Indicator">:</span>
+</span><span id="__span-108-26"><a id="__codelineno-108-26" name="__codelineno-108-26" href="#__codelineno-108-26"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd:2.4.62</span>
+</span><span id="__span-108-27"><a id="__codelineno-108-27" name="__codelineno-108-27" href="#__codelineno-108-27"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span>
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-93-1"><a id="__codelineno-93-1" name="__codelineno-93-1" href="#__codelineno-93-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>overlays/staging
-</span><span id="__span-93-2"><a id="__codelineno-93-2" name="__codelineno-93-2" href="#__codelineno-93-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,svc<span class="w"> </span>-n<span class="w"> </span>guide-helm<span class="w"> </span>-l<span class="w"> </span><span class="nv">team</span><span class="o">=</span>storefront
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-109-1"><a id="__codelineno-109-1" name="__codelineno-109-1" href="#__codelineno-109-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>overlays/staging
+</span><span id="__span-109-2"><a id="__codelineno-109-2" name="__codelineno-109-2" href="#__codelineno-109-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,svc<span class="w"> </span>-n<span class="w"> </span>guide-helm<span class="w"> </span>-l<span class="w"> </span><span class="nv">team</span><span class="o">=</span>storefront
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-94-1"><a id="__codelineno-94-1" name="__codelineno-94-1" href="#__codelineno-94-1"></a>service/stg-catalog created
-</span><span id="__span-94-2"><a id="__codelineno-94-2" name="__codelineno-94-2" href="#__codelineno-94-2"></a>deployment.apps/stg-catalog created
-</span><span id="__span-94-3"><a id="__codelineno-94-3" name="__codelineno-94-3" href="#__codelineno-94-3"></a>
-</span><span id="__span-94-4"><a id="__codelineno-94-4" name="__codelineno-94-4" href="#__codelineno-94-4"></a>NAME                          READY   UP-TO-DATE   AVAILABLE
-</span><span id="__span-94-5"><a id="__codelineno-94-5" name="__codelineno-94-5" href="#__codelineno-94-5"></a>deployment.apps/stg-catalog   1/1     1            1
-</span><span id="__span-94-6"><a id="__codelineno-94-6" name="__codelineno-94-6" href="#__codelineno-94-6"></a>
-</span><span id="__span-94-7"><a id="__codelineno-94-7" name="__codelineno-94-7" href="#__codelineno-94-7"></a>NAME                  TYPE        CLUSTER-IP     PORT(S)
-</span><span id="__span-94-8"><a id="__codelineno-94-8" name="__codelineno-94-8" href="#__codelineno-94-8"></a>service/stg-catalog   ClusterIP   10.105.33.7    80/TCP
+<div class="language-text highlight"><pre><span></span><code><span id="__span-110-1"><a id="__codelineno-110-1" name="__codelineno-110-1" href="#__codelineno-110-1"></a>service/stg-catalog created
+</span><span id="__span-110-2"><a id="__codelineno-110-2" name="__codelineno-110-2" href="#__codelineno-110-2"></a>deployment.apps/stg-catalog created
+</span><span id="__span-110-3"><a id="__codelineno-110-3" name="__codelineno-110-3" href="#__codelineno-110-3"></a>
+</span><span id="__span-110-4"><a id="__codelineno-110-4" name="__codelineno-110-4" href="#__codelineno-110-4"></a>NAME                          READY   UP-TO-DATE   AVAILABLE
+</span><span id="__span-110-5"><a id="__codelineno-110-5" name="__codelineno-110-5" href="#__codelineno-110-5"></a>deployment.apps/stg-catalog   1/1     1            1
+</span><span id="__span-110-6"><a id="__codelineno-110-6" name="__codelineno-110-6" href="#__codelineno-110-6"></a>
+</span><span id="__span-110-7"><a id="__codelineno-110-7" name="__codelineno-110-7" href="#__codelineno-110-7"></a>NAME                  TYPE        CLUSTER-IP     PORT(S)
+</span><span id="__span-110-8"><a id="__codelineno-110-8" name="__codelineno-110-8" href="#__codelineno-110-8"></a>service/stg-catalog   ClusterIP   10.105.33.7    80/TCP
 </span></code></pre></div>
 <h3 id="-k-f">깨 보기 — <code>-k</code> 대신 <code>-f</code><a class="headerlink" href="#-k-f" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-95-1"><a id="__codelineno-95-1" name="__codelineno-95-1" href="#__codelineno-95-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>overlays/staging
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-111-1"><a id="__codelineno-111-1" name="__codelineno-111-1" href="#__codelineno-111-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>overlays/staging
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-96-1"><a id="__codelineno-96-1" name="__codelineno-96-1" href="#__codelineno-96-1"></a>error: resource mapping not found for name: "" namespace: "" from "overlays/staging/kustomization.yaml": no matches for kind "Kustomization" in version "kustomize.config.k8s.io/v1beta1"
-</span><span id="__span-96-2"><a id="__codelineno-96-2" name="__codelineno-96-2" href="#__codelineno-96-2"></a>ensure CRDs are installed first
+<div class="language-text highlight"><pre><span></span><code><span id="__span-112-1"><a id="__codelineno-112-1" name="__codelineno-112-1" href="#__codelineno-112-1"></a>error: resource mapping not found for name: "" namespace: "" from "overlays/staging/kustomization.yaml": no matches for kind "Kustomization" in version "kustomize.config.k8s.io/v1beta1"
+</span><span id="__span-112-2"><a id="__codelineno-112-2" name="__codelineno-112-2" href="#__codelineno-112-2"></a>ensure CRDs are installed first
 </span></code></pre></div>
 <p><code>-f</code> 는 디렉터리 안의 YAML 을 <strong>쿠버네티스 리소스로</strong> 읽으려고 합니다. <code>kustomization.yaml</code> 은 리소스가 아니라 Kustomize 설정이므로 <code>-k</code> 로 넘겨야 합니다.
 (<code>apiVersion</code>/<code>kind</code> 줄을 생략한 kustomization 이면 "apiVersion not set, kind not set" 류의 에러가 납니다. 어느 쪽이든 원인은 <code>-f</code> 입니다.)</p>
 <p>staging 은 여기까지 보고 지웁니다. <code>delete -k</code> 도 됩니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-97-1"><a id="__codelineno-97-1" name="__codelineno-97-1" href="#__codelineno-97-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-k<span class="w"> </span>overlays/staging
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-113-1"><a id="__codelineno-113-1" name="__codelineno-113-1" href="#__codelineno-113-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-k<span class="w"> </span>overlays/staging
 </span></code></pre></div>
 <h3 id="prod-overlay-labels-images-patches-configmapgenerator">prod overlay — labels · images · patches · configMapGenerator<a class="headerlink" href="#prod-overlay-labels-images-patches-configmapgenerator" title="Permanent link">&para;</a></h3>
 <p><code>overlays/prod/kustomization.yaml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-98-1"><a id="__codelineno-98-1" name="__codelineno-98-1" href="#__codelineno-98-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kustomize.config.k8s.io/v1beta1</span>
-</span><span id="__span-98-2"><a id="__codelineno-98-2" name="__codelineno-98-2" href="#__codelineno-98-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kustomization</span>
-</span><span id="__span-98-3"><a id="__codelineno-98-3" name="__codelineno-98-3" href="#__codelineno-98-3"></a><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
-</span><span id="__span-98-4"><a id="__codelineno-98-4" name="__codelineno-98-4" href="#__codelineno-98-4"></a><span class="nt">namePrefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-</span>
-</span><span id="__span-98-5"><a id="__codelineno-98-5" name="__codelineno-98-5" href="#__codelineno-98-5"></a><span class="nt">resources</span><span class="p">:</span>
-</span><span id="__span-98-6"><a id="__codelineno-98-6" name="__codelineno-98-6" href="#__codelineno-98-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">../../base</span>
-</span><span id="__span-98-7"><a id="__codelineno-98-7" name="__codelineno-98-7" href="#__codelineno-98-7"></a><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-98-8"><a id="__codelineno-98-8" name="__codelineno-98-8" href="#__codelineno-98-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pairs</span><span class="p">:</span>
-</span><span id="__span-98-9"><a id="__codelineno-98-9" name="__codelineno-98-9" href="#__codelineno-98-9"></a><span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
-</span><span id="__span-98-10"><a id="__codelineno-98-10" name="__codelineno-98-10" href="#__codelineno-98-10"></a><span class="w">    </span><span class="nt">includeSelectors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">        </span><span class="c1"># ← selector 와 파드 템플릿에도 붙인다 (Service 셀렉터까지 맞춰 준다)</span>
-</span><span id="__span-98-11"><a id="__codelineno-98-11" name="__codelineno-98-11" href="#__codelineno-98-11"></a><span class="nt">images</span><span class="p">:</span>
-</span><span id="__span-98-12"><a id="__codelineno-98-12" name="__codelineno-98-12" href="#__codelineno-98-12"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="w">                   </span><span class="c1"># ← 이미지 이름이 httpd 인 컨테이너를 찾아</span>
-</span><span id="__span-98-13"><a id="__codelineno-98-13" name="__codelineno-98-13" href="#__codelineno-98-13"></a><span class="w">    </span><span class="nt">newTag</span><span class="p">:</span><span class="w"> </span><span class="s">"2.4.63"</span><span class="w">              </span><span class="c1"># ← 태그만 바꾼다 (newName 으로 이름도 바꿀 수 있다)</span>
-</span><span id="__span-98-14"><a id="__codelineno-98-14" name="__codelineno-98-14" href="#__codelineno-98-14"></a><span class="nt">patches</span><span class="p">:</span>
-</span><span id="__span-98-15"><a id="__codelineno-98-15" name="__codelineno-98-15" href="#__codelineno-98-15"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">replicas-and-resources.yaml</span><span class="w">   </span><span class="c1"># ← 전략적 병합 패치 파일</span>
-</span><span id="__span-98-16"><a id="__codelineno-98-16" name="__codelineno-98-16" href="#__codelineno-98-16"></a><span class="nt">configMapGenerator</span><span class="p">:</span>
-</span><span id="__span-98-17"><a id="__codelineno-98-17" name="__codelineno-98-17" href="#__codelineno-98-17"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog-config</span>
-</span><span id="__span-98-18"><a id="__codelineno-98-18" name="__codelineno-98-18" href="#__codelineno-98-18"></a><span class="w">    </span><span class="nt">literals</span><span class="p">:</span>
-</span><span id="__span-98-19"><a id="__codelineno-98-19" name="__codelineno-98-19" href="#__codelineno-98-19"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LOG_LEVEL=warn</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-114-1"><a id="__codelineno-114-1" name="__codelineno-114-1" href="#__codelineno-114-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kustomize.config.k8s.io/v1beta1</span>
+</span><span id="__span-114-2"><a id="__codelineno-114-2" name="__codelineno-114-2" href="#__codelineno-114-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kustomization</span>
+</span><span id="__span-114-3"><a id="__codelineno-114-3" name="__codelineno-114-3" href="#__codelineno-114-3"></a><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
+</span><span id="__span-114-4"><a id="__codelineno-114-4" name="__codelineno-114-4" href="#__codelineno-114-4"></a><span class="nt">namePrefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-</span>
+</span><span id="__span-114-5"><a id="__codelineno-114-5" name="__codelineno-114-5" href="#__codelineno-114-5"></a><span class="nt">resources</span><span class="p">:</span>
+</span><span id="__span-114-6"><a id="__codelineno-114-6" name="__codelineno-114-6" href="#__codelineno-114-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">../../base</span>
+</span><span id="__span-114-7"><a id="__codelineno-114-7" name="__codelineno-114-7" href="#__codelineno-114-7"></a><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-114-8"><a id="__codelineno-114-8" name="__codelineno-114-8" href="#__codelineno-114-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pairs</span><span class="p">:</span>
+</span><span id="__span-114-9"><a id="__codelineno-114-9" name="__codelineno-114-9" href="#__codelineno-114-9"></a><span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
+</span><span id="__span-114-10"><a id="__codelineno-114-10" name="__codelineno-114-10" href="#__codelineno-114-10"></a><span class="w">    </span><span class="nt">includeSelectors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">        </span><span class="c1"># ← selector 와 파드 템플릿에도 붙인다 (Service 셀렉터까지 맞춰 준다)</span>
+</span><span id="__span-114-11"><a id="__codelineno-114-11" name="__codelineno-114-11" href="#__codelineno-114-11"></a><span class="nt">images</span><span class="p">:</span>
+</span><span id="__span-114-12"><a id="__codelineno-114-12" name="__codelineno-114-12" href="#__codelineno-114-12"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="w">                   </span><span class="c1"># ← 이미지 이름이 httpd 인 컨테이너를 찾아</span>
+</span><span id="__span-114-13"><a id="__codelineno-114-13" name="__codelineno-114-13" href="#__codelineno-114-13"></a><span class="w">    </span><span class="nt">newTag</span><span class="p">:</span><span class="w"> </span><span class="s">"2.4.63"</span><span class="w">              </span><span class="c1"># ← 태그만 바꾼다 (newName 으로 이름도 바꿀 수 있다)</span>
+</span><span id="__span-114-14"><a id="__codelineno-114-14" name="__codelineno-114-14" href="#__codelineno-114-14"></a><span class="nt">patches</span><span class="p">:</span>
+</span><span id="__span-114-15"><a id="__codelineno-114-15" name="__codelineno-114-15" href="#__codelineno-114-15"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">replicas-and-resources.yaml</span><span class="w">   </span><span class="c1"># ← 전략적 병합 패치 파일</span>
+</span><span id="__span-114-16"><a id="__codelineno-114-16" name="__codelineno-114-16" href="#__codelineno-114-16"></a><span class="nt">configMapGenerator</span><span class="p">:</span>
+</span><span id="__span-114-17"><a id="__codelineno-114-17" name="__codelineno-114-17" href="#__codelineno-114-17"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog-config</span>
+</span><span id="__span-114-18"><a id="__codelineno-114-18" name="__codelineno-114-18" href="#__codelineno-114-18"></a><span class="w">    </span><span class="nt">literals</span><span class="p">:</span>
+</span><span id="__span-114-19"><a id="__codelineno-114-19" name="__codelineno-114-19" href="#__codelineno-114-19"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LOG_LEVEL=warn</span>
 </span></code></pre></div>
 <p><code>overlays/prod/replicas-and-resources.yaml</code> — <strong>바꿀 부분만</strong> 적은 반쪽짜리 Deployment 입니다.</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-99-1"><a id="__codelineno-99-1" name="__codelineno-99-1" href="#__codelineno-99-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
-</span><span id="__span-99-2"><a id="__codelineno-99-2" name="__codelineno-99-2" href="#__codelineno-99-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
-</span><span id="__span-99-3"><a id="__codelineno-99-3" name="__codelineno-99-3" href="#__codelineno-99-3"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-99-4"><a id="__codelineno-99-4" name="__codelineno-99-4" href="#__codelineno-99-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span><span class="w">                   </span><span class="c1"># ← base 의 이름으로 대상을 찾는다 (prod- 를 붙이지 않는다)</span>
-</span><span id="__span-99-5"><a id="__codelineno-99-5" name="__codelineno-99-5" href="#__codelineno-99-5"></a><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-99-6"><a id="__codelineno-99-6" name="__codelineno-99-6" href="#__codelineno-99-6"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
-</span><span id="__span-99-7"><a id="__codelineno-99-7" name="__codelineno-99-7" href="#__codelineno-99-7"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
-</span><span id="__span-99-8"><a id="__codelineno-99-8" name="__codelineno-99-8" href="#__codelineno-99-8"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-99-9"><a id="__codelineno-99-9" name="__codelineno-99-9" href="#__codelineno-99-9"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
-</span><span id="__span-99-10"><a id="__codelineno-99-10" name="__codelineno-99-10" href="#__codelineno-99-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="w">               </span><span class="c1"># ← 컨테이너는 name 으로 병합된다</span>
-</span><span id="__span-99-11"><a id="__codelineno-99-11" name="__codelineno-99-11" href="#__codelineno-99-11"></a><span class="w">        </span><span class="nt">envFrom</span><span class="p">:</span>
-</span><span id="__span-99-12"><a id="__codelineno-99-12" name="__codelineno-99-12" href="#__codelineno-99-12"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">configMapRef</span><span class="p">:</span>
-</span><span id="__span-99-13"><a id="__codelineno-99-13" name="__codelineno-99-13" href="#__codelineno-99-13"></a><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog-config</span><span class="w">  </span><span class="c1"># ← 생성기 이름. 결과에서는 해시가 붙은 이름으로 바뀐다</span>
-</span><span id="__span-99-14"><a id="__codelineno-99-14" name="__codelineno-99-14" href="#__codelineno-99-14"></a><span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
-</span><span id="__span-99-15"><a id="__codelineno-99-15" name="__codelineno-99-15" href="#__codelineno-99-15"></a><span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
-</span><span id="__span-99-16"><a id="__codelineno-99-16" name="__codelineno-99-16" href="#__codelineno-99-16"></a><span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50m</span>
-</span><span id="__span-99-17"><a id="__codelineno-99-17" name="__codelineno-99-17" href="#__codelineno-99-17"></a><span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64Mi</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-115-1"><a id="__codelineno-115-1" name="__codelineno-115-1" href="#__codelineno-115-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-115-2"><a id="__codelineno-115-2" name="__codelineno-115-2" href="#__codelineno-115-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-115-3"><a id="__codelineno-115-3" name="__codelineno-115-3" href="#__codelineno-115-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-115-4"><a id="__codelineno-115-4" name="__codelineno-115-4" href="#__codelineno-115-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span><span class="w">                   </span><span class="c1"># ← base 의 이름으로 대상을 찾는다 (prod- 를 붙이지 않는다)</span>
+</span><span id="__span-115-5"><a id="__codelineno-115-5" name="__codelineno-115-5" href="#__codelineno-115-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-115-6"><a id="__codelineno-115-6" name="__codelineno-115-6" href="#__codelineno-115-6"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</span><span id="__span-115-7"><a id="__codelineno-115-7" name="__codelineno-115-7" href="#__codelineno-115-7"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-115-8"><a id="__codelineno-115-8" name="__codelineno-115-8" href="#__codelineno-115-8"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-115-9"><a id="__codelineno-115-9" name="__codelineno-115-9" href="#__codelineno-115-9"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-115-10"><a id="__codelineno-115-10" name="__codelineno-115-10" href="#__codelineno-115-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="w">               </span><span class="c1"># ← 컨테이너는 name 으로 병합된다</span>
+</span><span id="__span-115-11"><a id="__codelineno-115-11" name="__codelineno-115-11" href="#__codelineno-115-11"></a><span class="w">        </span><span class="nt">envFrom</span><span class="p">:</span>
+</span><span id="__span-115-12"><a id="__codelineno-115-12" name="__codelineno-115-12" href="#__codelineno-115-12"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">configMapRef</span><span class="p">:</span>
+</span><span id="__span-115-13"><a id="__codelineno-115-13" name="__codelineno-115-13" href="#__codelineno-115-13"></a><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog-config</span><span class="w">  </span><span class="c1"># ← 생성기 이름. 결과에서는 해시가 붙은 이름으로 바뀐다</span>
+</span><span id="__span-115-14"><a id="__codelineno-115-14" name="__codelineno-115-14" href="#__codelineno-115-14"></a><span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
+</span><span id="__span-115-15"><a id="__codelineno-115-15" name="__codelineno-115-15" href="#__codelineno-115-15"></a><span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
+</span><span id="__span-115-16"><a id="__codelineno-115-16" name="__codelineno-115-16" href="#__codelineno-115-16"></a><span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50m</span>
+</span><span id="__span-115-17"><a id="__codelineno-115-17" name="__codelineno-115-17" href="#__codelineno-115-17"></a><span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64Mi</span>
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-100-1"><a id="__codelineno-100-1" name="__codelineno-100-1" href="#__codelineno-100-1"></a>kubectl<span class="w"> </span>kustomize<span class="w"> </span>overlays/prod
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-116-1"><a id="__codelineno-116-1" name="__codelineno-116-1" href="#__codelineno-116-1"></a>kubectl<span class="w"> </span>kustomize<span class="w"> </span>overlays/prod
 </span></code></pre></div>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-101-1"><a id="__codelineno-101-1" name="__codelineno-101-1" href="#__codelineno-101-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
-</span><span id="__span-101-2"><a id="__codelineno-101-2" name="__codelineno-101-2" href="#__codelineno-101-2"></a><span class="nt">data</span><span class="p">:</span>
-</span><span id="__span-101-3"><a id="__codelineno-101-3" name="__codelineno-101-3" href="#__codelineno-101-3"></a><span class="w">  </span><span class="nt">LOG_LEVEL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warn</span>
-</span><span id="__span-101-4"><a id="__codelineno-101-4" name="__codelineno-101-4" href="#__codelineno-101-4"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
-</span><span id="__span-101-5"><a id="__codelineno-101-5" name="__codelineno-101-5" href="#__codelineno-101-5"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-101-6"><a id="__codelineno-101-6" name="__codelineno-101-6" href="#__codelineno-101-6"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-101-7"><a id="__codelineno-101-7" name="__codelineno-101-7" href="#__codelineno-101-7"></a><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
-</span><span id="__span-101-8"><a id="__codelineno-101-8" name="__codelineno-101-8" href="#__codelineno-101-8"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-catalog-config-dfk4bdbtkk</span><span class="w">     </span><span class="c1"># ← 내용 해시가 붙는다</span>
-</span><span id="__span-101-9"><a id="__codelineno-101-9" name="__codelineno-101-9" href="#__codelineno-101-9"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
-</span><span id="__span-101-10"><a id="__codelineno-101-10" name="__codelineno-101-10" href="#__codelineno-101-10"></a><span class="nn">---</span>
-</span><span id="__span-101-11"><a id="__codelineno-101-11" name="__codelineno-101-11" href="#__codelineno-101-11"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
-</span><span id="__span-101-12"><a id="__codelineno-101-12" name="__codelineno-101-12" href="#__codelineno-101-12"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
-</span><span id="__span-101-13"><a id="__codelineno-101-13" name="__codelineno-101-13" href="#__codelineno-101-13"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-101-14"><a id="__codelineno-101-14" name="__codelineno-101-14" href="#__codelineno-101-14"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-101-15"><a id="__codelineno-101-15" name="__codelineno-101-15" href="#__codelineno-101-15"></a><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
-</span><span id="__span-101-16"><a id="__codelineno-101-16" name="__codelineno-101-16" href="#__codelineno-101-16"></a><span class="w">    </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
-</span><span id="__span-101-17"><a id="__codelineno-101-17" name="__codelineno-101-17" href="#__codelineno-101-17"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-catalog</span>
-</span><span id="__span-101-18"><a id="__codelineno-101-18" name="__codelineno-101-18" href="#__codelineno-101-18"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
-</span><span id="__span-101-19"><a id="__codelineno-101-19" name="__codelineno-101-19" href="#__codelineno-101-19"></a><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-101-20"><a id="__codelineno-101-20" name="__codelineno-101-20" href="#__codelineno-101-20"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-</span><span id="__span-101-21"><a id="__codelineno-101-21" name="__codelineno-101-21" href="#__codelineno-101-21"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">selector</span><span class="p p-Indicator">:</span>
-</span><span id="__span-101-22"><a id="__codelineno-101-22" name="__codelineno-101-22" href="#__codelineno-101-22"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
-</span><span id="__span-101-23"><a id="__codelineno-101-23" name="__codelineno-101-23" href="#__codelineno-101-23"></a><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span><span class="w">                              </span><span class="c1"># ← includeSelectors: true</span>
-</span><span id="__span-101-24"><a id="__codelineno-101-24" name="__codelineno-101-24" href="#__codelineno-101-24"></a><span class="nn">---</span>
-</span><span id="__span-101-25"><a id="__codelineno-101-25" name="__codelineno-101-25" href="#__codelineno-101-25"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
-</span><span id="__span-101-26"><a id="__codelineno-101-26" name="__codelineno-101-26" href="#__codelineno-101-26"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
-</span><span id="__span-101-27"><a id="__codelineno-101-27" name="__codelineno-101-27" href="#__codelineno-101-27"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-101-28"><a id="__codelineno-101-28" name="__codelineno-101-28" href="#__codelineno-101-28"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-101-29"><a id="__codelineno-101-29" name="__codelineno-101-29" href="#__codelineno-101-29"></a><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
-</span><span id="__span-101-30"><a id="__codelineno-101-30" name="__codelineno-101-30" href="#__codelineno-101-30"></a><span class="w">    </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
-</span><span id="__span-101-31"><a id="__codelineno-101-31" name="__codelineno-101-31" href="#__codelineno-101-31"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-catalog</span>
-</span><span id="__span-101-32"><a id="__codelineno-101-32" name="__codelineno-101-32" href="#__codelineno-101-32"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
-</span><span id="__span-101-33"><a id="__codelineno-101-33" name="__codelineno-101-33" href="#__codelineno-101-33"></a><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-101-34"><a id="__codelineno-101-34" name="__codelineno-101-34" href="#__codelineno-101-34"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">                              </span><span class="c1"># ← patch</span>
-</span><span id="__span-101-35"><a id="__codelineno-101-35" name="__codelineno-101-35" href="#__codelineno-101-35"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
-</span><span id="__span-101-36"><a id="__codelineno-101-36" name="__codelineno-101-36" href="#__codelineno-101-36"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
-</span><span id="__span-101-37"><a id="__codelineno-101-37" name="__codelineno-101-37" href="#__codelineno-101-37"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
-</span><span id="__span-101-38"><a id="__codelineno-101-38" name="__codelineno-101-38" href="#__codelineno-101-38"></a><span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
-</span><span id="__span-101-39"><a id="__codelineno-101-39" name="__codelineno-101-39" href="#__codelineno-101-39"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
-</span><span id="__span-101-40"><a id="__codelineno-101-40" name="__codelineno-101-40" href="#__codelineno-101-40"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-101-41"><a id="__codelineno-101-41" name="__codelineno-101-41" href="#__codelineno-101-41"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-101-42"><a id="__codelineno-101-42" name="__codelineno-101-42" href="#__codelineno-101-42"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
-</span><span id="__span-101-43"><a id="__codelineno-101-43" name="__codelineno-101-43" href="#__codelineno-101-43"></a><span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
-</span><span id="__span-101-44"><a id="__codelineno-101-44" name="__codelineno-101-44" href="#__codelineno-101-44"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-101-45"><a id="__codelineno-101-45" name="__codelineno-101-45" href="#__codelineno-101-45"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
-</span><span id="__span-101-46"><a id="__codelineno-101-46" name="__codelineno-101-46" href="#__codelineno-101-46"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">envFrom</span><span class="p">:</span>
-</span><span id="__span-101-47"><a id="__codelineno-101-47" name="__codelineno-101-47" href="#__codelineno-101-47"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">configMapRef</span><span class="p">:</span>
-</span><span id="__span-101-48"><a id="__codelineno-101-48" name="__codelineno-101-48" href="#__codelineno-101-48"></a><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-catalog-config-dfk4bdbtkk</span><span class="w">   </span><span class="c1"># ← 참조도 자동으로 바뀌었다</span>
-</span><span id="__span-101-49"><a id="__codelineno-101-49" name="__codelineno-101-49" href="#__codelineno-101-49"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd:2.4.63</span><span class="w">                        </span><span class="c1"># ← images</span>
-</span><span id="__span-101-50"><a id="__codelineno-101-50" name="__codelineno-101-50" href="#__codelineno-101-50"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span>
-</span><span id="__span-101-51"><a id="__codelineno-101-51" name="__codelineno-101-51" href="#__codelineno-101-51"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-</span><span id="__span-101-52"><a id="__codelineno-101-52" name="__codelineno-101-52" href="#__codelineno-101-52"></a><span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
-</span><span id="__span-101-53"><a id="__codelineno-101-53" name="__codelineno-101-53" href="#__codelineno-101-53"></a><span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
-</span><span id="__span-101-54"><a id="__codelineno-101-54" name="__codelineno-101-54" href="#__codelineno-101-54"></a><span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50m</span>
-</span><span id="__span-101-55"><a id="__codelineno-101-55" name="__codelineno-101-55" href="#__codelineno-101-55"></a><span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64Mi</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-117-1"><a id="__codelineno-117-1" name="__codelineno-117-1" href="#__codelineno-117-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-117-2"><a id="__codelineno-117-2" name="__codelineno-117-2" href="#__codelineno-117-2"></a><span class="nt">data</span><span class="p">:</span>
+</span><span id="__span-117-3"><a id="__codelineno-117-3" name="__codelineno-117-3" href="#__codelineno-117-3"></a><span class="w">  </span><span class="nt">LOG_LEVEL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warn</span>
+</span><span id="__span-117-4"><a id="__codelineno-117-4" name="__codelineno-117-4" href="#__codelineno-117-4"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+</span><span id="__span-117-5"><a id="__codelineno-117-5" name="__codelineno-117-5" href="#__codelineno-117-5"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-117-6"><a id="__codelineno-117-6" name="__codelineno-117-6" href="#__codelineno-117-6"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-117-7"><a id="__codelineno-117-7" name="__codelineno-117-7" href="#__codelineno-117-7"></a><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
+</span><span id="__span-117-8"><a id="__codelineno-117-8" name="__codelineno-117-8" href="#__codelineno-117-8"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-catalog-config-dfk4bdbtkk</span><span class="w">     </span><span class="c1"># ← 내용 해시가 붙는다</span>
+</span><span id="__span-117-9"><a id="__codelineno-117-9" name="__codelineno-117-9" href="#__codelineno-117-9"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
+</span><span id="__span-117-10"><a id="__codelineno-117-10" name="__codelineno-117-10" href="#__codelineno-117-10"></a><span class="nn">---</span>
+</span><span id="__span-117-11"><a id="__codelineno-117-11" name="__codelineno-117-11" href="#__codelineno-117-11"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-117-12"><a id="__codelineno-117-12" name="__codelineno-117-12" href="#__codelineno-117-12"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-117-13"><a id="__codelineno-117-13" name="__codelineno-117-13" href="#__codelineno-117-13"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-117-14"><a id="__codelineno-117-14" name="__codelineno-117-14" href="#__codelineno-117-14"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-117-15"><a id="__codelineno-117-15" name="__codelineno-117-15" href="#__codelineno-117-15"></a><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
+</span><span id="__span-117-16"><a id="__codelineno-117-16" name="__codelineno-117-16" href="#__codelineno-117-16"></a><span class="w">    </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
+</span><span id="__span-117-17"><a id="__codelineno-117-17" name="__codelineno-117-17" href="#__codelineno-117-17"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-catalog</span>
+</span><span id="__span-117-18"><a id="__codelineno-117-18" name="__codelineno-117-18" href="#__codelineno-117-18"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
+</span><span id="__span-117-19"><a id="__codelineno-117-19" name="__codelineno-117-19" href="#__codelineno-117-19"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-117-20"><a id="__codelineno-117-20" name="__codelineno-117-20" href="#__codelineno-117-20"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="__span-117-21"><a id="__codelineno-117-21" name="__codelineno-117-21" href="#__codelineno-117-21"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">selector</span><span class="p p-Indicator">:</span>
+</span><span id="__span-117-22"><a id="__codelineno-117-22" name="__codelineno-117-22" href="#__codelineno-117-22"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
+</span><span id="__span-117-23"><a id="__codelineno-117-23" name="__codelineno-117-23" href="#__codelineno-117-23"></a><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span><span class="w">                              </span><span class="c1"># ← includeSelectors: true</span>
+</span><span id="__span-117-24"><a id="__codelineno-117-24" name="__codelineno-117-24" href="#__codelineno-117-24"></a><span class="nn">---</span>
+</span><span id="__span-117-25"><a id="__codelineno-117-25" name="__codelineno-117-25" href="#__codelineno-117-25"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-117-26"><a id="__codelineno-117-26" name="__codelineno-117-26" href="#__codelineno-117-26"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-117-27"><a id="__codelineno-117-27" name="__codelineno-117-27" href="#__codelineno-117-27"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-117-28"><a id="__codelineno-117-28" name="__codelineno-117-28" href="#__codelineno-117-28"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-117-29"><a id="__codelineno-117-29" name="__codelineno-117-29" href="#__codelineno-117-29"></a><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
+</span><span id="__span-117-30"><a id="__codelineno-117-30" name="__codelineno-117-30" href="#__codelineno-117-30"></a><span class="w">    </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storefront</span>
+</span><span id="__span-117-31"><a id="__codelineno-117-31" name="__codelineno-117-31" href="#__codelineno-117-31"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-catalog</span>
+</span><span id="__span-117-32"><a id="__codelineno-117-32" name="__codelineno-117-32" href="#__codelineno-117-32"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-helm</span>
+</span><span id="__span-117-33"><a id="__codelineno-117-33" name="__codelineno-117-33" href="#__codelineno-117-33"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-117-34"><a id="__codelineno-117-34" name="__codelineno-117-34" href="#__codelineno-117-34"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">                              </span><span class="c1"># ← patch</span>
+</span><span id="__span-117-35"><a id="__codelineno-117-35" name="__codelineno-117-35" href="#__codelineno-117-35"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-117-36"><a id="__codelineno-117-36" name="__codelineno-117-36" href="#__codelineno-117-36"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-117-37"><a id="__codelineno-117-37" name="__codelineno-117-37" href="#__codelineno-117-37"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
+</span><span id="__span-117-38"><a id="__codelineno-117-38" name="__codelineno-117-38" href="#__codelineno-117-38"></a><span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
+</span><span id="__span-117-39"><a id="__codelineno-117-39" name="__codelineno-117-39" href="#__codelineno-117-39"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-117-40"><a id="__codelineno-117-40" name="__codelineno-117-40" href="#__codelineno-117-40"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-117-41"><a id="__codelineno-117-41" name="__codelineno-117-41" href="#__codelineno-117-41"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-117-42"><a id="__codelineno-117-42" name="__codelineno-117-42" href="#__codelineno-117-42"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog</span>
+</span><span id="__span-117-43"><a id="__codelineno-117-43" name="__codelineno-117-43" href="#__codelineno-117-43"></a><span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
+</span><span id="__span-117-44"><a id="__codelineno-117-44" name="__codelineno-117-44" href="#__codelineno-117-44"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-117-45"><a id="__codelineno-117-45" name="__codelineno-117-45" href="#__codelineno-117-45"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-117-46"><a id="__codelineno-117-46" name="__codelineno-117-46" href="#__codelineno-117-46"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">envFrom</span><span class="p">:</span>
+</span><span id="__span-117-47"><a id="__codelineno-117-47" name="__codelineno-117-47" href="#__codelineno-117-47"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">configMapRef</span><span class="p">:</span>
+</span><span id="__span-117-48"><a id="__codelineno-117-48" name="__codelineno-117-48" href="#__codelineno-117-48"></a><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-catalog-config-dfk4bdbtkk</span><span class="w">   </span><span class="c1"># ← 참조도 자동으로 바뀌었다</span>
+</span><span id="__span-117-49"><a id="__codelineno-117-49" name="__codelineno-117-49" href="#__codelineno-117-49"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd:2.4.63</span><span class="w">                        </span><span class="c1"># ← images</span>
+</span><span id="__span-117-50"><a id="__codelineno-117-50" name="__codelineno-117-50" href="#__codelineno-117-50"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">httpd</span>
+</span><span id="__span-117-51"><a id="__codelineno-117-51" name="__codelineno-117-51" href="#__codelineno-117-51"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="__span-117-52"><a id="__codelineno-117-52" name="__codelineno-117-52" href="#__codelineno-117-52"></a><span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
+</span><span id="__span-117-53"><a id="__codelineno-117-53" name="__codelineno-117-53" href="#__codelineno-117-53"></a><span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
+</span><span id="__span-117-54"><a id="__codelineno-117-54" name="__codelineno-117-54" href="#__codelineno-117-54"></a><span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50m</span>
+</span><span id="__span-117-55"><a id="__codelineno-117-55" name="__codelineno-117-55" href="#__codelineno-117-55"></a><span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64Mi</span>
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-102-1"><a id="__codelineno-102-1" name="__codelineno-102-1" href="#__codelineno-102-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>overlays/prod
-</span><span id="__span-102-2"><a id="__codelineno-102-2" name="__codelineno-102-2" href="#__codelineno-102-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,svc,cm<span class="w"> </span>-n<span class="w"> </span>guide-helm<span class="w"> </span>-l<span class="w"> </span><span class="nv">env</span><span class="o">=</span>prod
-</span><span id="__span-102-3"><a id="__codelineno-102-3" name="__codelineno-102-3" href="#__codelineno-102-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>prod-catalog<span class="w"> </span>-n<span class="w"> </span>guide-helm
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-118-1"><a id="__codelineno-118-1" name="__codelineno-118-1" href="#__codelineno-118-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>overlays/prod
+</span><span id="__span-118-2"><a id="__codelineno-118-2" name="__codelineno-118-2" href="#__codelineno-118-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,svc,cm<span class="w"> </span>-n<span class="w"> </span>guide-helm<span class="w"> </span>-l<span class="w"> </span><span class="nv">env</span><span class="o">=</span>prod
+</span><span id="__span-118-3"><a id="__codelineno-118-3" name="__codelineno-118-3" href="#__codelineno-118-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>prod-catalog<span class="w"> </span>-n<span class="w"> </span>guide-helm
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-103-1"><a id="__codelineno-103-1" name="__codelineno-103-1" href="#__codelineno-103-1"></a>NAME                           READY   UP-TO-DATE   AVAILABLE
-</span><span id="__span-103-2"><a id="__codelineno-103-2" name="__codelineno-103-2" href="#__codelineno-103-2"></a>deployment.apps/prod-catalog   3/3     3            3
-</span><span id="__span-103-3"><a id="__codelineno-103-3" name="__codelineno-103-3" href="#__codelineno-103-3"></a>
-</span><span id="__span-103-4"><a id="__codelineno-103-4" name="__codelineno-103-4" href="#__codelineno-103-4"></a>NAME                   TYPE        CLUSTER-IP      PORT(S)
-</span><span id="__span-103-5"><a id="__codelineno-103-5" name="__codelineno-103-5" href="#__codelineno-103-5"></a>service/prod-catalog   ClusterIP   10.109.40.21    80/TCP
-</span><span id="__span-103-6"><a id="__codelineno-103-6" name="__codelineno-103-6" href="#__codelineno-103-6"></a>
-</span><span id="__span-103-7"><a id="__codelineno-103-7" name="__codelineno-103-7" href="#__codelineno-103-7"></a>NAME                                     DATA
-</span><span id="__span-103-8"><a id="__codelineno-103-8" name="__codelineno-103-8" href="#__codelineno-103-8"></a>configmap/prod-catalog-config-dfk4bdbtkk 1
-</span><span id="__span-103-9"><a id="__codelineno-103-9" name="__codelineno-103-9" href="#__codelineno-103-9"></a>
-</span><span id="__span-103-10"><a id="__codelineno-103-10" name="__codelineno-103-10" href="#__codelineno-103-10"></a>NAME           ENDPOINTS
-</span><span id="__span-103-11"><a id="__codelineno-103-11" name="__codelineno-103-11" href="#__codelineno-103-11"></a>prod-catalog   10.0.1.23:80,10.0.2.41:80,10.0.2.57:80
+<div class="language-text highlight"><pre><span></span><code><span id="__span-119-1"><a id="__codelineno-119-1" name="__codelineno-119-1" href="#__codelineno-119-1"></a>NAME                           READY   UP-TO-DATE   AVAILABLE
+</span><span id="__span-119-2"><a id="__codelineno-119-2" name="__codelineno-119-2" href="#__codelineno-119-2"></a>deployment.apps/prod-catalog   3/3     3            3
+</span><span id="__span-119-3"><a id="__codelineno-119-3" name="__codelineno-119-3" href="#__codelineno-119-3"></a>
+</span><span id="__span-119-4"><a id="__codelineno-119-4" name="__codelineno-119-4" href="#__codelineno-119-4"></a>NAME                   TYPE        CLUSTER-IP      PORT(S)
+</span><span id="__span-119-5"><a id="__codelineno-119-5" name="__codelineno-119-5" href="#__codelineno-119-5"></a>service/prod-catalog   ClusterIP   10.109.40.21    80/TCP
+</span><span id="__span-119-6"><a id="__codelineno-119-6" name="__codelineno-119-6" href="#__codelineno-119-6"></a>
+</span><span id="__span-119-7"><a id="__codelineno-119-7" name="__codelineno-119-7" href="#__codelineno-119-7"></a>NAME                                     DATA
+</span><span id="__span-119-8"><a id="__codelineno-119-8" name="__codelineno-119-8" href="#__codelineno-119-8"></a>configmap/prod-catalog-config-dfk4bdbtkk 1
+</span><span id="__span-119-9"><a id="__codelineno-119-9" name="__codelineno-119-9" href="#__codelineno-119-9"></a>
+</span><span id="__span-119-10"><a id="__codelineno-119-10" name="__codelineno-119-10" href="#__codelineno-119-10"></a>NAME           ENDPOINTS
+</span><span id="__span-119-11"><a id="__codelineno-119-11" name="__codelineno-119-11" href="#__codelineno-119-11"></a>prod-catalog   10.0.1.23:80,10.0.2.41:80,10.0.2.57:80
 </span></code></pre></div>
 <p>관찰 포인트: ConfigMap 내용을 바꾸면(예: <code>LOG_LEVEL=error</code>) <strong>해시가 바뀌어 새 이름</strong>이 되고, Deployment 의 참조도 바뀌므로 파드가 <strong>자동으로 롤링 업데이트</strong>됩니다.
 6강에서 "ConfigMap 을 바꿔도 환경변수는 그대로" 였던 문제를 Kustomize 는 이름을 바꾸는 방식으로 풉니다.</p>
@@ -3635,7 +3820,7 @@ kubectl 에 들어 있어서 따로 설치할 것이 없습니다(<code>kubectl 
 </table>
 <div class="admonition note">
 <p class="admonition-title"><code>commonLabels</code> 를 쓰면</p>
-<p><div class="language-text highlight"><pre><span></span><code><span id="__span-104-1"><a id="__codelineno-104-1" name="__codelineno-104-1" href="#__codelineno-104-1"></a># Warning: 'commonLabels' is deprecated. Please use 'labels' instead. ...
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-120-1"><a id="__codelineno-120-1" name="__codelineno-120-1" href="#__codelineno-120-1"></a># Warning: 'commonLabels' is deprecated. Please use 'labels' instead. ...
 </span></code></pre></div>
 경고와 함께 여전히 동작합니다. 시험 지문이 <code>commonLabels</code> 를 요구하면 그대로 써도 됩니다.</p>
 </div>
@@ -3678,51 +3863,63 @@ kubectl 에 들어 있어서 따로 설치할 것이 없습니다(<code>kubectl 
 </table>
 <hr />
 <h2 id="_20">시험에서 빠르게<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-105-1"><a id="__codelineno-105-1" name="__codelineno-105-1" href="#__codelineno-105-1"></a><span class="c1"># 저장소 · 검색 · 값</span>
-</span><span id="__span-105-2"><a id="__codelineno-105-2" name="__codelineno-105-2" href="#__codelineno-105-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>&lt;name&gt;<span class="w"> </span>&lt;url&gt;<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>helm<span class="w"> </span>repo<span class="w"> </span>update
-</span><span id="__span-105-3"><a id="__codelineno-105-3" name="__codelineno-105-3" href="#__codelineno-105-3"></a>helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>&lt;chart&gt;<span class="w"> </span>--versions
-</span><span id="__span-105-4"><a id="__codelineno-105-4" name="__codelineno-105-4" href="#__codelineno-105-4"></a>helm<span class="w"> </span>show<span class="w"> </span>values<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>--version<span class="w"> </span>&lt;v&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-n<span class="w"> </span>-i<span class="w"> </span>&lt;key&gt;
-</span><span id="__span-105-5"><a id="__codelineno-105-5" name="__codelineno-105-5" href="#__codelineno-105-5"></a>
-</span><span id="__span-105-6"><a id="__codelineno-105-6" name="__codelineno-105-6" href="#__codelineno-105-6"></a><span class="c1"># 설치 · 확인</span>
-</span><span id="__span-105-7"><a id="__codelineno-105-7" name="__codelineno-105-7" href="#__codelineno-105-7"></a>helm<span class="w"> </span>install<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--create-namespace<span class="w"> </span>--version<span class="w"> </span>&lt;v&gt;<span class="w"> </span>--set<span class="w"> </span>a.b<span class="o">=</span>c<span class="w"> </span>-f<span class="w"> </span>values.yaml
-</span><span id="__span-105-8"><a id="__codelineno-105-8" name="__codelineno-105-8" href="#__codelineno-105-8"></a>helm<span class="w"> </span>list<span class="w"> </span>-A
-</span><span id="__span-105-9"><a id="__codelineno-105-9" name="__codelineno-105-9" href="#__codelineno-105-9"></a>helm<span class="w"> </span>status<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
-</span><span id="__span-105-10"><a id="__codelineno-105-10" name="__codelineno-105-10" href="#__codelineno-105-10"></a>helm<span class="w"> </span>get<span class="w"> </span>values<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span><span class="o">[</span>--all<span class="o">]</span><span class="w"> </span><span class="o">[</span>--revision<span class="w"> </span>N<span class="o">]</span>
-</span><span id="__span-105-11"><a id="__codelineno-105-11" name="__codelineno-105-11" href="#__codelineno-105-11"></a>helm<span class="w"> </span>get<span class="w"> </span>manifest<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
-</span><span id="__span-105-12"><a id="__codelineno-105-12" name="__codelineno-105-12" href="#__codelineno-105-12"></a>
-</span><span id="__span-105-13"><a id="__codelineno-105-13" name="__codelineno-105-13" href="#__codelineno-105-13"></a><span class="c1"># 업그레이드 · 롤백 · 삭제</span>
-</span><span id="__span-105-14"><a id="__codelineno-105-14" name="__codelineno-105-14" href="#__codelineno-105-14"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--reuse-values<span class="w"> </span>--set<span class="w"> </span><span class="nv">x</span><span class="o">=</span>y
-</span><span id="__span-105-15"><a id="__codelineno-105-15" name="__codelineno-105-15" href="#__codelineno-105-15"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>-f<span class="w"> </span>values.yaml
-</span><span id="__span-105-16"><a id="__codelineno-105-16" name="__codelineno-105-16" href="#__codelineno-105-16"></a>helm<span class="w"> </span><span class="nb">history</span><span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
-</span><span id="__span-105-17"><a id="__codelineno-105-17" name="__codelineno-105-17" href="#__codelineno-105-17"></a>helm<span class="w"> </span>rollback<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;rev&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
-</span><span id="__span-105-18"><a id="__codelineno-105-18" name="__codelineno-105-18" href="#__codelineno-105-18"></a>helm<span class="w"> </span>uninstall<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
-</span><span id="__span-105-19"><a id="__codelineno-105-19" name="__codelineno-105-19" href="#__codelineno-105-19"></a>
-</span><span id="__span-105-20"><a id="__codelineno-105-20" name="__codelineno-105-20" href="#__codelineno-105-20"></a><span class="c1"># 설치하지 않고 뽑기 (CRD 는 결과를 세어서 확인)</span>
-</span><span id="__span-105-21"><a id="__codelineno-105-21" name="__codelineno-105-21" href="#__codelineno-105-21"></a>helm<span class="w"> </span>template<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>--version<span class="w"> </span>&lt;v&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--skip-crds<span class="w"> </span>&gt;<span class="w"> </span>/path/out.yaml
-</span><span id="__span-105-22"><a id="__codelineno-105-22" name="__codelineno-105-22" href="#__codelineno-105-22"></a>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span><span class="w"> </span>/path/out.yaml
-</span><span id="__span-105-23"><a id="__codelineno-105-23" name="__codelineno-105-23" href="#__codelineno-105-23"></a>
-</span><span id="__span-105-24"><a id="__codelineno-105-24" name="__codelineno-105-24" href="#__codelineno-105-24"></a><span class="c1"># 차트 열어 보기 · 의존성</span>
-</span><span id="__span-105-25"><a id="__codelineno-105-25" name="__codelineno-105-25" href="#__codelineno-105-25"></a>helm<span class="w"> </span>pull<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>--version<span class="w"> </span>&lt;v&gt;<span class="w"> </span>--untar<span class="w"> </span>-d<span class="w"> </span>&lt;dir&gt;
-</span><span id="__span-105-26"><a id="__codelineno-105-26" name="__codelineno-105-26" href="#__codelineno-105-26"></a>helm<span class="w"> </span>dependency<span class="w"> </span>update<span class="w"> </span>&lt;chart-dir&gt;<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>helm<span class="w"> </span>dependency<span class="w"> </span>list<span class="w"> </span>&lt;chart-dir&gt;
-</span><span id="__span-105-27"><a id="__codelineno-105-27" name="__codelineno-105-27" href="#__codelineno-105-27"></a>
-</span><span id="__span-105-28"><a id="__codelineno-105-28" name="__codelineno-105-28" href="#__codelineno-105-28"></a><span class="c1"># Kustomize</span>
-</span><span id="__span-105-29"><a id="__codelineno-105-29" name="__codelineno-105-29" href="#__codelineno-105-29"></a>kubectl<span class="w"> </span>kustomize<span class="w"> </span>&lt;dir&gt;<span class="w">          </span><span class="c1"># 미리 보기</span>
-</span><span id="__span-105-30"><a id="__codelineno-105-30" name="__codelineno-105-30" href="#__codelineno-105-30"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>&lt;dir&gt;<span class="w">           </span><span class="c1"># 적용 (-f 아님)</span>
-</span><span id="__span-105-31"><a id="__codelineno-105-31" name="__codelineno-105-31" href="#__codelineno-105-31"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-k<span class="w"> </span>&lt;dir&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-121-1"><a id="__codelineno-121-1" name="__codelineno-121-1" href="#__codelineno-121-1"></a><span class="c1"># 저장소 · 검색 · 값</span>
+</span><span id="__span-121-2"><a id="__codelineno-121-2" name="__codelineno-121-2" href="#__codelineno-121-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>&lt;name&gt;<span class="w"> </span>&lt;url&gt;<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>helm<span class="w"> </span>repo<span class="w"> </span>update
+</span><span id="__span-121-3"><a id="__codelineno-121-3" name="__codelineno-121-3" href="#__codelineno-121-3"></a>helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>&lt;chart&gt;<span class="w"> </span>--versions
+</span><span id="__span-121-4"><a id="__codelineno-121-4" name="__codelineno-121-4" href="#__codelineno-121-4"></a>helm<span class="w"> </span>show<span class="w"> </span>values<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>--version<span class="w"> </span>&lt;v&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-n<span class="w"> </span>-i<span class="w"> </span>&lt;key&gt;
+</span><span id="__span-121-5"><a id="__codelineno-121-5" name="__codelineno-121-5" href="#__codelineno-121-5"></a>
+</span><span id="__span-121-6"><a id="__codelineno-121-6" name="__codelineno-121-6" href="#__codelineno-121-6"></a><span class="c1"># 설치 · 확인</span>
+</span><span id="__span-121-7"><a id="__codelineno-121-7" name="__codelineno-121-7" href="#__codelineno-121-7"></a>helm<span class="w"> </span>install<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--create-namespace<span class="w"> </span>--version<span class="w"> </span>&lt;v&gt;<span class="w"> </span>--set<span class="w"> </span>a.b<span class="o">=</span>c<span class="w"> </span>-f<span class="w"> </span>values.yaml
+</span><span id="__span-121-8"><a id="__codelineno-121-8" name="__codelineno-121-8" href="#__codelineno-121-8"></a>helm<span class="w"> </span>list<span class="w"> </span>-A
+</span><span id="__span-121-9"><a id="__codelineno-121-9" name="__codelineno-121-9" href="#__codelineno-121-9"></a>helm<span class="w"> </span>status<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
+</span><span id="__span-121-10"><a id="__codelineno-121-10" name="__codelineno-121-10" href="#__codelineno-121-10"></a>helm<span class="w"> </span>get<span class="w"> </span>values<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span><span class="o">[</span>--all<span class="o">]</span><span class="w"> </span><span class="o">[</span>--revision<span class="w"> </span>N<span class="o">]</span>
+</span><span id="__span-121-11"><a id="__codelineno-121-11" name="__codelineno-121-11" href="#__codelineno-121-11"></a>helm<span class="w"> </span>get<span class="w"> </span>manifest<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
+</span><span id="__span-121-12"><a id="__codelineno-121-12" name="__codelineno-121-12" href="#__codelineno-121-12"></a>
+</span><span id="__span-121-13"><a id="__codelineno-121-13" name="__codelineno-121-13" href="#__codelineno-121-13"></a><span class="c1"># 업그레이드 · 롤백 · 삭제</span>
+</span><span id="__span-121-14"><a id="__codelineno-121-14" name="__codelineno-121-14" href="#__codelineno-121-14"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--reuse-values<span class="w"> </span>--set<span class="w"> </span><span class="nv">x</span><span class="o">=</span>y
+</span><span id="__span-121-15"><a id="__codelineno-121-15" name="__codelineno-121-15" href="#__codelineno-121-15"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>-f<span class="w"> </span>values.yaml
+</span><span id="__span-121-16"><a id="__codelineno-121-16" name="__codelineno-121-16" href="#__codelineno-121-16"></a>helm<span class="w"> </span><span class="nb">history</span><span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
+</span><span id="__span-121-17"><a id="__codelineno-121-17" name="__codelineno-121-17" href="#__codelineno-121-17"></a>helm<span class="w"> </span>rollback<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;rev&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
+</span><span id="__span-121-18"><a id="__codelineno-121-18" name="__codelineno-121-18" href="#__codelineno-121-18"></a>helm<span class="w"> </span>uninstall<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;
+</span><span id="__span-121-19"><a id="__codelineno-121-19" name="__codelineno-121-19" href="#__codelineno-121-19"></a>
+</span><span id="__span-121-20"><a id="__codelineno-121-20" name="__codelineno-121-20" href="#__codelineno-121-20"></a><span class="c1"># 설치하지 않고 뽑기 (CRD 는 결과를 세어서 확인)</span>
+</span><span id="__span-121-21"><a id="__codelineno-121-21" name="__codelineno-121-21" href="#__codelineno-121-21"></a>helm<span class="w"> </span>template<span class="w"> </span>&lt;rel&gt;<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>--version<span class="w"> </span>&lt;v&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--skip-crds<span class="w"> </span>&gt;<span class="w"> </span>/path/out.yaml
+</span><span id="__span-121-22"><a id="__codelineno-121-22" name="__codelineno-121-22" href="#__codelineno-121-22"></a>helm<span class="w"> </span>template<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>--version<span class="w"> </span>&lt;v&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>&gt;<span class="w"> </span>/path/out.yaml<span class="w">   </span><span class="c1"># 이름 생략 → release-name</span>
+</span><span id="__span-121-23"><a id="__codelineno-121-23" name="__codelineno-121-23" href="#__codelineno-121-23"></a>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^kind: CustomResourceDefinition'</span><span class="w"> </span>/path/out.yaml
+</span><span id="__span-121-24"><a id="__codelineno-121-24" name="__codelineno-121-24" href="#__codelineno-121-24"></a>
+</span><span id="__span-121-25"><a id="__codelineno-121-25" name="__codelineno-121-25" href="#__codelineno-121-25"></a><span class="c1"># CRD 조회를 파일로</span>
+</span><span id="__span-121-26"><a id="__codelineno-121-26" name="__codelineno-121-26" href="#__codelineno-121-26"></a>kubectl<span class="w"> </span>get<span class="w"> </span>crd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;api-group&gt;<span class="w"> </span>&gt;<span class="w"> </span>/path/crds.txt<span class="w">          </span><span class="c1"># 기본 출력 형식 (-o 없음)</span>
+</span><span id="__span-121-27"><a id="__codelineno-121-27" name="__codelineno-121-27" href="#__codelineno-121-27"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>&lt;resource&gt;.spec.&lt;field&gt;<span class="w"> </span>&gt;<span class="w"> </span>/path/explain.txt
+</span><span id="__span-121-28"><a id="__codelineno-121-28" name="__codelineno-121-28" href="#__codelineno-121-28"></a>
+</span><span id="__span-121-29"><a id="__codelineno-121-29" name="__codelineno-121-29" href="#__codelineno-121-29"></a><span class="c1"># 차트 열어 보기 · 의존성</span>
+</span><span id="__span-121-30"><a id="__codelineno-121-30" name="__codelineno-121-30" href="#__codelineno-121-30"></a>helm<span class="w"> </span>pull<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>--version<span class="w"> </span>&lt;v&gt;<span class="w"> </span>--untar<span class="w"> </span>-d<span class="w"> </span>&lt;dir&gt;
+</span><span id="__span-121-31"><a id="__codelineno-121-31" name="__codelineno-121-31" href="#__codelineno-121-31"></a>helm<span class="w"> </span>dependency<span class="w"> </span>update<span class="w"> </span>&lt;chart-dir&gt;<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>helm<span class="w"> </span>dependency<span class="w"> </span>list<span class="w"> </span>&lt;chart-dir&gt;
+</span><span id="__span-121-32"><a id="__codelineno-121-32" name="__codelineno-121-32" href="#__codelineno-121-32"></a>
+</span><span id="__span-121-33"><a id="__codelineno-121-33" name="__codelineno-121-33" href="#__codelineno-121-33"></a><span class="c1"># Kustomize</span>
+</span><span id="__span-121-34"><a id="__codelineno-121-34" name="__codelineno-121-34" href="#__codelineno-121-34"></a>kubectl<span class="w"> </span>kustomize<span class="w"> </span>&lt;dir&gt;<span class="w">          </span><span class="c1"># 미리 보기</span>
+</span><span id="__span-121-35"><a id="__codelineno-121-35" name="__codelineno-121-35" href="#__codelineno-121-35"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>&lt;dir&gt;<span class="w">           </span><span class="c1"># 적용 (-f 아님)</span>
+</span><span id="__span-121-36"><a id="__codelineno-121-36" name="__codelineno-121-36" href="#__codelineno-121-36"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-k<span class="w"> </span>&lt;dir&gt;
 </span></code></pre></div>
 <hr />
 <h2 id="_21">정리<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <p>Helm 릴리스를 먼저 지우고(릴리스 Secret 과 리소스가 함께 정리됩니다), 네임스페이스와 작업 파일을 지웁니다.
-이 페이지는 클러스터 범위 오브젝트를 만들지 않았습니다(<code>helm template</code> 결과는 적용하지 않았습니다).</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-106-1"><a id="__codelineno-106-1" name="__codelineno-106-1" href="#__codelineno-106-1"></a>helm<span class="w"> </span>uninstall<span class="w"> </span>demo<span class="w"> </span>-n<span class="w"> </span>guide-helm
-</span><span id="__span-106-2"><a id="__codelineno-106-2" name="__codelineno-106-2" href="#__codelineno-106-2"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-k<span class="w"> </span>~/guide-helm/kustomize/overlays/prod
-</span><span id="__span-106-3"><a id="__codelineno-106-3" name="__codelineno-106-3" href="#__codelineno-106-3"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>namespace<span class="w"> </span>guide-helm
-</span><span id="__span-106-4"><a id="__codelineno-106-4" name="__codelineno-106-4" href="#__codelineno-106-4"></a>helm<span class="w"> </span>list<span class="w"> </span>-A<span class="w">                       </span><span class="c1"># guide-helm 릴리스가 남지 않았는지</span>
-</span><span id="__span-106-5"><a id="__codelineno-106-5" name="__codelineno-106-5" href="#__codelineno-106-5"></a>
-</span><span id="__span-106-6"><a id="__codelineno-106-6" name="__codelineno-106-6" href="#__codelineno-106-6"></a>helm<span class="w"> </span>repo<span class="w"> </span>remove<span class="w"> </span>traefik<span class="w"> </span>jetstack<span class="w">  </span><span class="c1"># 7) 에서만 쓴 저장소 (podinfo 는 남겨 둬도 된다)</span>
-</span><span id="__span-106-7"><a id="__codelineno-106-7" name="__codelineno-106-7" href="#__codelineno-106-7"></a><span class="nb">cd</span><span class="w"> </span>~<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>~/guide-helm
+클러스터 범위 오브젝트는 7)-③ 에서 설치한 <strong>CRD 두 개뿐</strong>입니다(<code>helm template</code> 결과는 적용하지 않았습니다).</p>
+<div class="admonition warning">
+<p class="admonition-title">Prometheus Operator 를 원래 쓰고 있던 클러스터라면</p>
+<p>CRD 를 지우면 그 종류의 오브젝트(ServiceMonitor · PodMonitor)도 <strong>전부</strong> 지워집니다. 7)-③ 의 apply 전에 이미 있던 CRD 라면 지우지 않습니다.</p>
+</div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-122-1"><a id="__codelineno-122-1" name="__codelineno-122-1" href="#__codelineno-122-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>crd<span class="w"> </span>servicemonitors.monitoring.coreos.com<span class="w"> </span>podmonitors.monitoring.coreos.com
+</span><span id="__span-122-2"><a id="__codelineno-122-2" name="__codelineno-122-2" href="#__codelineno-122-2"></a>helm<span class="w"> </span>uninstall<span class="w"> </span>demo<span class="w"> </span>-n<span class="w"> </span>guide-helm
+</span><span id="__span-122-3"><a id="__codelineno-122-3" name="__codelineno-122-3" href="#__codelineno-122-3"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-k<span class="w"> </span>~/guide-helm/kustomize/overlays/prod
+</span><span id="__span-122-4"><a id="__codelineno-122-4" name="__codelineno-122-4" href="#__codelineno-122-4"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>namespace<span class="w"> </span>guide-helm
+</span><span id="__span-122-5"><a id="__codelineno-122-5" name="__codelineno-122-5" href="#__codelineno-122-5"></a>helm<span class="w"> </span>list<span class="w"> </span>-A<span class="w">                       </span><span class="c1"># guide-helm 릴리스가 남지 않았는지</span>
+</span><span id="__span-122-6"><a id="__codelineno-122-6" name="__codelineno-122-6" href="#__codelineno-122-6"></a>
+</span><span id="__span-122-7"><a id="__codelineno-122-7" name="__codelineno-122-7" href="#__codelineno-122-7"></a>helm<span class="w"> </span>repo<span class="w"> </span>remove<span class="w"> </span>traefik<span class="w"> </span>jetstack<span class="w">  </span><span class="c1"># 7) 에서만 쓴 저장소 (podinfo 는 남겨 둬도 된다)</span>
+</span><span id="__span-122-8"><a id="__codelineno-122-8" name="__codelineno-122-8" href="#__codelineno-122-8"></a><span class="nb">cd</span><span class="w"> </span>~<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>~/guide-helm
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-107-1"><a id="__codelineno-107-1" name="__codelineno-107-1" href="#__codelineno-107-1"></a>release "demo" uninstalled
+<div class="language-text highlight"><pre><span></span><code><span id="__span-123-1"><a id="__codelineno-123-1" name="__codelineno-123-1" href="#__codelineno-123-1"></a>customresourcedefinition.apiextensions.k8s.io "servicemonitors.monitoring.coreos.com" deleted
+</span><span id="__span-123-2"><a id="__codelineno-123-2" name="__codelineno-123-2" href="#__codelineno-123-2"></a>customresourcedefinition.apiextensions.k8s.io "podmonitors.monitoring.coreos.com" deleted
+</span><span id="__span-123-3"><a id="__codelineno-123-3" name="__codelineno-123-3" href="#__codelineno-123-3"></a>release "demo" uninstalled
 </span></code></pre></div>
 <hr />
 <h2 id="_22">확인 질문<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
@@ -3756,18 +3953,28 @@ kubectl 에 들어 있어서 따로 설치할 것이 없습니다(<code>kubectl 
 결과는 <code>grep -c '^kind: CustomResourceDefinition'</code> 으로 확인합니다.</p>
 </details>
 <details class="question">
-<summary>7. <code>Chart.yaml</code> 의 의존성 버전을 바꿨는데 렌더링 결과가 옛 버전입니다. 무엇을 빠뜨렸나요?</summary>
+<summary>7. <code>helm template &lt;차트&gt;</code> 처럼 릴리스 이름을 빼면 어떻게 되나요? <code>helm install &lt;차트&gt;</code> 는요?</summary>
+<p><code>template</code> 은 기본 이름 <code>release-name</code> 으로 렌더링합니다. 리소스 이름과 <code>app.kubernetes.io/instance</code> 레이블에 <code>release-name</code> 이 들어갑니다.
+<code>install</code> 은 <code>must either provide a name or specify --generate-name</code> 에러가 납니다.</p>
+</details>
+<details class="question">
+<summary>8. CRD 목록을 '기본 출력 형식' 으로 저장하라는 문제에 <code>kubectl get crd -o name | grep ...</code> 을 쓰면 왜 틀리나요?</summary>
+<p><code>-o name</code> 은 <code>customresourcedefinition.apiextensions.k8s.io/&lt;이름&gt;</code> 만 찍는 <strong>다른 출력 형식</strong>입니다. 기본 출력은 <code>-o</code> 없이 <code>NAME  CREATED AT</code> 두 열입니다.
+<code>kubectl get crd | grep &lt;api-group&gt; &gt; 파일</code> 로 저장하고, 필드 설명은 <code>kubectl explain &lt;리소스&gt;.spec.&lt;필드&gt; &gt; 파일</code> 로 저장합니다.</p>
+</details>
+<details class="question">
+<summary>9. <code>Chart.yaml</code> 의 의존성 버전을 바꿨는데 렌더링 결과가 옛 버전입니다. 무엇을 빠뜨렸나요?</summary>
 <p><code>helm dependency update</code> 입니다. <code>helm dependency list</code> 의 STATUS 가 <code>wrong version</code> 이면 <code>charts/</code> 에 옛 tgz 가 남아 있다는 뜻입니다.</p>
 </details>
 <details class="question">
-<summary>8. Kustomize overlay 의 patch 파일에 적는 <code>metadata.name</code> 은 <code>prod-catalog</code> 인가요, <code>catalog</code> 인가요?</summary>
+<summary>10. Kustomize overlay 의 patch 파일에 적는 <code>metadata.name</code> 은 <code>prod-catalog</code> 인가요, <code>catalog</code> 인가요?</summary>
 <p>base 의 원래 이름인 <code>catalog</code> 입니다. namePrefix 는 패치가 끝난 뒤 결과에 붙습니다.</p>
 </details>
 <hr />
 <h2 id="_23">다음 단계 — 채점 실습<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
 <p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong> 차트를 내려받으므로 인터넷이 필요합니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-108-1"><a id="__codelineno-108-1" name="__codelineno-108-1" href="#__codelineno-108-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/17-helm
-</span><span id="__span-108-2"><a id="__codelineno-108-2" name="__codelineno-108-2" href="#__codelineno-108-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-124-1"><a id="__codelineno-124-1" name="__codelineno-124-1" href="#__codelineno-124-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/17-helm
+</span><span id="__span-124-2"><a id="__codelineno-124-2" name="__codelineno-124-2" href="#__codelineno-124-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
 </span></code></pre></div>
 <table>
 <thead>
@@ -3794,8 +4001,16 @@ kubectl 에 들어 있어서 따로 설치할 것이 없습니다(<code>kubectl 
 <td>9) base · overlay · namePrefix · <code>apply -k</code></td>
 </tr>
 <tr>
-<td>Q5 설치하지 않고 매니페스트만 뽑기</td>
-<td>6) <code>helm template</code> · 7) CRD 확인</td>
+<td>Q5 릴리스 이름 없이 매니페스트만 뽑기</td>
+<td>6) <code>helm template</code> · 릴리스 이름 없이 template 하면? · 7) CRD 확인</td>
+</tr>
+<tr>
+<td>Q6 CRD 를 빼고 차트 설치</td>
+<td>2) install · 7)-② 차트 값으로 CRD 끄기</td>
+</tr>
+<tr>
+<td>Q7 CRD 목록과 필드 설명을 파일로</td>
+<td>7)-③ <code>kubectl get crd</code> · <code>kubectl explain</code> 을 파일로</td>
 </tr>
 </tbody>
 </table>

@@ -987,13 +987,96 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#gateway-api" class="md-nav__link">
+  <a href="#9-ingress-gateway-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        더 보기: Gateway API 로 같은 일 하기
+        9) Ingress 를 Gateway API 로 옮기기
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="9) Ingress 를 Gateway API 로 옮기기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gatewayclass-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        준비 — GatewayClass 확인, 7) 의 정책 걷어내기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-ingress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① 옮길 Ingress 를 읽는다
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-gateway-https" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② Gateway — HTTPS 리스너
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — Secret 이름이 틀리면
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-httproute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③ HTTPRoute — 호스트·경로·백엔드
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-https" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④ HTTPS 로 확인 — 입구가 두 개인 상태
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-ingress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⑤ Ingress 를 지운다
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1541,13 +1624,96 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#gateway-api" class="md-nav__link">
+  <a href="#9-ingress-gateway-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        더 보기: Gateway API 로 같은 일 하기
+        9) Ingress 를 Gateway API 로 옮기기
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="9) Ingress 를 Gateway API 로 옮기기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gatewayclass-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        준비 — GatewayClass 확인, 7) 의 정책 걷어내기
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-ingress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① 옮길 Ingress 를 읽는다
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-gateway-https" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② Gateway — HTTPS 리스너
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실험 — Secret 이름이 틀리면
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-httproute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③ HTTPRoute — 호스트·경로·백엔드
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-https" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④ HTTPS 로 확인 — 입구가 두 개인 상태
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-ingress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⑤ Ingress 를 지운다
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1627,6 +1793,7 @@
 <li>openssl 로 만든 자체 서명 인증서를 <strong>TLS Secret → Ingress</strong> 로 붙이고, 어떤 인증서가 나오는지 확인한다.</li>
 <li>404 · 503 · 504 가 <strong>각각 어디의 문제인지</strong> 직접 만들어 보고 구분한다.</li>
 <li>NetworkPolicy 로 잠근 네임스페이스에 <strong>Ingress 컨트롤러만 들여보내는</strong> 조합을 만든다.</li>
+<li>기존 Ingress(호스트 + TLS + 경로)를 <strong>Gateway + HTTPRoute 로 옮기고</strong> Ingress 를 지운다. 필드가 어디로 가는지 표로 정리한다.</li>
 </ul>
 <hr />
 <h2 id="0">0) 준비 — 컨트롤러 확인과 접속 주소<a class="headerlink" href="#0" title="Permanent link">&para;</a></h2>
@@ -2366,113 +2533,353 @@
 </tbody>
 </table>
 <hr />
-<h2 id="gateway-api">더 보기: Gateway API 로 같은 일 하기<a class="headerlink" href="#gateway-api" title="Permanent link">&para;</a></h2>
-<p>Gateway API 는 12강에서 다룹니다. 클러스터에 GatewayClass 가 설치돼 있다면 같은 라우팅을 이렇게 옮길 수 있습니다.</p>
+<h2 id="9-ingress-gateway-api">9) Ingress 를 Gateway API 로 옮기기<a class="headerlink" href="#9-ingress-gateway-api" title="Permanent link">&para;</a></h2>
+<p>Gateway API 는 Ingress 의 뒤를 잇는 표준입니다(구조 전체는 12강에서 다룹니다). 시험에는 <strong>이미 있는 Ingress 를 읽고, 같은 동작을 하는 Gateway + HTTPRoute 를 만든 뒤, Ingress 를 지우는</strong> 문제가 나옵니다. <strong>HTTPS 리스너</strong>까지 옮겨야 합니다.</p>
+<p>여기서는 5) 에서 만든 <code>shop-tls</code>(호스트 <code>secure.guide.local</code> · Secret <code>guide-tls</code> · <code>catalog-svc:80</code>)를 옮깁니다.</p>
+<h3 id="gatewayclass-7">준비 — GatewayClass 확인, 7) 의 정책 걷어내기<a class="headerlink" href="#gatewayclass-7" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>gatewayclass
+</span><span id="__span-70-2"><a id="__codelineno-70-2" name="__codelineno-70-2" href="#__codelineno-70-2"></a>kubectl<span class="w"> </span>api-resources<span class="w"> </span>--api-group<span class="o">=</span>gateway.networking.k8s.io
 </span></code></pre></div>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a>NAME    CONTROLLER                                   ACCEPTED   AGE
 </span><span id="__span-71-2"><a id="__codelineno-71-2" name="__codelineno-71-2" href="#__codelineno-71-2"></a>nginx   gateway.nginx.org/nginx-gateway-controller   True       3d
+</span><span id="__span-71-3"><a id="__codelineno-71-3" name="__codelineno-71-3" href="#__codelineno-71-3"></a>
+</span><span id="__span-71-4"><a id="__codelineno-71-4" name="__codelineno-71-4" href="#__codelineno-71-4"></a>NAME              SHORTNAMES   APIVERSION                           NAMESPACED   KIND
+</span><span id="__span-71-5"><a id="__codelineno-71-5" name="__codelineno-71-5" href="#__codelineno-71-5"></a>gatewayclasses    gc           gateway.networking.k8s.io/v1         false        GatewayClass
+</span><span id="__span-71-6"><a id="__codelineno-71-6" name="__codelineno-71-6" href="#__codelineno-71-6"></a>gateways          gtw          gateway.networking.k8s.io/v1         true         Gateway
+</span><span id="__span-71-7"><a id="__codelineno-71-7" name="__codelineno-71-7" href="#__codelineno-71-7"></a>grpcroutes                     gateway.networking.k8s.io/v1         true         GRPCRoute
+</span><span id="__span-71-8"><a id="__codelineno-71-8" name="__codelineno-71-8" href="#__codelineno-71-8"></a>httproutes                     gateway.networking.k8s.io/v1         true         HTTPRoute
+</span><span id="__span-71-9"><a id="__codelineno-71-9" name="__codelineno-71-9" href="#__codelineno-71-9"></a>referencegrants   refgrant     gateway.networking.k8s.io/v1beta1    true         ReferenceGrant
 </span></code></pre></div>
-<p>목록이 비어 있으면(CRD 나 구현이 없으면) 이 절은 건너뜁니다.</p>
-<p><code>guide-gw.yaml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
-</span><span id="__span-72-2"><a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gateway</span>
-</span><span id="__span-72-3"><a id="__codelineno-72-3" name="__codelineno-72-3" href="#__codelineno-72-3"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-72-4"><a id="__codelineno-72-4" name="__codelineno-72-4" href="#__codelineno-72-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-gw</span>
-</span><span id="__span-72-5"><a id="__codelineno-72-5" name="__codelineno-72-5" href="#__codelineno-72-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-ingress</span>
-</span><span id="__span-72-6"><a id="__codelineno-72-6" name="__codelineno-72-6" href="#__codelineno-72-6"></a><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-72-7"><a id="__codelineno-72-7" name="__codelineno-72-7" href="#__codelineno-72-7"></a><span class="w">  </span><span class="nt">gatewayClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w">          </span><span class="c1"># ← Ingress 의 ingressClassName 자리</span>
-</span><span id="__span-72-8"><a id="__codelineno-72-8" name="__codelineno-72-8" href="#__codelineno-72-8"></a><span class="w">  </span><span class="nt">listeners</span><span class="p">:</span>
-</span><span id="__span-72-9"><a id="__codelineno-72-9" name="__codelineno-72-9" href="#__codelineno-72-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
-</span><span id="__span-72-10"><a id="__codelineno-72-10" name="__codelineno-72-10" href="#__codelineno-72-10"></a><span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
-</span><span id="__span-72-11"><a id="__codelineno-72-11" name="__codelineno-72-11" href="#__codelineno-72-11"></a><span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTP</span>
-</span><span id="__span-72-12"><a id="__codelineno-72-12" name="__codelineno-72-12" href="#__codelineno-72-12"></a><span class="nn">---</span>
-</span><span id="__span-72-13"><a id="__codelineno-72-13" name="__codelineno-72-13" href="#__codelineno-72-13"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
-</span><span id="__span-72-14"><a id="__codelineno-72-14" name="__codelineno-72-14" href="#__codelineno-72-14"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
-</span><span id="__span-72-15"><a id="__codelineno-72-15" name="__codelineno-72-15" href="#__codelineno-72-15"></a><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-72-16"><a id="__codelineno-72-16" name="__codelineno-72-16" href="#__codelineno-72-16"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-route</span>
-</span><span id="__span-72-17"><a id="__codelineno-72-17" name="__codelineno-72-17" href="#__codelineno-72-17"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-ingress</span>
-</span><span id="__span-72-18"><a id="__codelineno-72-18" name="__codelineno-72-18" href="#__codelineno-72-18"></a><span class="nt">spec</span><span class="p">:</span>
-</span><span id="__span-72-19"><a id="__codelineno-72-19" name="__codelineno-72-19" href="#__codelineno-72-19"></a><span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
-</span><span id="__span-72-20"><a id="__codelineno-72-20" name="__codelineno-72-20" href="#__codelineno-72-20"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-gw</span><span class="w">               </span><span class="c1"># ← 어느 Gateway 에 붙나 (Ingress 에는 없던 개념)</span>
-</span><span id="__span-72-21"><a id="__codelineno-72-21" name="__codelineno-72-21" href="#__codelineno-72-21"></a><span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
-</span><span id="__span-72-22"><a id="__codelineno-72-22" name="__codelineno-72-22" href="#__codelineno-72-22"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matches</span><span class="p">:</span>
-</span><span id="__span-72-23"><a id="__codelineno-72-23" name="__codelineno-72-23" href="#__codelineno-72-23"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> type</span><span class="p">:</span><span class="w"> </span><span class="nv">PathPrefix</span><span class="p p-Indicator">,</span><span class="nt"> value</span><span class="p">:</span><span class="w"> </span><span class="nv">/catalog</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w">   </span><span class="c1"># ← Ingress 의 Prefix</span>
-</span><span id="__span-72-24"><a id="__codelineno-72-24" name="__codelineno-72-24" href="#__codelineno-72-24"></a><span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
-</span><span id="__span-72-25"><a id="__codelineno-72-25" name="__codelineno-72-25" href="#__codelineno-72-25"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog-svc</span>
-</span><span id="__span-72-26"><a id="__codelineno-72-26" name="__codelineno-72-26" href="#__codelineno-72-26"></a><span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<p>관찰 포인트: Ingress 에서 <code>get ingressclass</code> 로 클래스 이름을 확인했듯, 여기서는 <strong><code>get gatewayclass</code> 의 NAME</strong> 이 Gateway 의 <code>gatewayClassName</code> 에 들어갑니다. <code>ACCEPTED</code> 가 <code>True</code> 여야 컨트롤러가 살아 있는 것입니다.</p>
+<details class="note">
+<summary>GatewayClass 가 없다면 — 설치 (NGINX Gateway Fabric)</summary>
+<p>Gateway API 는 <strong>CRD + 구현(컨트롤러)</strong> 을 따로 설치합니다. 채점 세트 <code>11-ingress</code> 의 <code>start</code> 가 아래와 같은 버전으로 자동 설치하므로, 채점 세트를 한 번 시작했다면 이미 있습니다.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a><span class="nv">NGF_VERSION</span><span class="o">=</span>v2.7.0
+</span><span id="__span-72-2"><a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a>kubectl<span class="w"> </span>kustomize<span class="w"> </span><span class="s2">"https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=</span><span class="si">${</span><span class="nv">NGF_VERSION</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+</span><span id="__span-72-3"><a id="__codelineno-72-3" name="__codelineno-72-3" href="#__codelineno-72-3"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>--server-side<span class="w"> </span>-f<span class="w"> </span>https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/<span class="si">${</span><span class="nv">NGF_VERSION</span><span class="si">}</span>/deploy/crds.yaml
+</span><span id="__span-72-4"><a id="__codelineno-72-4" name="__codelineno-72-4" href="#__codelineno-72-4"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/<span class="si">${</span><span class="nv">NGF_VERSION</span><span class="si">}</span>/deploy/nodeport/deploy.yaml
+</span><span id="__span-72-5"><a id="__codelineno-72-5" name="__codelineno-72-5" href="#__codelineno-72-5"></a>kubectl<span class="w"> </span><span class="nb">wait</span><span class="w"> </span>--for<span class="o">=</span><span class="nv">condition</span><span class="o">=</span>Available<span class="w"> </span>deployment<span class="w"> </span>--all<span class="w"> </span>-n<span class="w"> </span>nginx-gateway<span class="w"> </span>--timeout<span class="o">=</span>180s
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>guide-gw.yaml
-</span><span id="__span-73-2"><a id="__codelineno-73-2" name="__codelineno-73-2" href="#__codelineno-73-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>gateway,httproute<span class="w"> </span>-n<span class="w"> </span>guide-ingress
-</span><span id="__span-73-3"><a id="__codelineno-73-3" name="__codelineno-73-3" href="#__codelineno-73-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>guide-gw
+시험 클러스터에는 GatewayClass 가 미리 있습니다. 시험에서는 <strong>설치하지 말고 이름만 확인</strong>합니다.</p>
+</details>
+<p>NGINX Gateway Fabric 은 Gateway 를 하나 만들 때마다 <strong>그 Gateway 와 같은 네임스페이스에</strong> 데이터 플레인 파드를 띄웁니다. 7) 의 기본 거부 정책이 남아 있으면 그 파드로 들어오는 요청도, 그 파드가 백엔드로 가는 요청도(출발지가 <code>ingress-nginx</code> 네임스페이스가 아니므로) 막힙니다. 먼저 걷어냅니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>from-ingress-nginx.yaml<span class="w"> </span>-f<span class="w"> </span>deny-in-all.yaml
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-74-1"><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a>NAME                                         CLASS   ADDRESS   PROGRAMMED   AGE
-</span><span id="__span-74-2"><a id="__codelineno-74-2" name="__codelineno-74-2" href="#__codelineno-74-2"></a>gateway.gateway.networking.k8s.io/guide-gw   nginx             True         20s
-</span><span id="__span-74-3"><a id="__codelineno-74-3" name="__codelineno-74-3" href="#__codelineno-74-3"></a>
-</span><span id="__span-74-4"><a id="__codelineno-74-4" name="__codelineno-74-4" href="#__codelineno-74-4"></a>NAME                                              HOSTNAMES   AGE
-</span><span id="__span-74-5"><a id="__codelineno-74-5" name="__codelineno-74-5" href="#__codelineno-74-5"></a>httproute.gateway.networking.k8s.io/guide-route               20s
-</span><span id="__span-74-6"><a id="__codelineno-74-6" name="__codelineno-74-6" href="#__codelineno-74-6"></a>
-</span><span id="__span-74-7"><a id="__codelineno-74-7" name="__codelineno-74-7" href="#__codelineno-74-7"></a>guide-gw-nginx   LoadBalancer   10.104.77.9   &lt;pending&gt;   80:31518/TCP   20s
+<h3 id="1-ingress">① 옮길 Ingress 를 읽는다<a class="headerlink" href="#1-ingress" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-74-1"><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>ingress<span class="w"> </span>shop-tls<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span>-n<span class="w"> </span><span class="s1">'/^spec:/,/^status:/p'</span>
 </span></code></pre></div>
-<p>LoadBalancer 는 Pending 이지만 <strong>NodePort(여기서는 31518)는 이미 열려 있습니다.</strong> 그 포트로 확인합니다.
-(Gateway 가 만드는 Service 이름은 구현·버전마다 다를 수 있으니 <code>get svc</code> 로 확인합니다.)</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-75-1"><a id="__codelineno-75-1" name="__codelineno-75-1" href="#__codelineno-75-1"></a><span class="nv">GW_PORT</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>-l<span class="w"> </span>gateway.networking.k8s.io/gateway-name<span class="o">=</span>guide-gw<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].spec.ports[0].nodePort}'</span><span class="k">)</span>
-</span><span id="__span-75-2"><a id="__codelineno-75-2" name="__codelineno-75-2" href="#__codelineno-75-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://<span class="nv">$NODE_IP</span>:<span class="nv">$GW_PORT</span>/catalog/items
+<div class="language-text highlight"><pre><span></span><code><span id="__span-75-1"><a id="__codelineno-75-1" name="__codelineno-75-1" href="#__codelineno-75-1"></a>spec:
+</span><span id="__span-75-2"><a id="__codelineno-75-2" name="__codelineno-75-2" href="#__codelineno-75-2"></a>  ingressClassName: nginx
+</span><span id="__span-75-3"><a id="__codelineno-75-3" name="__codelineno-75-3" href="#__codelineno-75-3"></a>  rules:
+</span><span id="__span-75-4"><a id="__codelineno-75-4" name="__codelineno-75-4" href="#__codelineno-75-4"></a>  - host: secure.guide.local
+</span><span id="__span-75-5"><a id="__codelineno-75-5" name="__codelineno-75-5" href="#__codelineno-75-5"></a>    http:
+</span><span id="__span-75-6"><a id="__codelineno-75-6" name="__codelineno-75-6" href="#__codelineno-75-6"></a>      paths:
+</span><span id="__span-75-7"><a id="__codelineno-75-7" name="__codelineno-75-7" href="#__codelineno-75-7"></a>      - backend:
+</span><span id="__span-75-8"><a id="__codelineno-75-8" name="__codelineno-75-8" href="#__codelineno-75-8"></a>          service:
+</span><span id="__span-75-9"><a id="__codelineno-75-9" name="__codelineno-75-9" href="#__codelineno-75-9"></a>            name: catalog-svc
+</span><span id="__span-75-10"><a id="__codelineno-75-10" name="__codelineno-75-10" href="#__codelineno-75-10"></a>            port:
+</span><span id="__span-75-11"><a id="__codelineno-75-11" name="__codelineno-75-11" href="#__codelineno-75-11"></a>              number: 80
+</span><span id="__span-75-12"><a id="__codelineno-75-12" name="__codelineno-75-12" href="#__codelineno-75-12"></a>        path: /
+</span><span id="__span-75-13"><a id="__codelineno-75-13" name="__codelineno-75-13" href="#__codelineno-75-13"></a>        pathType: Prefix
+</span><span id="__span-75-14"><a id="__codelineno-75-14" name="__codelineno-75-14" href="#__codelineno-75-14"></a>  tls:
+</span><span id="__span-75-15"><a id="__codelineno-75-15" name="__codelineno-75-15" href="#__codelineno-75-15"></a>  - hosts:
+</span><span id="__span-75-16"><a id="__codelineno-75-16" name="__codelineno-75-16" href="#__codelineno-75-16"></a>    - secure.guide.local
+</span><span id="__span-75-17"><a id="__codelineno-75-17" name="__codelineno-75-17" href="#__codelineno-75-17"></a>    secretName: guide-tls
+</span><span id="__span-75-18"><a id="__codelineno-75-18" name="__codelineno-75-18" href="#__codelineno-75-18"></a>status:
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-76-1"><a id="__codelineno-76-1" name="__codelineno-76-1" href="#__codelineno-76-1"></a>served-by=catalog-5f7b9c6d4-m9q4t uri=/catalog/items host=192.168.56.11
-</span></code></pre></div>
+<p>이 값들을 한 칸씩 옮겨 적습니다.</p>
 <table>
 <thead>
 <tr>
-<th>Ingress</th>
-<th>Gateway API</th>
+<th>Ingress 필드</th>
+<th>옮겨 갈 곳</th>
+<th>이 실습의 값</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ingressClassName</code></td>
-<td>Gateway 의 <code>gatewayClassName</code></td>
+<td><code>spec.ingressClassName</code></td>
+<td>Gateway <code>spec.gatewayClassName</code></td>
+<td><code>nginx</code></td>
 </tr>
 <tr>
-<td>(컨트롤러 Service 가 입구)</td>
-<td>Gateway 의 <code>listeners</code> 가 입구</td>
+<td>(컨트롤러 Service 의 443 포트)</td>
+<td>Gateway <code>spec.listeners[]</code> — <code>port: 443</code>, <code>protocol: HTTPS</code></td>
+<td>리스너 이름 <code>https</code></td>
 </tr>
 <tr>
-<td><code>rules[].http.paths[]</code></td>
-<td>HTTPRoute 의 <code>rules[].matches[]</code></td>
+<td><code>spec.tls[].hosts[]</code></td>
+<td>리스너의 <code>hostname</code></td>
+<td><code>secure.guide.local</code></td>
 </tr>
 <tr>
-<td><code>backend.service.name/port.number</code></td>
-<td><code>backendRefs[].name/port</code></td>
+<td><code>spec.tls[].secretName</code></td>
+<td>리스너의 <code>tls.certificateRefs[].name</code> (<code>kind: Secret</code>)</td>
+<td><code>guide-tls</code></td>
 </tr>
 <tr>
+<td>(HTTPS 는 컨트롤러에서 끝난다)</td>
+<td>리스너의 <code>tls.mode: Terminate</code> (생략하면 기본값)</td>
+<td><code>Terminate</code></td>
+</tr>
+<tr>
+<td><code>spec.rules[].host</code></td>
+<td>HTTPRoute <code>spec.hostnames[]</code></td>
+<td><code>secure.guide.local</code></td>
+</tr>
+<tr>
+<td><code>paths[].pathType: Prefix</code> + <code>path</code></td>
+<td><code>rules[].matches[].path</code> — <code>type: PathPrefix</code> + <code>value</code></td>
+<td><code>/</code></td>
+</tr>
+<tr>
+<td><code>paths[].pathType: Exact</code></td>
+<td><code>type: Exact</code></td>
 <td>—</td>
-<td>HTTPRoute 의 <code>parentRefs</code> (어느 Gateway 에 붙나)</td>
+</tr>
+<tr>
+<td><code>backend.service.name</code> / <code>port.number</code></td>
+<td><code>rules[].backendRefs[].name</code> / <code>port</code></td>
+<td><code>catalog-svc</code> / <code>80</code></td>
+</tr>
+<tr>
+<td>— (Ingress 에는 없던 개념)</td>
+<td>HTTPRoute <code>spec.parentRefs[]</code> — 어느 Gateway 에 붙나</td>
+<td><code>guide-gw</code></td>
 </tr>
 </tbody>
 </table>
+<p>Ingress 한 장이 <strong>두 장으로 나뉩니다.</strong> 입구(포트·프로토콜·호스트·인증서)는 Gateway 로, 라우팅(호스트·경로·백엔드)은 HTTPRoute 로 갑니다. 호스트는 양쪽에 다 적습니다.</p>
+<h3 id="2-gateway-https">② Gateway — HTTPS 리스너<a class="headerlink" href="#2-gateway-https" title="Permanent link">&para;</a></h3>
+<p>필드 이름이 헷갈리면 Ingress 때처럼 <code>explain</code> 으로 내려갑니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-76-1"><a id="__codelineno-76-1" name="__codelineno-76-1" href="#__codelineno-76-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>gateway.spec.listeners.tls
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-77-1"><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a>FIELDS:
+</span><span id="__span-77-2"><a id="__codelineno-77-2" name="__codelineno-77-2" href="#__codelineno-77-2"></a>  certificateRefs     &lt;[]Object&gt;
+</span><span id="__span-77-3"><a id="__codelineno-77-3" name="__codelineno-77-3" href="#__codelineno-77-3"></a>  mode                &lt;string&gt;
+</span><span id="__span-77-4"><a id="__codelineno-77-4" name="__codelineno-77-4" href="#__codelineno-77-4"></a>  options             &lt;map[string]string&gt;
+</span></code></pre></div>
+<p><code>guide-gw.yaml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-78-1"><a id="__codelineno-78-1" name="__codelineno-78-1" href="#__codelineno-78-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+</span><span id="__span-78-2"><a id="__codelineno-78-2" name="__codelineno-78-2" href="#__codelineno-78-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gateway</span>
+</span><span id="__span-78-3"><a id="__codelineno-78-3" name="__codelineno-78-3" href="#__codelineno-78-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-78-4"><a id="__codelineno-78-4" name="__codelineno-78-4" href="#__codelineno-78-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-gw</span>
+</span><span id="__span-78-5"><a id="__codelineno-78-5" name="__codelineno-78-5" href="#__codelineno-78-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-ingress</span>
+</span><span id="__span-78-6"><a id="__codelineno-78-6" name="__codelineno-78-6" href="#__codelineno-78-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-78-7"><a id="__codelineno-78-7" name="__codelineno-78-7" href="#__codelineno-78-7"></a><span class="w">  </span><span class="nt">gatewayClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w">               </span><span class="c1"># ← ingressClassName</span>
+</span><span id="__span-78-8"><a id="__codelineno-78-8" name="__codelineno-78-8" href="#__codelineno-78-8"></a><span class="w">  </span><span class="nt">listeners</span><span class="p">:</span>
+</span><span id="__span-78-9"><a id="__codelineno-78-9" name="__codelineno-78-9" href="#__codelineno-78-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span>
+</span><span id="__span-78-10"><a id="__codelineno-78-10" name="__codelineno-78-10" href="#__codelineno-78-10"></a><span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span>
+</span><span id="__span-78-11"><a id="__codelineno-78-11" name="__codelineno-78-11" href="#__codelineno-78-11"></a><span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPS</span>
+</span><span id="__span-78-12"><a id="__codelineno-78-12" name="__codelineno-78-12" href="#__codelineno-78-12"></a><span class="w">      </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secure.guide.local</span><span class="w">      </span><span class="c1"># ← tls[].hosts</span>
+</span><span id="__span-78-13"><a id="__codelineno-78-13" name="__codelineno-78-13" href="#__codelineno-78-13"></a><span class="w">      </span><span class="nt">tls</span><span class="p">:</span>
+</span><span id="__span-78-14"><a id="__codelineno-78-14" name="__codelineno-78-14" href="#__codelineno-78-14"></a><span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Terminate</span><span class="w">                 </span><span class="c1"># ← 생략해도 Terminate</span>
+</span><span id="__span-78-15"><a id="__codelineno-78-15" name="__codelineno-78-15" href="#__codelineno-78-15"></a><span class="w">        </span><span class="nt">certificateRefs</span><span class="p">:</span>
+</span><span id="__span-78-16"><a id="__codelineno-78-16" name="__codelineno-78-16" href="#__codelineno-78-16"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+</span><span id="__span-78-17"><a id="__codelineno-78-17" name="__codelineno-78-17" href="#__codelineno-78-17"></a><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-tls</span><span class="w">             </span><span class="c1"># ← tls[].secretName (같은 네임스페이스)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-79-1"><a id="__codelineno-79-1" name="__codelineno-79-1" href="#__codelineno-79-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>guide-gw.yaml
+</span><span id="__span-79-2"><a id="__codelineno-79-2" name="__codelineno-79-2" href="#__codelineno-79-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>gateway<span class="w"> </span>guide-gw<span class="w"> </span>-n<span class="w"> </span>guide-ingress
+</span><span id="__span-79-3"><a id="__codelineno-79-3" name="__codelineno-79-3" href="#__codelineno-79-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>gateway<span class="w"> </span>guide-gw<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.listeners[*]}{.name}{"  attachedRoutes="}{.attachedRoutes}{"\n"}{range .conditions[*]}{"  "}{.type}={.status}{"  "}{.reason}{"\n"}{end}{end}'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-80-1"><a id="__codelineno-80-1" name="__codelineno-80-1" href="#__codelineno-80-1"></a>NAME       CLASS   ADDRESS   PROGRAMMED   AGE
+</span><span id="__span-80-2"><a id="__codelineno-80-2" name="__codelineno-80-2" href="#__codelineno-80-2"></a>guide-gw   nginx             True         15s
+</span><span id="__span-80-3"><a id="__codelineno-80-3" name="__codelineno-80-3" href="#__codelineno-80-3"></a>
+</span><span id="__span-80-4"><a id="__codelineno-80-4" name="__codelineno-80-4" href="#__codelineno-80-4"></a>https  attachedRoutes=0
+</span><span id="__span-80-5"><a id="__codelineno-80-5" name="__codelineno-80-5" href="#__codelineno-80-5"></a>  Accepted=True  Accepted
+</span><span id="__span-80-6"><a id="__codelineno-80-6" name="__codelineno-80-6" href="#__codelineno-80-6"></a>  ResolvedRefs=True  ResolvedRefs        ← 인증서 Secret 을 찾았다
+</span><span id="__span-80-7"><a id="__codelineno-80-7" name="__codelineno-80-7" href="#__codelineno-80-7"></a>  Programmed=True  Programmed
+</span><span id="__span-80-8"><a id="__codelineno-80-8" name="__codelineno-80-8" href="#__codelineno-80-8"></a>  Conflicted=False  NoConflicts
+</span></code></pre></div>
+<p>관찰 포인트: <code>attachedRoutes=0</code> — 입구는 열렸지만 <strong>아직 붙은 라우트가 없습니다.</strong> 이 상태로 접속하면 404 입니다. Ingress 에서는 규칙이 입구와 한 몸이었지만, Gateway API 에서는 HTTPRoute 가 와서 붙어야 합니다.</p>
+<h3 id="secret">실험 — Secret 이름이 틀리면<a class="headerlink" href="#secret" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-81-1"><a id="__codelineno-81-1" name="__codelineno-81-1" href="#__codelineno-81-1"></a>kubectl<span class="w"> </span>patch<span class="w"> </span>gateway<span class="w"> </span>guide-gw<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>--type<span class="o">=</span>json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-81-2"><a id="__codelineno-81-2" name="__codelineno-81-2" href="#__codelineno-81-2"></a><span class="w">  </span>-p<span class="o">=</span><span class="s1">'[{"op":"replace","path":"/spec/listeners/0/tls/certificateRefs/0/name","value":"guide-tls-typo"}]'</span>
+</span><span id="__span-81-3"><a id="__codelineno-81-3" name="__codelineno-81-3" href="#__codelineno-81-3"></a>sleep<span class="w"> </span><span class="m">3</span>
+</span><span id="__span-81-4"><a id="__codelineno-81-4" name="__codelineno-81-4" href="#__codelineno-81-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>gateway<span class="w"> </span>guide-gw<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.listeners[0].conditions[?(@.type=="ResolvedRefs")]}{"\n"}'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-82-1"><a id="__codelineno-82-1" name="__codelineno-82-1" href="#__codelineno-82-1"></a>{"lastTransitionTime":"2026-10-04T06:41:12Z","message":"Secret guide-ingress/guide-tls-typo does not exist","observedGeneration":2,"reason":"InvalidCertificateRef","status":"False","type":"ResolvedRefs"}
+</span></code></pre></div>
+<p>관찰 포인트: Ingress 는 Secret 이 틀려도 조용히 <strong>가짜 인증서</strong>를 내줬지만(5)), Gateway 는 리스너 상태에 <strong><code>InvalidCertificateRef</code></strong> 로 이유를 적어 줍니다. 되돌려 놓습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-83-1"><a id="__codelineno-83-1" name="__codelineno-83-1" href="#__codelineno-83-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>guide-gw.yaml
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">인증서 Secret 은 Gateway 와 같은 네임스페이스에</p>
+<p><code>certificateRefs</code> 에 다른 네임스페이스의 Secret 을 적으려면 그쪽 네임스페이스에 <strong>ReferenceGrant</strong> 가 있어야 합니다. 없으면 위와 같은 <code>ResolvedRefs=False</code> 가 됩니다.
+Ingress 를 옮길 때는 Secret 이 이미 Ingress 와 같은 네임스페이스에 있으므로, <strong>Gateway 도 같은 네임스페이스에</strong> 만드는 것이 가장 단순합니다.</p>
+</div>
+<h3 id="3-httproute">③ HTTPRoute — 호스트·경로·백엔드<a class="headerlink" href="#3-httproute" title="Permanent link">&para;</a></h3>
+<p><code>guide-route.yaml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-84-1"><a id="__codelineno-84-1" name="__codelineno-84-1" href="#__codelineno-84-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+</span><span id="__span-84-2"><a id="__codelineno-84-2" name="__codelineno-84-2" href="#__codelineno-84-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+</span><span id="__span-84-3"><a id="__codelineno-84-3" name="__codelineno-84-3" href="#__codelineno-84-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-84-4"><a id="__codelineno-84-4" name="__codelineno-84-4" href="#__codelineno-84-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-route</span>
+</span><span id="__span-84-5"><a id="__codelineno-84-5" name="__codelineno-84-5" href="#__codelineno-84-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-ingress</span>
+</span><span id="__span-84-6"><a id="__codelineno-84-6" name="__codelineno-84-6" href="#__codelineno-84-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-84-7"><a id="__codelineno-84-7" name="__codelineno-84-7" href="#__codelineno-84-7"></a><span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+</span><span id="__span-84-8"><a id="__codelineno-84-8" name="__codelineno-84-8" href="#__codelineno-84-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-gw</span><span class="w">                    </span><span class="c1"># ← 어느 Gateway 에 붙나</span>
+</span><span id="__span-84-9"><a id="__codelineno-84-9" name="__codelineno-84-9" href="#__codelineno-84-9"></a><span class="w">  </span><span class="nt">hostnames</span><span class="p">:</span>
+</span><span id="__span-84-10"><a id="__codelineno-84-10" name="__codelineno-84-10" href="#__codelineno-84-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secure.guide.local</span><span class="w">                </span><span class="c1"># ← rules[].host</span>
+</span><span id="__span-84-11"><a id="__codelineno-84-11" name="__codelineno-84-11" href="#__codelineno-84-11"></a><span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+</span><span id="__span-84-12"><a id="__codelineno-84-12" name="__codelineno-84-12" href="#__codelineno-84-12"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matches</span><span class="p">:</span>
+</span><span id="__span-84-13"><a id="__codelineno-84-13" name="__codelineno-84-13" href="#__codelineno-84-13"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span>
+</span><span id="__span-84-14"><a id="__codelineno-84-14" name="__codelineno-84-14" href="#__codelineno-84-14"></a><span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PathPrefix</span><span class="w">            </span><span class="c1"># ← pathType: Prefix</span>
+</span><span id="__span-84-15"><a id="__codelineno-84-15" name="__codelineno-84-15" href="#__codelineno-84-15"></a><span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+</span><span id="__span-84-16"><a id="__codelineno-84-16" name="__codelineno-84-16" href="#__codelineno-84-16"></a><span class="w">      </span><span class="nt">backendRefs</span><span class="p">:</span>
+</span><span id="__span-84-17"><a id="__codelineno-84-17" name="__codelineno-84-17" href="#__codelineno-84-17"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog-svc</span><span class="w">             </span><span class="c1"># ← backend.service.name</span>
+</span><span id="__span-84-18"><a id="__codelineno-84-18" name="__codelineno-84-18" href="#__codelineno-84-18"></a><span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w">                      </span><span class="c1"># ← backend.service.port.number</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-85-1"><a id="__codelineno-85-1" name="__codelineno-85-1" href="#__codelineno-85-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>guide-route.yaml
+</span><span id="__span-85-2"><a id="__codelineno-85-2" name="__codelineno-85-2" href="#__codelineno-85-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>httproute<span class="w"> </span>guide-route<span class="w"> </span>-n<span class="w"> </span>guide-ingress
+</span><span id="__span-85-3"><a id="__codelineno-85-3" name="__codelineno-85-3" href="#__codelineno-85-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>httproute<span class="w"> </span>guide-route<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.parents[*]}{.parentRef.name}{": "}{range .conditions[*]}{.type}={.status} {end}{"\n"}{end}'</span>
+</span><span id="__span-85-4"><a id="__codelineno-85-4" name="__codelineno-85-4" href="#__codelineno-85-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>gateway<span class="w"> </span>guide-gw<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.listeners[0].attachedRoutes}{"\n"}'</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-86-1"><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a>NAME          HOSTNAMES                AGE
+</span><span id="__span-86-2"><a id="__codelineno-86-2" name="__codelineno-86-2" href="#__codelineno-86-2"></a>guide-route   ["secure.guide.local"]   10s
+</span><span id="__span-86-3"><a id="__codelineno-86-3" name="__codelineno-86-3" href="#__codelineno-86-3"></a>
+</span><span id="__span-86-4"><a id="__codelineno-86-4" name="__codelineno-86-4" href="#__codelineno-86-4"></a>guide-gw: Accepted=True ResolvedRefs=True
+</span><span id="__span-86-5"><a id="__codelineno-86-5" name="__codelineno-86-5" href="#__codelineno-86-5"></a>1
+</span></code></pre></div>
+<p>관찰 포인트: HTTPRoute 쪽에도 상태가 있습니다. <strong><code>Accepted</code></strong> 는 "Gateway 가 이 라우트를 받아들였다"(리스너 hostname 과 라우트 hostnames 가 맞아야 함), <strong><code>ResolvedRefs</code></strong> 는 "backendRefs 의 Service·포트를 찾았다" 입니다. 그리고 Gateway 의 <code>attachedRoutes</code> 가 1 로 올라갔습니다.</p>
+<table>
+<thead>
+<tr>
+<th>증상</th>
+<th>어디를 보나</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gateway <code>PROGRAMMED</code> 가 비거나 False</td>
+<td><code>gatewayClassName</code> 오타, GatewayClass <code>ACCEPTED</code></td>
+</tr>
+<tr>
+<td>리스너 <code>ResolvedRefs=False</code> (<code>InvalidCertificateRef</code>)</td>
+<td><code>certificateRefs</code> 의 Secret 이름 · 네임스페이스 · 타입</td>
+</tr>
+<tr>
+<td>라우트 <code>Accepted=False</code> (<code>NoMatchingListenerHostname</code>)</td>
+<td>리스너 <code>hostname</code> 과 라우트 <code>hostnames</code> 불일치</td>
+</tr>
+<tr>
+<td>라우트 <code>ResolvedRefs=False</code> (<code>BackendNotFound</code>)</td>
+<td><code>backendRefs</code> 의 Service 이름 · 포트</td>
+</tr>
+<tr>
+<td><code>attachedRoutes=0</code></td>
+<td><code>parentRefs</code> 의 Gateway 이름 · 네임스페이스</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-https">④ HTTPS 로 확인 — 입구가 두 개인 상태<a class="headerlink" href="#4-https" title="Permanent link">&para;</a></h3>
+<p>Gateway 를 만들면 컨트롤러가 그 앞에 Service 를 하나 만듭니다. 그 Service 의 <strong>443 에 붙은 NodePort</strong> 로 들어갑니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-87-1"><a id="__codelineno-87-1" name="__codelineno-87-1" href="#__codelineno-87-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>-l<span class="w"> </span>gateway.networking.k8s.io/gateway-name<span class="o">=</span>guide-gw
+</span><span id="__span-87-2"><a id="__codelineno-87-2" name="__codelineno-87-2" href="#__codelineno-87-2"></a><span class="nv">GW_HTTPS_PORT</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>-l<span class="w"> </span>gateway.networking.k8s.io/gateway-name<span class="o">=</span>guide-gw<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-87-3"><a id="__codelineno-87-3" name="__codelineno-87-3" href="#__codelineno-87-3"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].spec.ports[?(@.port==443)].nodePort}'</span><span class="k">)</span>
+</span><span id="__span-87-4"><a id="__codelineno-87-4" name="__codelineno-87-4" href="#__codelineno-87-4"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"gateway https:</span><span class="nv">$GW_HTTPS_PORT</span><span class="s2">   ingress https:</span><span class="nv">$HTTPS_PORT</span><span class="s2">"</span>
+</span><span id="__span-87-5"><a id="__codelineno-87-5" name="__codelineno-87-5" href="#__codelineno-87-5"></a>
+</span><span id="__span-87-6"><a id="__codelineno-87-6" name="__codelineno-87-6" href="#__codelineno-87-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"== Gateway"</span><span class="p">;</span><span class="w">  </span>curl<span class="w"> </span>-s<span class="w"> </span>--cacert<span class="w"> </span>guide.crt<span class="w"> </span>--resolve<span class="w"> </span>secure.guide.local:<span class="nv">$GW_HTTPS_PORT</span>:<span class="nv">$NODE_IP</span><span class="w"> </span>https://secure.guide.local:<span class="nv">$GW_HTTPS_PORT</span>/pay
+</span><span id="__span-87-7"><a id="__codelineno-87-7" name="__codelineno-87-7" href="#__codelineno-87-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"== Ingress"</span><span class="p">;</span><span class="w">  </span>curl<span class="w"> </span>-s<span class="w"> </span>--cacert<span class="w"> </span>guide.crt<span class="w"> </span>--resolve<span class="w"> </span>secure.guide.local:<span class="nv">$HTTPS_PORT</span>:<span class="nv">$NODE_IP</span><span class="w">    </span>https://secure.guide.local:<span class="nv">$HTTPS_PORT</span>/pay
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-88-1"><a id="__codelineno-88-1" name="__codelineno-88-1" href="#__codelineno-88-1"></a>NAME             TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)         AGE
+</span><span id="__span-88-2"><a id="__codelineno-88-2" name="__codelineno-88-2" href="#__codelineno-88-2"></a>guide-gw-nginx   LoadBalancer   10.104.77.9   &lt;pending&gt;     443:30943/TCP   2m
+</span><span id="__span-88-3"><a id="__codelineno-88-3" name="__codelineno-88-3" href="#__codelineno-88-3"></a>
+</span><span id="__span-88-4"><a id="__codelineno-88-4" name="__codelineno-88-4" href="#__codelineno-88-4"></a>gateway https:30943   ingress https:32507
+</span><span id="__span-88-5"><a id="__codelineno-88-5" name="__codelineno-88-5" href="#__codelineno-88-5"></a>== Gateway
+</span><span id="__span-88-6"><a id="__codelineno-88-6" name="__codelineno-88-6" href="#__codelineno-88-6"></a>served-by=catalog-5f7b9c6d4-m9q4t uri=/pay host=secure.guide.local
+</span><span id="__span-88-7"><a id="__codelineno-88-7" name="__codelineno-88-7" href="#__codelineno-88-7"></a>== Ingress
+</span><span id="__span-88-8"><a id="__codelineno-88-8" name="__codelineno-88-8" href="#__codelineno-88-8"></a>served-by=catalog-5f7b9c6d4-k2x8p uri=/pay host=secure.guide.local
+</span></code></pre></div>
+<p>관찰 포인트: 같은 인증서(<code>--cacert guide.crt</code> 로 검증 통과), 같은 백엔드입니다. 지금은 <strong>Ingress 와 Gateway 두 입구가 같은 앱을 가리키는</strong> 이전 중 상태입니다. 실제 운영에서도 새 입구를 확인한 다음에 옛 입구를 닫습니다.
+(Service 이름과 TYPE 은 구현·설치 방식에 따라 다를 수 있습니다. LoadBalancer 가 Pending 이어도 NodePort 는 열려 있습니다.)</p>
+<div class="admonition note">
+<p class="admonition-title">Gateway 쪽만 응답이 없다면 — externalTrafficPolicy</p>
+<p>NGINX Gateway Fabric 이 만드는 Service 는 <code>externalTrafficPolicy: Local</code> 이라, <strong>데이터 플레인 파드가 떠 있는 노드로 들어온 요청만</strong> 받습니다.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-89-1"><a id="__codelineno-89-1" name="__codelineno-89-1" href="#__codelineno-89-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>guide-ingress<span class="w"> </span>-l<span class="w"> </span>gateway.networking.k8s.io/gateway-name<span class="o">=</span>guide-gw<span class="w"> </span>-o<span class="w"> </span>wide
+</span></code></pre></div>
+<code>NODE</code> 칸의 노드 IP 로 <code>--resolve</code> 를 바꿔서 다시 해 봅니다.</p>
+</div>
+<h3 id="5-ingress">⑤ Ingress 를 지운다<a class="headerlink" href="#5-ingress" title="Permanent link">&para;</a></h3>
+<p>새 입구가 동작하는 것을 확인했으니 옛 입구를 닫습니다. <strong>시험에서도 이 단계가 채점 항목</strong>입니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-90-1"><a id="__codelineno-90-1" name="__codelineno-90-1" href="#__codelineno-90-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>ingress<span class="w"> </span>shop-tls<span class="w"> </span>-n<span class="w"> </span>guide-ingress
+</span><span id="__span-90-2"><a id="__codelineno-90-2" name="__codelineno-90-2" href="#__codelineno-90-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"== Gateway"</span><span class="p">;</span><span class="w">  </span>curl<span class="w"> </span>-s<span class="w"> </span>--cacert<span class="w"> </span>guide.crt<span class="w"> </span>--resolve<span class="w"> </span>secure.guide.local:<span class="nv">$GW_HTTPS_PORT</span>:<span class="nv">$NODE_IP</span><span class="w"> </span>https://secure.guide.local:<span class="nv">$GW_HTTPS_PORT</span>/pay
+</span><span id="__span-90-3"><a id="__codelineno-90-3" name="__codelineno-90-3" href="#__codelineno-90-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"== Ingress"</span><span class="p">;</span><span class="w">  </span>curl<span class="w"> </span>-sk<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code}\n'</span><span class="w"> </span>--resolve<span class="w"> </span>secure.guide.local:<span class="nv">$HTTPS_PORT</span>:<span class="nv">$NODE_IP</span><span class="w"> </span>https://secure.guide.local:<span class="nv">$HTTPS_PORT</span>/pay
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-91-1"><a id="__codelineno-91-1" name="__codelineno-91-1" href="#__codelineno-91-1"></a>ingress.networking.k8s.io "shop-tls" deleted
+</span><span id="__span-91-2"><a id="__codelineno-91-2" name="__codelineno-91-2" href="#__codelineno-91-2"></a>== Gateway
+</span><span id="__span-91-3"><a id="__codelineno-91-3" name="__codelineno-91-3" href="#__codelineno-91-3"></a>served-by=catalog-5f7b9c6d4-k2x8p uri=/pay host=secure.guide.local
+</span><span id="__span-91-4"><a id="__codelineno-91-4" name="__codelineno-91-4" href="#__codelineno-91-4"></a>== Ingress
+</span><span id="__span-91-5"><a id="__codelineno-91-5" name="__codelineno-91-5" href="#__codelineno-91-5"></a>404
+</span></code></pre></div>
+<p>관찰 포인트: Ingress 쪽은 이제 규칙이 없어 <strong>404</strong>(인증서도 가짜 기본 인증서라 <code>-k</code> 가 필요)입니다. 남은 입구는 Gateway 하나입니다. Secret <code>guide-tls</code> 와 <code>catalog-svc</code> 는 Gateway 가 계속 쓰므로 <strong>지우면 안 됩니다.</strong></p>
+<div class="admonition tip">
+<p class="admonition-title">시험 팁 — 옮기기 문제의 순서</p>
+<ol>
+<li><code>kubectl get ingress &lt;이름&gt; -n &lt;ns&gt; -o yaml</code> 로 <strong>class · host · secretName · path · pathType · backend</strong> 를 메모한다.</li>
+<li><code>kubectl get gatewayclass</code> 로 클래스 이름을 확인한다.</li>
+<li>Gateway(리스너 <code>https</code> · 443 · HTTPS · hostname · certificateRefs) → HTTPRoute(parentRefs · hostnames · PathPrefix · backendRefs) 순으로 만든다. <code>kubectl create</code> 로 만드는 명령이 없으므로 YAML 로 씁니다. 필드는 <code>kubectl explain gateway.spec.listeners</code> · <code>kubectl explain httproute.spec.rules</code> 로 확인합니다.</li>
+<li><code>kubectl describe gateway</code> · <code>describe httproute</code> 로 Accepted · Programmed · ResolvedRefs 를 확인한다.</li>
+<li><strong>마지막에 Ingress 를 지운다.</strong> 문제에 적힌 대로 Service · Secret 은 남긴다.</li>
+</ol>
+</div>
+<details class="note">
+<summary>ingress-nginx 가 해 주던 HTTP → HTTPS 리다이렉트는?</summary>
+<p>5) 에서 본 308 리다이렉트는 ingress-nginx 가 <strong>알아서</strong> 하던 일입니다. Gateway API 에서는 직접 만들어야 합니다. HTTP 리스너를 하나 더 열고, 그 리스너에만 붙는 리다이렉트 라우트를 둡니다.
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-92-1"><a id="__codelineno-92-1" name="__codelineno-92-1" href="#__codelineno-92-1"></a><span class="c1"># guide-gw.yaml 의 listeners 에 추가</span>
+</span><span id="__span-92-2"><a id="__codelineno-92-2" name="__codelineno-92-2" href="#__codelineno-92-2"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+</span><span id="__span-92-3"><a id="__codelineno-92-3" name="__codelineno-92-3" href="#__codelineno-92-3"></a><span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-92-4"><a id="__codelineno-92-4" name="__codelineno-92-4" href="#__codelineno-92-4"></a><span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTP</span>
+</span><span id="__span-92-5"><a id="__codelineno-92-5" name="__codelineno-92-5" href="#__codelineno-92-5"></a><span class="w">      </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secure.guide.local</span>
+</span><span id="__span-92-6"><a id="__codelineno-92-6" name="__codelineno-92-6" href="#__codelineno-92-6"></a><span class="nn">---</span>
+</span><span id="__span-92-7"><a id="__codelineno-92-7" name="__codelineno-92-7" href="#__codelineno-92-7"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
+</span><span id="__span-92-8"><a id="__codelineno-92-8" name="__codelineno-92-8" href="#__codelineno-92-8"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPRoute</span>
+</span><span id="__span-92-9"><a id="__codelineno-92-9" name="__codelineno-92-9" href="#__codelineno-92-9"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-92-10"><a id="__codelineno-92-10" name="__codelineno-92-10" href="#__codelineno-92-10"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-redirect</span>
+</span><span id="__span-92-11"><a id="__codelineno-92-11" name="__codelineno-92-11" href="#__codelineno-92-11"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-ingress</span>
+</span><span id="__span-92-12"><a id="__codelineno-92-12" name="__codelineno-92-12" href="#__codelineno-92-12"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-92-13"><a id="__codelineno-92-13" name="__codelineno-92-13" href="#__codelineno-92-13"></a><span class="w">  </span><span class="nt">parentRefs</span><span class="p">:</span>
+</span><span id="__span-92-14"><a id="__codelineno-92-14" name="__codelineno-92-14" href="#__codelineno-92-14"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guide-gw</span>
+</span><span id="__span-92-15"><a id="__codelineno-92-15" name="__codelineno-92-15" href="#__codelineno-92-15"></a><span class="w">      </span><span class="nt">sectionName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span><span class="w">           </span><span class="c1"># ← http 리스너에만 붙인다</span>
+</span><span id="__span-92-16"><a id="__codelineno-92-16" name="__codelineno-92-16" href="#__codelineno-92-16"></a><span class="w">  </span><span class="nt">hostnames</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">secure.guide.local</span><span class="p p-Indicator">]</span>
+</span><span id="__span-92-17"><a id="__codelineno-92-17" name="__codelineno-92-17" href="#__codelineno-92-17"></a><span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+</span><span id="__span-92-18"><a id="__codelineno-92-18" name="__codelineno-92-18" href="#__codelineno-92-18"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filters</span><span class="p">:</span>
+</span><span id="__span-92-19"><a id="__codelineno-92-19" name="__codelineno-92-19" href="#__codelineno-92-19"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RequestRedirect</span>
+</span><span id="__span-92-20"><a id="__codelineno-92-20" name="__codelineno-92-20" href="#__codelineno-92-20"></a><span class="w">          </span><span class="nt">requestRedirect</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> scheme</span><span class="p">:</span><span class="w"> </span><span class="nv">https</span><span class="p p-Indicator">,</span><span class="nt"> statusCode</span><span class="p">:</span><span class="w"> </span><span class="nv">301</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</span></code></pre></div>
+이때 <code>guide-route</code> 의 <code>parentRefs</code> 에도 <code>sectionName: https</code> 를 넣어야 합니다. 안 넣으면 <code>guide-route</code> 가 두 리스너 모두에 붙어서 HTTP 로도 그냥 응답합니다.
+rewrite 어노테이션(6))도 같은 사정으로, Gateway API 에서는 HTTPRoute 의 <code>URLRewrite</code> 필터로 다시 씁니다.</p>
+</details>
 <hr />
 <h2 id="_9">시험에서 빠르게<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-77-1"><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>ingressclass<span class="w">                                     </span><span class="c1"># 클래스 이름 확인</span>
-</span><span id="__span-77-2"><a id="__codelineno-77-2" name="__codelineno-77-2" href="#__codelineno-77-2"></a>kubectl<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--class<span class="o">=</span>nginx<span class="w"> </span>--rule<span class="o">=</span><span class="s2">"/&lt;path&gt;*=&lt;svc&gt;:&lt;port&gt;"</span><span class="w">             </span><span class="c1"># Prefix</span>
-</span><span id="__span-77-3"><a id="__codelineno-77-3" name="__codelineno-77-3" href="#__codelineno-77-3"></a>kubectl<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--class<span class="o">=</span>nginx<span class="w"> </span>--rule<span class="o">=</span><span class="s2">"&lt;host&gt;/*=&lt;svc&gt;:&lt;port&gt;"</span><span class="w">             </span><span class="c1"># 호스트</span>
-</span><span id="__span-77-4"><a id="__codelineno-77-4" name="__codelineno-77-4" href="#__codelineno-77-4"></a>kubectl<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--class<span class="o">=</span>nginx<span class="w"> </span>--rule<span class="o">=</span><span class="s2">"&lt;host&gt;/*=&lt;svc&gt;:&lt;port&gt;,tls=&lt;secret&gt;"</span><span class="w"> </span><span class="c1"># TLS</span>
-</span><span id="__span-77-5"><a id="__codelineno-77-5" name="__codelineno-77-5" href="#__codelineno-77-5"></a>kubectl<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--class<span class="o">=</span>nginx<span class="w"> </span>--default-backend<span class="o">=</span>&lt;svc&gt;:&lt;port&gt;<span class="w">              </span><span class="c1"># 기본 백엔드</span>
-</span><span id="__span-77-6"><a id="__codelineno-77-6" name="__codelineno-77-6" href="#__codelineno-77-6"></a>
-</span><span id="__span-77-7"><a id="__codelineno-77-7" name="__codelineno-77-7" href="#__codelineno-77-7"></a>openssl<span class="w"> </span>req<span class="w"> </span>-x509<span class="w"> </span>-nodes<span class="w"> </span>-days<span class="w"> </span>&lt;일&gt;<span class="w"> </span>-newkey<span class="w"> </span>rsa:2048<span class="w"> </span>-keyout<span class="w"> </span>&lt;k&gt;<span class="w"> </span>-out<span class="w"> </span>&lt;c&gt;<span class="w"> </span>-subj<span class="w"> </span><span class="s2">"/CN=&lt;host&gt;"</span>
-</span><span id="__span-77-8"><a id="__codelineno-77-8" name="__codelineno-77-8" href="#__codelineno-77-8"></a>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>tls<span class="w"> </span>&lt;secret&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--cert<span class="o">=</span>&lt;c&gt;<span class="w"> </span>--key<span class="o">=</span>&lt;k&gt;
-</span><span id="__span-77-9"><a id="__codelineno-77-9" name="__codelineno-77-9" href="#__codelineno-77-9"></a>
-</span><span id="__span-77-10"><a id="__codelineno-77-10" name="__codelineno-77-10" href="#__codelineno-77-10"></a>kubectl<span class="w"> </span>get<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w">                               </span><span class="c1"># CLASS · ADDRESS</span>
-</span><span id="__span-77-11"><a id="__codelineno-77-11" name="__codelineno-77-11" href="#__codelineno-77-11"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w">                          </span><span class="c1"># Rules · Backends (파드 IP)</span>
-</span><span id="__span-77-12"><a id="__codelineno-77-12" name="__codelineno-77-12" href="#__codelineno-77-12"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s1">'Host: &lt;host&gt;'</span><span class="w"> </span>http://&lt;노드IP&gt;:&lt;NodePort&gt;/&lt;path&gt;
-</span><span id="__span-77-13"><a id="__codelineno-77-13" name="__codelineno-77-13" href="#__codelineno-77-13"></a>curl<span class="w"> </span>-k<span class="w"> </span>--resolve<span class="w"> </span>&lt;host&gt;:&lt;https포트&gt;:&lt;노드IP&gt;<span class="w"> </span>https://&lt;host&gt;:&lt;https포트&gt;/
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-93-1"><a id="__codelineno-93-1" name="__codelineno-93-1" href="#__codelineno-93-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>ingressclass<span class="w">                                     </span><span class="c1"># 클래스 이름 확인</span>
+</span><span id="__span-93-2"><a id="__codelineno-93-2" name="__codelineno-93-2" href="#__codelineno-93-2"></a>kubectl<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--class<span class="o">=</span>nginx<span class="w"> </span>--rule<span class="o">=</span><span class="s2">"/&lt;path&gt;*=&lt;svc&gt;:&lt;port&gt;"</span><span class="w">             </span><span class="c1"># Prefix</span>
+</span><span id="__span-93-3"><a id="__codelineno-93-3" name="__codelineno-93-3" href="#__codelineno-93-3"></a>kubectl<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--class<span class="o">=</span>nginx<span class="w"> </span>--rule<span class="o">=</span><span class="s2">"&lt;host&gt;/*=&lt;svc&gt;:&lt;port&gt;"</span><span class="w">             </span><span class="c1"># 호스트</span>
+</span><span id="__span-93-4"><a id="__codelineno-93-4" name="__codelineno-93-4" href="#__codelineno-93-4"></a>kubectl<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--class<span class="o">=</span>nginx<span class="w"> </span>--rule<span class="o">=</span><span class="s2">"&lt;host&gt;/*=&lt;svc&gt;:&lt;port&gt;,tls=&lt;secret&gt;"</span><span class="w"> </span><span class="c1"># TLS</span>
+</span><span id="__span-93-5"><a id="__codelineno-93-5" name="__codelineno-93-5" href="#__codelineno-93-5"></a>kubectl<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--class<span class="o">=</span>nginx<span class="w"> </span>--default-backend<span class="o">=</span>&lt;svc&gt;:&lt;port&gt;<span class="w">              </span><span class="c1"># 기본 백엔드</span>
+</span><span id="__span-93-6"><a id="__codelineno-93-6" name="__codelineno-93-6" href="#__codelineno-93-6"></a>
+</span><span id="__span-93-7"><a id="__codelineno-93-7" name="__codelineno-93-7" href="#__codelineno-93-7"></a>openssl<span class="w"> </span>req<span class="w"> </span>-x509<span class="w"> </span>-nodes<span class="w"> </span>-days<span class="w"> </span>&lt;일&gt;<span class="w"> </span>-newkey<span class="w"> </span>rsa:2048<span class="w"> </span>-keyout<span class="w"> </span>&lt;k&gt;<span class="w"> </span>-out<span class="w"> </span>&lt;c&gt;<span class="w"> </span>-subj<span class="w"> </span><span class="s2">"/CN=&lt;host&gt;"</span>
+</span><span id="__span-93-8"><a id="__codelineno-93-8" name="__codelineno-93-8" href="#__codelineno-93-8"></a>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>tls<span class="w"> </span>&lt;secret&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>--cert<span class="o">=</span>&lt;c&gt;<span class="w"> </span>--key<span class="o">=</span>&lt;k&gt;
+</span><span id="__span-93-9"><a id="__codelineno-93-9" name="__codelineno-93-9" href="#__codelineno-93-9"></a>
+</span><span id="__span-93-10"><a id="__codelineno-93-10" name="__codelineno-93-10" href="#__codelineno-93-10"></a>kubectl<span class="w"> </span>get<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w">                               </span><span class="c1"># CLASS · ADDRESS</span>
+</span><span id="__span-93-11"><a id="__codelineno-93-11" name="__codelineno-93-11" href="#__codelineno-93-11"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w">                          </span><span class="c1"># Rules · Backends (파드 IP)</span>
+</span><span id="__span-93-12"><a id="__codelineno-93-12" name="__codelineno-93-12" href="#__codelineno-93-12"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s1">'Host: &lt;host&gt;'</span><span class="w"> </span>http://&lt;노드IP&gt;:&lt;NodePort&gt;/&lt;path&gt;
+</span><span id="__span-93-13"><a id="__codelineno-93-13" name="__codelineno-93-13" href="#__codelineno-93-13"></a>curl<span class="w"> </span>-k<span class="w"> </span>--resolve<span class="w"> </span>&lt;host&gt;:&lt;https포트&gt;:&lt;노드IP&gt;<span class="w"> </span>https://&lt;host&gt;:&lt;https포트&gt;/
+</span><span id="__span-93-14"><a id="__codelineno-93-14" name="__codelineno-93-14" href="#__codelineno-93-14"></a>
+</span><span id="__span-93-15"><a id="__codelineno-93-15" name="__codelineno-93-15" href="#__codelineno-93-15"></a><span class="c1"># Ingress → Gateway API</span>
+</span><span id="__span-93-16"><a id="__codelineno-93-16" name="__codelineno-93-16" href="#__codelineno-93-16"></a>kubectl<span class="w"> </span>get<span class="w"> </span>gatewayclass<span class="w">                                      </span><span class="c1"># gatewayClassName</span>
+</span><span id="__span-93-17"><a id="__codelineno-93-17" name="__codelineno-93-17" href="#__codelineno-93-17"></a>kubectl<span class="w"> </span>get<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w">                       </span><span class="c1"># class · host · secretName · path · backend 메모</span>
+</span><span id="__span-93-18"><a id="__codelineno-93-18" name="__codelineno-93-18" href="#__codelineno-93-18"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>gateway.spec.listeners.tls<span class="w">                    </span><span class="c1"># certificateRefs · mode</span>
+</span><span id="__span-93-19"><a id="__codelineno-93-19" name="__codelineno-93-19" href="#__codelineno-93-19"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>gateway<span class="w"> </span>&lt;gw&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w">                         </span><span class="c1"># Accepted · Programmed · 리스너 ResolvedRefs</span>
+</span><span id="__span-93-20"><a id="__codelineno-93-20" name="__codelineno-93-20" href="#__codelineno-93-20"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>httproute<span class="w"> </span>&lt;rt&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w">                       </span><span class="c1"># Accepted · ResolvedRefs</span>
+</span><span id="__span-93-21"><a id="__codelineno-93-21" name="__codelineno-93-21" href="#__codelineno-93-21"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>ingress<span class="w"> </span>&lt;n&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;ns&gt;<span class="w">                            </span><span class="c1"># 마지막에 옛 입구를 닫는다</span>
 </span></code></pre></div>
 <hr />
 <h2 id="_10">정리<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-78-1"><a id="__codelineno-78-1" name="__codelineno-78-1" href="#__codelineno-78-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>namespace<span class="w"> </span>guide-ingress
-</span><span id="__span-78-2"><a id="__codelineno-78-2" name="__codelineno-78-2" href="#__codelineno-78-2"></a>rm<span class="w"> </span>-f<span class="w"> </span>backends.yaml<span class="w"> </span>probe-ing.yaml<span class="w"> </span>shop-paths.yaml<span class="w"> </span>shop-hosts.yaml<span class="w"> </span>shop-fallback.yaml<span class="w"> </span>shop-tls.yaml<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-78-3"><a id="__codelineno-78-3" name="__codelineno-78-3" href="#__codelineno-78-3"></a><span class="w">      </span>shop-rewrite.yaml<span class="w"> </span>deny-in-all.yaml<span class="w"> </span>from-ingress-nginx.yaml<span class="w"> </span>guide-gw.yaml<span class="w"> </span>guide.key<span class="w"> </span>guide.crt<span class="w"> </span>/tmp/hit.out
-</span><span id="__span-78-4"><a id="__codelineno-78-4" name="__codelineno-78-4" href="#__codelineno-78-4"></a><span class="nb">unset</span><span class="w"> </span>-f<span class="w"> </span>hit
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-94-1"><a id="__codelineno-94-1" name="__codelineno-94-1" href="#__codelineno-94-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>namespace<span class="w"> </span>guide-ingress
+</span><span id="__span-94-2"><a id="__codelineno-94-2" name="__codelineno-94-2" href="#__codelineno-94-2"></a>rm<span class="w"> </span>-f<span class="w"> </span>backends.yaml<span class="w"> </span>probe-ing.yaml<span class="w"> </span>shop-paths.yaml<span class="w"> </span>shop-hosts.yaml<span class="w"> </span>shop-fallback.yaml<span class="w"> </span>shop-tls.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-94-3"><a id="__codelineno-94-3" name="__codelineno-94-3" href="#__codelineno-94-3"></a><span class="w">      </span>shop-rewrite.yaml<span class="w"> </span>deny-in-all.yaml<span class="w"> </span>from-ingress-nginx.yaml<span class="w"> </span>guide-gw.yaml<span class="w"> </span>guide-route.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-94-4"><a id="__codelineno-94-4" name="__codelineno-94-4" href="#__codelineno-94-4"></a><span class="w">      </span>guide.key<span class="w"> </span>guide.crt<span class="w"> </span>/tmp/hit.out
+</span><span id="__span-94-5"><a id="__codelineno-94-5" name="__codelineno-94-5" href="#__codelineno-94-5"></a><span class="nb">unset</span><span class="w"> </span>-f<span class="w"> </span>hit
 </span></code></pre></div>
 <hr />
 <h2 id="_11">확인 질문<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
@@ -2510,11 +2917,23 @@ HTTPS 는 SNI 까지 맞추는 <code>--resolve</code> 가 정확합니다.</p>
 <summary>8. 네임스페이스에 Ingress 기본 거부를 걸었더니 Ingress 로도 접속이 안 됩니다. 어떻게 여나요?</summary>
 <p>컨트롤러가 있는 네임스페이스(<code>kubernetes.io/metadata.name: ingress-nginx</code>)에서 오는 트래픽을 백엔드 파드 포트로 허용하는 정책을 추가합니다.</p>
 </details>
+<details class="question">
+<summary>9. Ingress 의 <code>tls[].hosts</code> 와 <code>tls[].secretName</code> 은 Gateway API 에서 어디로 가나요?</summary>
+<p>Gateway 리스너(<code>port: 443</code>, <code>protocol: HTTPS</code>)의 <code>hostname</code> 과 <code>tls.certificateRefs[].name</code>(<code>kind: Secret</code>)으로 갑니다. <code>rules[].host</code> 는 HTTPRoute 의 <code>hostnames</code> 로 갑니다.</p>
+</details>
+<details class="question">
+<summary>10. Gateway 와 HTTPRoute 를 만들었는데 Gateway 리스너의 <code>attachedRoutes</code> 가 0 입니다. 무엇을 보나요?</summary>
+<p>HTTPRoute 의 <code>parentRefs</code> 에 적은 Gateway 이름·네임스페이스, 그리고 라우트 <code>hostnames</code> 가 리스너 <code>hostname</code> 과 맞는지(라우트 <code>Accepted</code> 조건) 봅니다.</p>
+</details>
+<details class="question">
+<summary>11. Ingress 를 Gateway API 로 옮긴 뒤 Secret 이나 Service 도 지워도 되나요?</summary>
+<p>안 됩니다. Gateway 의 <code>certificateRefs</code> 가 같은 Secret 을, HTTPRoute 의 <code>backendRefs</code> 가 같은 Service 를 계속 씁니다. 지우는 것은 Ingress 하나입니다.</p>
+</details>
 <hr />
 <h2 id="_12">다음 단계 — 채점 실습<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong> 컨트롤러가 설치돼 있어야 실제 접속까지 확인할 수 있습니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-79-1"><a id="__codelineno-79-1" name="__codelineno-79-1" href="#__codelineno-79-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/11-ingress
-</span><span id="__span-79-2"><a id="__codelineno-79-2" name="__codelineno-79-2" href="#__codelineno-79-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
+<p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong> 컨트롤러가 설치돼 있어야 실제 접속까지 확인할 수 있습니다. Q5 에 필요한 Gateway API(NGINX Gateway Fabric)는 클러스터에 없으면 <code>start</code> 가 자동으로 설치합니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-95-1"><a id="__codelineno-95-1" name="__codelineno-95-1" href="#__codelineno-95-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/11-ingress
+</span><span id="__span-95-2"><a id="__codelineno-95-2" name="__codelineno-95-2" href="#__codelineno-95-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
 </span></code></pre></div>
 <table>
 <thead>
@@ -2539,6 +2958,10 @@ HTTPS 는 SNI 까지 맞추는 <code>--resolve</code> 가 정확합니다.</p>
 <tr>
 <td>Q4 NetworkPolicy 로 네임스페이스 격리</td>
 <td>7) (원리는 <a href="../10-networkpolicy/">10강</a> 의 2) · 3))</td>
+</tr>
+<tr>
+<td>Q5 Ingress 를 Gateway API 로 옮기기 (HTTPS)</td>
+<td>9) — 필드 대응표, HTTPS 리스너 · certificateRefs, HTTPRoute, Ingress 삭제</td>
 </tr>
 </tbody>
 </table>
