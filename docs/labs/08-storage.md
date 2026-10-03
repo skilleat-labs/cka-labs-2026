@@ -10,6 +10,8 @@
 - reclaimPolicy `Retain` 에서 PVC 를 지운 뒤 **Released → Available** 로 되살리는 과정을 해 본다.
 - StorageClass 의 `volumeBindingMode` 가 **언제, 어느 노드의 PV 에** 바인딩하는지를 바꾼다는 것을 확인한다.
 - StatefulSet 의 `volumeClaimTemplates` 가 **파드마다 PVC 를 찍어 내고**, 파드가 다시 떠도 같은 PVC 를 쓰는 것을 확인한다.
+- StorageClass 를 **기본으로 지정**하고, 이미 있던 기본을 **해제**해 `(default)` 가 하나만 남게 한다.
+- 이미 있는 PV 를 **읽고 거기에 맞는 PVC** 를 만든 뒤, **주어진 Deployment 파일**을 고쳐 PVC 를 붙인다.
 
 ---
 
@@ -927,9 +929,43 @@ now-user   0/1     Pending   0          5s
 
 **관찰 포인트** — PVC 가 먼저 worker-1 의 PV 에 붙어 버려서, worker-2 에 가야 하는 파드는 **갈 곳이 없습니다**(`volume node affinity conflict`). 노드에 묶인 저장소에 `WaitForFirstConsumer` 를 쓰는 이유가 이것입니다.
 
-### 기본 StorageClass
+### 기본 StorageClass — 새로 지정하고, 기존 기본은 해제한다
 
 PVC 에 `storageClassName` 을 **안 적으면** 기본 클래스가 자동으로 들어갑니다. 기본 클래스는 어노테이션 하나로 정합니다.
+
+```text
+storageclass.kubernetes.io/is-default-class: "true"
+```
+
+시험에서는 "새 StorageClass 를 만들고 **기본으로** 지정하라" 는 문제가 나오고, 클러스터에는 **이미 다른 기본 클래스가** 있는 경우가 많습니다.
+그 상황을 먼저 만듭니다. `guide-old` 는 예전에 관리자가 기본으로 지정해 둔 클래스 역할입니다.
+
+`guide-old.yaml`:
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: guide-old
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"   # ← 만들 때부터 기본. 값은 문자열이라 따옴표 필수
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+```
+
+```bash
+kubectl apply -f guide-old.yaml
+kubectl get sc
+```
+
+```text
+NAME                  PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+guide-now             kubernetes.io/no-provisioner   Retain          Immediate              false                  6m
+guide-old (default)   kubernetes.io/no-provisioner   Delete          WaitForFirstConsumer   false                  2s
+guide-wait            kubernetes.io/no-provisioner   Retain          WaitForFirstConsumer   false                  6m
+```
+
+이제 `guide-wait` 를 기본으로 지정합니다. 이미 있는 클래스는 `patch` 나 `annotate` 로 바꿉니다.
 
 ```bash
 kubectl patch storageclass guide-wait \
@@ -940,14 +976,92 @@ kubectl get sc
 ```text
 NAME                   PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE
 guide-now              kubernetes.io/no-provisioner   Retain          Immediate
+guide-old (default)    kubernetes.io/no-provisioner   Delete          WaitForFirstConsumer
 guide-wait (default)   kubernetes.io/no-provisioner   Retain          WaitForFirstConsumer
 ```
+
+**`(default)` 가 두 개입니다.** API 서버는 이것을 막지 않습니다. 이 상태에서 클래스 없는 PVC 를 만들면 어느 쪽이 붙는지 봅니다.
+
+```bash
+kubectl create -n guide-storage -f - <<'EOF'
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: which-class }
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources: { requests: { storage: 100Mi } }
+EOF
+kubectl get pvc which-class -n guide-storage -o jsonpath='{.spec.storageClassName}{"\n"}'
+```
+
+```text
+guide-old
+```
+
+**관찰 포인트** — 방금 기본으로 지정한 `guide-wait` 가 아니라 `guide-old` 가 붙었습니다. 기본이 여러 개면 **가장 최근에 만든** 클래스가 쓰이기 때문입니다(`guide-old` 가 나중에 만들어졌다).
+"기본으로 지정하라" 는 문제는 **기존 기본을 해제하는 것까지**가 한 세트입니다.
+
+```bash
+kubectl patch storageclass guide-old \
+  -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+kubectl get sc
+```
+
+```text
+NAME                   PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE
+guide-now              kubernetes.io/no-provisioner   Retain          Immediate
+guide-old              kubernetes.io/no-provisioner   Delete          WaitForFirstConsumer
+guide-wait (default)   kubernetes.io/no-provisioner   Retain          WaitForFirstConsumer
+```
+
+PVC 의 `storageClassName` 은 **나중에 바뀌지 않습니다.** 이미 만든 PVC 는 지우고 다시 만들어야 새 기본을 받습니다.
+
+```bash
+kubectl delete pvc which-class -n guide-storage
+kubectl create -n guide-storage -f - <<'EOF'
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: which-class }
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources: { requests: { storage: 100Mi } }
+EOF
+kubectl get pvc which-class -n guide-storage -o jsonpath='{.spec.storageClassName}{"\n"}'
+```
+
+```text
+guide-wait
+```
+
+어노테이션 값을 한 번에 보려면 jsonpath 로 뽑습니다. 키에 점(`.`)이 들어 있어서 `\.` 로 이스케이프합니다.
+
+```bash
+kubectl get sc -o jsonpath='{range .items[*]}{.metadata.name}={.metadata.annotations.storageclass\.kubernetes\.io/is-default-class}{"\n"}{end}'
+```
+
+```text
+guide-now=
+guide-old=false
+guide-wait=true
+```
+
+!!! tip "시험 팁 — 기본 StorageClass 문제의 순서"
+    1. `kubectl get sc` 로 지금 `(default)` 가 붙은 클래스를 먼저 확인한다.
+    2. 새 클래스를 만들 때 `metadata.annotations` 에 `storageclass.kubernetes.io/is-default-class: "true"` 를 넣는다 (이미 있으면 `patch`).
+    3. 기존 기본 클래스는 **지우지 말고** 같은 어노테이션을 `"false"` 로 바꾼다.
+    4. 다시 `kubectl get sc` — `(default)` 가 **하나만** 보여야 끝이다.
+
+    따옴표 없이 `true` 라고 쓰면 YAML 이 불리언으로 읽어서 apply 가 거부됩니다(어노테이션 값은 문자열만 된다).
+    명령 하나로 하려면 `kubectl annotate sc <이름> storageclass.kubernetes.io/is-default-class=true --overwrite` 도 됩니다.
 
 확인했으면 **바로 되돌립니다.** 기본 클래스가 남아 있으면 다른 실습의 "클래스 없는 PVC" 가 이 클래스를 받아 결과가 달라집니다.
 
 ```bash
+kubectl delete pvc which-class -n guide-storage
 kubectl patch storageclass guide-wait \
   -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+kubectl delete storageclass guide-old
+kubectl get sc                                   # (default) 가 하나도 없어야 한다
 ```
 
 !!! warning "`storageClassName` 을 안 적은 것과 `\"\"` 로 적은 것은 다릅니다"
@@ -1199,6 +1313,231 @@ kubectl explain statefulset.spec.persistentVolumeClaimRetentionPolicy
 
 ---
 
+## 9) 시험형 — PV 에 맞춰 PVC 를 만들고, 주어진 Deployment 파일에 붙인다
+
+시험에서 자주 나오는 모양입니다. **PV 는 이미 있고**, Deployment 는 **YAML 파일로만** 주어집니다. 할 일은 두 가지입니다.
+
+1. 그 PV 에 묶이는 PVC 를 만든다 — 클래스·모드·용량을 **PV 를 읽어서** 맞춘다.
+2. 주어진 파일을 **직접 고쳐** PVC 를 마운트하고, 그 파일을 apply 한다.
+
+### 주어진 것 준비 — PV 와 Deployment 파일
+
+관리자가 만들어 둔 PV 라고 생각하고 만듭니다. 이번 PV 에는 `storageClassName` 이 있습니다.
+
+`ledger-pv.yaml`:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: guide-ledger-pv
+spec:
+  storageClassName: guide-slow          # ← PVC 가 맞춰야 할 값 (StorageClass 객체는 없다)
+  capacity: { storage: 300Mi }
+  accessModes: ["ReadWriteOnce"]
+  persistentVolumeReclaimPolicy: Retain
+  hostPath: { path: /srv/guide-storage/ledger, type: DirectoryOrCreate }
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions: [{ key: kubernetes.io/hostname, operator: In, values: ["worker-1"] }]
+```
+
+그리고 볼륨이 **하나도 없는** Deployment 파일입니다. 시험에서는 이런 파일이 경로와 함께 주어집니다.
+
+```bash
+kubectl apply -f ledger-pv.yaml
+cat > ledger-deploy.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ledger
+  namespace: guide-storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ledger
+  template:
+    metadata:
+      labels:
+        app: ledger
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.27
+EOF
+```
+
+### PV 를 먼저 읽는다
+
+```bash
+kubectl get pv guide-ledger-pv
+kubectl get pv guide-ledger-pv \
+  -o jsonpath='{.spec.storageClassName}{"  "}{.spec.capacity.storage}{"  "}{.spec.accessModes}{"\n"}'
+```
+
+```text
+NAME              CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+guide-ledger-pv   300Mi      RWO            Retain           Available           guide-slow     <unset>                          4s
+
+guide-slow  300Mi  ["ReadWriteOnce"]
+```
+
+PVC 가 맞춰야 할 세 가지가 다 보입니다. 5) 의 표대로 **클래스는 같게, 모드는 지원되게, 요청은 300Mi 이하로** 적으면 됩니다.
+
+```bash
+kubectl get sc guide-slow
+```
+
+```text
+Error from server (NotFound): storageclasses.storage.k8s.io "guide-slow" not found
+```
+
+**관찰 포인트** — `guide-slow` 라는 StorageClass 객체는 없습니다. 미리 만든 PV 에 붙일 때 `storageClassName` 은 **짝을 찾는 이름표**일 뿐이라, 이름만 같으면 묶입니다.
+
+### 실험 — 클래스를 빼먹으면
+
+```bash
+kubectl create -n guide-storage -f - <<'EOF'
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: ledger-noclass }
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources: { requests: { storage: 300Mi } }
+EOF
+kubectl get pvc ledger-noclass -n guide-storage
+kubectl describe pvc ledger-noclass -n guide-storage | tail -1
+```
+
+```text
+NAME             STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS
+ledger-noclass   Pending
+
+  Normal  FailedBinding  3s (x2 over 5s)  persistentvolume-controller  no persistent volumes available for this claim and no storage class is set
+```
+
+용량·모드는 맞는데 **클래스가 비어 있어서** `guide-slow` PV 와 짝이 되지 않았습니다. 기본 StorageClass 가 있는 환경이라면 그 기본 클래스가 붙어서, 역시 이 PV 에는 묶이지 않습니다.
+`storageClassName` 은 고칠 수 없으니 지웁니다.
+
+```bash
+kubectl delete pvc ledger-noclass -n guide-storage
+```
+
+### 맞는 PVC 만들기
+
+`ledger-claim.yaml`:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ledger-claim
+  namespace: guide-storage
+spec:
+  storageClassName: guide-slow     # ← PV 에서 읽은 값 그대로
+  accessModes: ["ReadWriteOnce"]   # ← PV 가 지원하는 모드
+  resources:
+    requests:
+      storage: 300Mi               # ← PV 용량 이하
+```
+
+```bash
+kubectl apply -f ledger-claim.yaml
+kubectl get pvc ledger-claim -n guide-storage
+```
+
+```text
+NAME           STATUS   VOLUME            CAPACITY   ACCESS MODES   STORAGECLASS
+ledger-claim   Bound    guide-ledger-pv   300Mi      RWO            guide-slow
+```
+
+### 주어진 파일을 고쳐서 apply
+
+`ledger-deploy.yaml` 을 편집기로 열어 **두 블록**을 넣습니다. `volumes` 는 `template.spec` 바로 아래, `volumeMounts` 는 컨테이너 아래입니다.
+
+```bash
+vi ledger-deploy.yaml
+```
+
+고친 뒤의 파일:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ledger
+  namespace: guide-storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ledger
+  template:
+    metadata:
+      labels:
+        app: ledger
+    spec:
+      volumes:                         # ← 추가 ① template.spec 바로 아래 (containers 와 같은 높이)
+        - name: ledger-data
+          persistentVolumeClaim:
+            claimName: ledger-claim    # ← PV 이름이 아니라 PVC 이름
+      containers:
+        - name: app
+          image: nginx:1.27
+          volumeMounts:                # ← 추가 ② 컨테이너 안
+            - name: ledger-data        # ← 위 volumes 의 name 과 같게
+              mountPath: /data
+```
+
+```bash
+kubectl apply -f ledger-deploy.yaml
+kubectl rollout status deployment ledger -n guide-storage
+kubectl get pod -n guide-storage -l app=ledger -o wide
+kubectl exec deploy/ledger -n guide-storage -- sh -c 'echo "entry-1" > /data/entry.txt && ls /data'
+```
+
+```text
+deployment.apps/ledger created
+deployment "ledger" successfully rolled out
+
+NAME                      READY   STATUS    NODE
+ledger-6d4c8f7b9c-k2v8x   1/1     Running   worker-1          ← PV 의 nodeAffinity 때문에 worker-1
+
+entry.txt
+```
+
+파일에 변경이 남아 있는지도 확인합니다.
+
+```bash
+grep -n -A2 'persistentVolumeClaim' ledger-deploy.yaml
+```
+
+```text
+18:          persistentVolumeClaim:
+19-            claimName: ledger-claim    # ← PV 이름이 아니라 PVC 이름
+20-      containers:
+```
+
+(줄 번호는 들여쓰기·주석에 따라 다를 수 있습니다.)
+
+**관찰 포인트** — Deployment 는 파드에 PVC 를 직접 담지 않고 **파드 템플릿**에 적습니다. 그래서 이미 실행 중인 Deployment 의 파일을 고쳐 apply 하면 템플릿이 바뀐 것으로 보고 **새 파드로 롤링**됩니다.
+
+!!! tip "시험 팁 — \"주어진 파일을 고쳐 적용하라\""
+    - **그 파일 자체**를 고친다. `kubectl edit` 나 `patch` 로 클러스터만 바꾸면 파일은 그대로라, 파일을 보는 채점에서 점수를 잃을 수 있다.
+    - 고친 뒤 `kubectl apply -f <그 파일>`. 이미 같은 이름의 Deployment 가 있어도 apply 는 덮어쓴다.
+    - 필드 위치가 헷갈리면 `kubectl explain deploy.spec.template.spec.volumes.persistentVolumeClaim` 으로 확인한다.
+    - PVC 는 **파드보다 먼저** 만든다. PVC 가 없으면 파드가 `Pending` 에 머문다.
+
+!!! warning "자주 하는 실수"
+    - `volumes` 를 컨테이너 항목 안에 넣음 → `unknown field "spec.template.spec.containers[0].volumes"` 로 거부.
+    - `claimName` 에 **PV 이름**을 적음 → 파드가 Pending, Events 에 `persistentvolumeclaim "guide-ledger-pv" not found`.
+    - `volumeMounts.name` 과 `volumes.name` 이 다름 → `volumeMounts[0].name: Not found` 로 거부.
+    - PVC 에 `storageClassName` 을 빼먹음 → 위 실험처럼 Pending. PVC 를 지우고 다시 만든다.
+
+---
+
 ## 시험에서 빠르게
 
 ```bash
@@ -1221,8 +1560,13 @@ kubectl run p --image=nginx $do > p.yaml
 kubectl patch pv <pv> --type=json -p '[{"op":"remove","path":"/spec/claimRef"}]'
 kubectl patch pv <pv> -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
 
-# 기본 StorageClass 지정
-kubectl patch sc <sc> -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+# 기본 StorageClass 지정 · 기존 기본 해제 — (default) 가 하나만 남게
+kubectl get sc
+kubectl patch sc <새것> -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+kubectl patch sc <기존> -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+
+# 있는 PV 에 맞춰 PVC 를 만들 때 — 클래스·용량·모드를 한 줄로
+kubectl get pv <pv> -o jsonpath='{.spec.storageClassName}{"  "}{.spec.capacity.storage}{"  "}{.spec.accessModes}{"\n"}'
 ```
 
 !!! tip "kubernetes.io 에서 복사할 문서 제목"
@@ -1240,8 +1584,8 @@ kubectl delete namespace guide-storage
 
 # 클러스터 범위 — 네임스페이스와 함께 지워지지 않는다
 kubectl delete pv guide-kv-w1 guide-kv-w2
-kubectl delete pv guide-pv-a guide-pv-b guide-wait-w1 guide-wait-w2 guide-now-w1 --ignore-not-found
-kubectl delete storageclass guide-wait guide-now --ignore-not-found
+kubectl delete pv guide-pv-a guide-pv-b guide-wait-w1 guide-wait-w2 guide-now-w1 guide-ledger-pv --ignore-not-found
+kubectl delete storageclass guide-wait guide-now guide-old --ignore-not-found
 kubectl get pv,sc                                   # guide- 로 시작하는 것이 없어야 한다
 
 # 노드에 남은 hostPath 디렉터리 (Retain 이라 데이터가 그대로 있다)
@@ -1250,12 +1594,14 @@ ssh -t worker-2 'sudo rm -rf /srv/guide-storage'
 
 # 로컬 파일
 rm -f scratchpad-vol.yaml relay.yaml relay-typo.yaml node-peek.yaml hp-pair.yaml pv-a.yaml pv-b.yaml \
-      notes-claim.yaml notes-app.yaml bad-claims.yaml classes.yaml class-pvs.yaml wait-user.yaml kv.yaml kv-pvs.yaml
+      notes-claim.yaml notes-app.yaml bad-claims.yaml classes.yaml class-pvs.yaml wait-user.yaml kv.yaml kv-pvs.yaml \
+      guide-old.yaml ledger-pv.yaml ledger-claim.yaml ledger-deploy.yaml
 ```
 
 !!! note "순서가 중요합니다"
     네임스페이스를 먼저 지우면 PVC 가 사라지고 PV 는 `Released` 로 남습니다. 그 PV 를 지우는 것이 두 번째 줄입니다.
     기본 StorageClass 어노테이션을 7) 에서 되돌리지 않았다면 StorageClass 를 지우는 것으로 함께 정리됩니다.
+    마지막의 `kubectl get sc` 에 `(default)` 가 남아 있으면 그 클래스는 이 페이지 밖에서 온 것입니다 — 건드리지 마세요.
 
 ---
 
@@ -1286,6 +1632,14 @@ rm -f scratchpad-vol.yaml relay.yaml relay-typo.yaml node-peek.yaml hp-pair.yaml
 ??? question "8. StatefulSet 을 지웠는데 PVC 가 남아 있습니다. 정상인가요?"
     정상입니다. 데이터 보호를 위해 기본으로 PVC 를 남깁니다. 함께 지우려면 PVC 를 직접 지우거나 `persistentVolumeClaimRetentionPolicy.whenDeleted: Delete` 를 설정합니다.
 
+??? question "9. 새 StorageClass 에 기본 어노테이션을 붙였는데 클래스 없는 PVC 에 예전 클래스가 붙습니다. 왜인가요?"
+    `(default)` 가 둘 이상이면 **가장 최근에 만든** 기본 클래스가 쓰입니다. 예전 클래스가 나중에 만들어졌다면 그쪽이 붙습니다.
+    기존 클래스의 `storageclass.kubernetes.io/is-default-class` 를 `"false"` 로 바꿔 `(default)` 가 하나만 남게 하고, 이미 만든 PVC 는 지우고 다시 만듭니다.
+
+??? question "10. PV 의 `storageClassName` 이 `slow` 인데 `kubectl get sc` 에 `slow` 가 없습니다. PVC 를 묶을 수 있나요?"
+    있습니다. 미리 만든 PV 와 PVC 는 `storageClassName` **문자열이 같은지**로 짝을 짓습니다. PVC 에 `storageClassName: slow` 를 적고 모드·용량만 맞추면 Bound 됩니다.
+    StorageClass 객체가 필요한 것은 맞는 PV 가 없어서 **새로 만들어야(동적 프로비저닝)** 할 때입니다.
+
 ---
 
 ## 다음 단계 — 채점 실습
@@ -1299,7 +1653,8 @@ bash exam.sh start
 
 | 문제 | 이 페이지에서 연습한 것 |
 |------|------------------------|
-| Q1 PersistentVolume + PVC 바인딩 | 4) PV·PVC 작성, 5) 바인딩 조건, 6) reclaimPolicy |
-| Q2 StorageClass + 그것을 쓰는 PVC | 7) no-provisioner · WaitForFirstConsumer · Pending 이 정상 |
+| Q1 PersistentVolume + PVC 바인딩 | 4) PV·PVC 작성, 5) 바인딩 조건(storageClassName 포함), 6) reclaimPolicy |
+| Q2 StorageClass 를 유일한 기본으로 + PVC | 7) no-provisioner · WaitForFirstConsumer · 기본 지정과 기존 기본 해제 |
 | Q3 StatefulSet + volumeClaimTemplates | 8) 템플릿 위치 · PVC 이름 규칙 |
 | Q4 emptyDir 를 공유하는 컨테이너 2개 | 1) emptyDir 수명, 2) 멀티 컨테이너 공유 |
+| Q5 기존 PV 에 맞는 PVC + 주어진 Deployment 파일 수정 | 9) PV 읽고 PVC 맞추기 · 파일에 volumes/volumeMounts 추가 후 apply |

@@ -8,8 +8,9 @@
 - requests 는 **스케줄링 기준**, limits 는 **런타임 상한**이라는 것을 노드 할당량·OOMKilled 로 확인한다.
 - QoS 등급, LimitRange, ResourceQuota 가 **자원을 안 적은 파드**를 어떻게 다루는지 비교한다.
 - nodeSelector · Node Affinity · Taint/Toleration · Pod (Anti-)Affinity 를 **방향(누가 누구를 고르나)** 으로 구분한다.
-- HPA 가 **requests 와 metrics-server** 없이는 동작하지 않는다는 것을 직접 본다.
+- HPA 가 **requests 와 metrics-server** 없이는 동작하지 않는다는 것을 직접 보고, **behavior** 로 줄어드는 속도를 바꾼다.
 - PriorityClass 가 붙은 파드가 **자리를 빼앗는(preemption)** 장면을 본다.
+- 레플리카가 다 안 뜰 때 **노드의 남은 자원을 계산해 requests 를 나누는** 순서를 익힌다 (initContainer 포함).
 
 ---
 
@@ -45,7 +46,7 @@ Allocated resources:
   memory             140Mi (7%)   340Mi (17%)
 ```
 
-VM 사양에 따라 숫자는 다릅니다. **내 워커의 CPU 가 몇 코어인지**만 기억해 두세요. 9) 에서 씁니다.
+VM 사양에 따라 숫자는 다릅니다. **내 워커의 CPU 가 몇 코어인지**만 기억해 두세요. 9)·10) 에서 씁니다.
 
 ### metrics-server (8) HPA 와 `kubectl top` 에 필요)
 
@@ -1113,7 +1114,7 @@ php-apache   Deployment/php-apache   cpu: 55%/40%    1         4         4
 kubectl delete pod load -n guide-sched
 ```
 
-줄어드는 것은 바로 일어나지 않습니다. 기본 **scale-down 안정화 시간이 5분**이라 5분쯤 지나야 1 로 돌아옵니다(출렁임 방지).
+줄어드는 것은 바로 일어나지 않습니다. 기본 **scale-down 안정화 시간이 5분**이라 5분쯤 지나야 1 로 돌아옵니다(출렁임 방지). 이 시간은 아래 **behavior** 에서 바꿉니다.
 
 ### 실험 — requests 가 없으면
 
@@ -1165,6 +1166,95 @@ spec:
 
 !!! note "`autoscale ... $do` 의 출력"
     `kubectl autoscale` 에 `$do` 를 붙이면 kubectl 버전에 따라 `autoscaling/v1`(`targetCPUUtilizationPercentage`) 또는 `v2` 형식으로 나옵니다. 어느 쪽이든 CPU 기준 HPA 로는 똑같이 동작합니다.
+
+
+### 줄어드는 속도 조절 — `behavior.scaleDown`
+
+"부하가 빠져도 **N초 동안은 줄이지 마라**"는 조건은 `spec.behavior.scaleDown.stabilizationWindowSeconds` 에 적습니다.
+HPA 는 이 시간 동안 나온 추천 레플리카 수 중 **가장 큰 값**을 씁니다. 부하가 잠깐 줄었다 다시 오를 때 파드를 지웠다 만들었다 하지 않게 하는 장치입니다.
+
+`kubectl autoscale` 에는 `--min` · `--max` · `--cpu-percent` 만 있고 **behavior 옵션이 없습니다.** 그래서 명령으로 만든 뒤 `edit`(또는 `patch`)로 한 블록을 더하거나, 처음부터 v2 YAML 로 씁니다.
+앞에서 명령으로 만든 `php-apache` HPA 에 더합니다. 필드 위치부터 확인합니다.
+
+```bash
+kubectl explain hpa.spec.behavior.scaleDown --api-version=autoscaling/v2
+```
+
+```text
+GROUP:      autoscaling
+KIND:       HorizontalPodAutoscaler
+VERSION:    v2
+
+FIELD: scaleDown <HPAScalingRules>
+...
+FIELDS:
+  policies	<[]HPAScalingPolicy>
+  selectPolicy	<string>
+  stabilizationWindowSeconds	<integer>
+```
+
+```bash
+kubectl edit hpa php-apache -n guide-sched
+```
+
+`spec` 바로 아래(`metrics` · `minReplicas` 와 같은 깊이)에 세 줄을 넣습니다.
+
+```yaml
+spec:
+  behavior:                            # ← spec 바로 아래
+    scaleDown:
+      stabilizationWindowSeconds: 60   # ← 기본 300초 → 60초
+  maxReplicas: 4
+  metrics:
+  ...
+```
+
+`edit` 대신 한 줄로 해도 결과는 같습니다.
+
+```bash
+kubectl patch hpa php-apache -n guide-sched --type=merge \
+  -p '{"spec":{"behavior":{"scaleDown":{"stabilizationWindowSeconds":60}}}}'
+```
+
+```bash
+kubectl get hpa php-apache -n guide-sched -o yaml | grep -A17 '  behavior:'
+```
+
+```text
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 15
+        type: Percent
+        value: 100
+      selectPolicy: Max
+      stabilizationWindowSeconds: 60
+    scaleUp:
+      policies:
+      - periodSeconds: 15
+        type: Pods
+        value: 4
+      - periodSeconds: 15
+        type: Percent
+        value: 100
+      selectPolicy: Max
+      stabilizationWindowSeconds: 0
+```
+
+**관찰 포인트** — 한 줄만 적었는데 나머지가 **기본값으로 채워졌습니다.** 늘릴 때(`scaleUp`)는 안정화 시간이 0초라 바로 늘고, 줄일 때만 기다립니다. 위의 **부하 걸기**를 다시 해 보면 부하를 멈춘 뒤 5분이 아니라 **1분쯤 뒤에** REPLICAS 가 1 로 돌아옵니다.
+
+```bash
+kubectl get hpa php-apache -n guide-sched \
+  -o jsonpath='{.spec.behavior.scaleDown.stabilizationWindowSeconds}{"\n"}'
+```
+
+```text
+60
+```
+
+!!! tip "시험 팁 — behavior 는 autoscale 다음에 edit"
+    "스케일 다운 안정화 N초" 가 나오면 ① `kubectl autoscale` 로 min·max·cpu 를 만들고 ② `kubectl edit hpa` 로 `behavior.scaleDown.stabilizationWindowSeconds` 한 블록을 더합니다.
+    `autoscaling/v1` 형식에는 behavior 필드가 없습니다. YAML 을 직접 쓸 때는 반드시 `apiVersion: autoscaling/v2` 로 씁니다.
 
 ```bash
 kubectl delete hpa php-apache no-req -n guide-sched
@@ -1332,6 +1422,226 @@ kubectl delete pod urgent -n guide-sched
 
 ---
 
+## 10) 자원 부족 — 레플리카를 노드에 나눠 넣기
+
+레플리카를 4개 달라고 했는데 2개만 뜨고 나머지가 `Pending` 인 상황입니다. 파드 하나의 requests 가 너무 커서 **노드 한 대에 하나씩밖에 안 들어가는** 경우입니다.
+고치는 순서는 정해져 있습니다. **① 무엇이 모자란지 읽고 → ② 0 으로 줄여 자리를 비우고 → ③ 노드에 남은 양을 계산해 → ④ requests 를 고치고 → ⑤ 다시 늘립니다.**
+
+### 일부러 모자라게 만들기
+
+init 컨테이너와 메인 컨테이너가 모두 CPU 1 코어 · 메모리 1Gi 를 요청하는 Deployment 입니다. 2코어 워커라면 노드당 하나만 들어갑니다.
+
+```bash
+kubectl create deployment catalog -n guide-sched --image=nginx:1.27 --replicas=4 $do > catalog.yaml
+```
+
+`catalog.yaml` 의 `spec.template.spec` 을 다음처럼 고칩니다.
+
+```yaml
+    spec:
+      initContainers:
+        - name: prep
+          image: busybox:1.36
+          command: ["sh", "-c", "echo preparing; sleep 2"]
+          resources:
+            requests:
+              cpu: "1"          # ← init 컨테이너도 requests 를 가진다
+              memory: 1Gi
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          resources:
+            requests:
+              cpu: "1"
+              memory: 1Gi
+```
+
+```bash
+kubectl apply -f catalog.yaml
+kubectl get pods -n guide-sched -l app=catalog -o wide
+```
+
+```text
+NAME                       READY   STATUS     NODE
+catalog-7c9d5b8f4-4kq2m    1/1     Running    worker-1
+catalog-7c9d5b8f4-8xw7n    1/1     Running    worker-2
+catalog-7c9d5b8f4-c2v9p    0/1     Pending    <none>
+catalog-7c9d5b8f4-t6h3z    0/1     Pending    <none>
+```
+
+워커가 2코어보다 크면 더 많이 뜰 수 있습니다. 그럴 때는 `cpu` 를 워커 코어 수의 절반보다 조금 크게(예: 4코어면 `"2.2"`) 바꿔서 다시 apply 합니다.
+
+```bash
+kubectl describe pod -n guide-sched -l app=catalog | grep FailedScheduling | tail -1
+```
+
+```text
+  Warning  FailedScheduling  20s   default-scheduler  0/3 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }, 2 Insufficient cpu, 2 Insufficient memory. preemption: ...
+```
+
+**관찰 포인트** — 노드는 멀쩡한데 **예약 장부(requests 합)** 가 꽉 찬 것입니다. 1) 의 표대로 `Insufficient cpu` · `Insufficient memory` 가 원인입니다.
+
+### 0 으로 줄이고 남은 양을 잰다
+
+지금 떠 있는 catalog 파드도 자원을 잡고 있습니다. 그대로 계산하면 **자기 몫이 빠진 숫자**를 보게 되니 먼저 0 으로 줄입니다.
+
+```bash
+kubectl scale deployment catalog -n guide-sched --replicas=0
+kubectl get pods -n guide-sched -l app=catalog        # No resources found 가 될 때까지
+```
+
+워커의 Allocatable 과 이미 예약된 Requests 합을 봅니다.
+
+```bash
+kubectl get nodes -o custom-columns=NAME:.metadata.name,CPU:.status.allocatable.cpu,MEMORY:.status.allocatable.memory
+kubectl describe node worker-1 | grep -A5 'Allocated resources'
+kubectl describe node worker-2 | grep -A5 'Allocated resources'
+```
+
+```text
+NAME            CPU   MEMORY
+control-plane   2     1912Mi
+worker-1        2     1912Mi
+worker-2        2     1912Mi
+
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests     Limits
+  --------           --------     ------
+  cpu                350m (17%)   0 (0%)
+  memory             140Mi (7%)   340Mi (17%)
+```
+
+메모리 Allocatable 이 `2014036Ki` 처럼 Ki 로 나오면 1024 로 나눠 Mi 로 바꿉니다(≈ 1966Mi).
+이제 계산합니다. 두 워커가 같다고 가정한 예입니다.
+
+| | CPU | 메모리 |
+|---|-----|--------|
+| Allocatable | 2000m | 1912Mi |
+| 이미 예약된 Requests | − 350m | − 140Mi |
+| **남은 양 (노드 1대)** | **1650m** | **1772Mi** |
+| 노드 1대에 들어갈 파드 수 (4개 ÷ 워커 2대) | 2 | 2 |
+| 파드 1개 몫 | 825m | 886Mi |
+| 여유 약 20% 를 남기고 반올림 | **650m** | **700Mi** |
+
+**관찰 포인트** — 나누는 수는 레플리카 수가 아니라 **한 노드에 올라갈 파드 수**입니다. 레플리카 3개를 워커 2대에 넣으면 한 노드에 2개가 가므로 똑같이 2로 나눕니다. 워커마다 남은 양이 다르면 **적게 남은 쪽**을 기준으로 잡습니다.
+
+### requests 를 고치고 다시 늘린다
+
+```bash
+kubectl edit deployment catalog -n guide-sched
+```
+
+init 컨테이너와 메인 컨테이너에 **같은 값**을 넣습니다.
+
+```yaml
+      initContainers:
+        - name: prep
+          ...
+          resources:
+            requests:
+              cpu: 650m         # ← 메인과 같은 값
+              memory: 700Mi
+      containers:
+        - name: nginx
+          ...
+          resources:
+            requests:
+              cpu: 650m
+              memory: 700Mi
+```
+
+```bash
+kubectl scale deployment catalog -n guide-sched --replicas=4
+kubectl rollout status deployment/catalog -n guide-sched
+kubectl get pods -n guide-sched -l app=catalog -o wide
+```
+
+```text
+deployment "catalog" successfully rolled out
+
+NAME                       READY   STATUS    NODE
+catalog-5f8b6c9d7-2jx4q    1/1     Running   worker-1
+catalog-5f8b6c9d7-9mzr6    1/1     Running   worker-2
+catalog-5f8b6c9d7-kp7wn    1/1     Running   worker-1
+catalog-5f8b6c9d7-xv3t8    1/1     Running   worker-2
+```
+
+두 컨테이너의 값이 같은지 jsonpath 로 확인합니다.
+
+```bash
+kubectl get deployment catalog -n guide-sched -o jsonpath='init={.spec.template.spec.initContainers[0].resources.requests} main={.spec.template.spec.containers[0].resources.requests}{"\n"}'
+```
+
+```text
+init={"cpu":"650m","memory":"700Mi"} main={"cpu":"650m","memory":"700Mi"}
+```
+
+!!! warning "왜 0 으로 줄이고 고치나요?"
+    replicas 를 그대로 둔 채 고치면 롤링 업데이트가 **옛 파드를 남겨 둔 채** 새 파드를 먼저 만듭니다. 옛 파드가 큰 requests 로 자리를 잡고 있어서 새 파드가 Pending 에 걸리고, 롤아웃이 멈춘 채로 옛 파드·새 파드가 섞입니다.
+    0 → 수정 → 원래 개수 순서면 섞일 일이 없습니다. Deployment 를 **지우고 다시 만들 필요는 없습니다.**
+
+!!! tip "시험 팁 — `kubectl set resources` 를 쓴다면"
+    `kubectl set resources deployment <이름> -c <컨테이너> --requests=cpu=650m,memory=700Mi` 로도 바꿀 수 있습니다.
+    다만 init 컨테이너까지 바뀌었는지는 반드시 위의 jsonpath 로 확인하세요. 문제에 "init 컨테이너와 같은 값" 이 있으면 `edit` 로 두 곳을 눈으로 보며 고치는 편이 안전합니다.
+
+### 실험 — init 컨테이너의 requests 도 자리를 잡는다
+
+파드가 실제로 예약하는 양은 **max( init 컨테이너 중 가장 큰 값 , 메인 컨테이너들의 합 )** 입니다. init 컨테이너는 먼저 하나씩 돌고 끝나지만, 스케줄러는 그 순간에 필요한 자리도 확보해야 하기 때문입니다.
+메인은 작게, init 만 크게 적은 파드를 만들어 봅니다.
+
+`init-heavy.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-heavy
+  namespace: guide-sched
+spec:
+  initContainers:
+    - name: setup
+      image: busybox:1.36
+      command: ["sh", "-c", "echo done"]
+      resources:
+        requests:
+          cpu: "64"          # ← init 만 64 코어
+  containers:
+    - name: app
+      image: nginx:1.27
+      resources:
+        requests:
+          cpu: 50m           # ← 메인은 작다
+```
+
+```bash
+kubectl apply -f init-heavy.yaml
+kubectl get pod init-heavy -n guide-sched
+kubectl describe pod init-heavy -n guide-sched | tail -1
+```
+
+```text
+NAME         READY   STATUS     RESTARTS   AGE
+init-heavy   0/1     Pending    0          5s
+
+  Warning  FailedScheduling  5s  default-scheduler  0/3 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }, 2 Insufficient cpu. ...
+```
+
+**관찰 포인트** — 메인 컨테이너는 50m 뿐인데 `Insufficient cpu` 입니다. 메인만 줄이고 init 을 그대로 두면 **여전히 Pending** 이라는 뜻입니다. 자원 부족 문제에서 init 컨테이너가 보이면 **두 곳을 다 고칩니다.**
+
+| init 최댓값 | 메인 합 | 파드가 예약하는 양 |
+|-------------|---------|--------------------|
+| 64 | 50m | 64 (init 이 결정) |
+| 650m | 650m | 650m (같게 맞추면 계산이 단순하다) |
+| 100m | 300m + 200m | 500m (메인 합이 결정) |
+
+```bash
+kubectl delete deployment catalog -n guide-sched
+kubectl delete pod init-heavy -n guide-sched
+```
+
+---
+
 ## 시험에서 빠르게
 
 ```bash
@@ -1357,9 +1667,16 @@ kubectl get pod -o wide
 kubectl describe pod p | tail -5
 kubectl get events --field-selector reason=FailedScheduling
 
-# HPA
+# HPA — behavior(스케일 다운 안정화)는 옵션이 없으니 edit
 kubectl autoscale deploy d --min=1 --max=5 --cpu-percent=70
+kubectl edit hpa d                           # spec.behavior.scaleDown.stabilizationWindowSeconds
 kubectl get hpa
+
+# 자원 부족 — 0 으로 줄이고, 남은 양 재고, init·메인 같이 고치고, 다시 늘린다
+kubectl scale deploy d --replicas=0
+kubectl describe node worker-1 | grep -A5 'Allocated resources'
+kubectl edit deploy d                        # initContainers · containers 의 requests
+kubectl scale deploy d --replicas=3
 
 # PriorityClass
 kubectl get pc                               # 기존 값 먼저
@@ -1372,6 +1689,8 @@ kubectl patch deploy d -p '{"spec":{"template":{"spec":{"priorityClassName":"nam
     - **Taints and Tolerations** — tolerations YAML
     - **Assigning Pods to Nodes** — podAffinity / podAntiAffinity 예제
     - **HorizontalPodAutoscaler Walkthrough** — HPA v2 YAML
+    - **Horizontal Pod Autoscaling** — `behavior` (Configurable scaling behavior) 예제
+    - **Resource Management for Pods and Containers** — requests 단위(m · Mi)
     - **Pod Priority and Preemption** — PriorityClass YAML
 
 ---
@@ -1397,7 +1716,8 @@ sudo rm -f /etc/kubernetes/manifests/guide-static.yaml
 
 # 로컬 파일
 rm -f greedy.yaml sized.yaml oom.yaml qos.yaml limitrange.yaml too-big.yaml quota.yaml \
-      affinity.yaml batch-job.yaml noexec.yaml near-cache.yaml spread.yaml filler.yaml urgent.yaml
+      affinity.yaml batch-job.yaml noexec.yaml near-cache.yaml spread.yaml filler.yaml urgent.yaml \
+      catalog.yaml init-heavy.yaml
 ```
 
 확인합니다.
@@ -1450,6 +1770,12 @@ metrics-server 는 다른 실습(19강 트러블슈팅의 `kubectl top` 등)에�
 ??? question "8. 기존 Deployment 에 PriorityClass 를 붙이는 필드 경로는? 붙이면 파드는 어떻게 되나요?"
     `spec.template.spec.priorityClassName` 입니다. 파드 템플릿이 바뀌므로 롤링 업데이트로 파드가 새로 만들어지고 revision 이 하나 올라갑니다.
 
+??? question "9. HPA 가 부하가 빠졌는데도 5분 동안 파드를 줄이지 않습니다. 이 시간을 30초로 바꾸려면?"
+    `spec.behavior.scaleDown.stabilizationWindowSeconds: 30` 입니다. `kubectl autoscale` 에는 이 옵션이 없으므로 만든 뒤 `kubectl edit hpa` 로 넣습니다. `autoscaling/v1` 에는 behavior 필드가 없으니 YAML 을 쓸 때는 v2 로 씁니다.
+
+??? question "10. 레플리카 3개 중 1개가 `Insufficient cpu` 로 Pending 입니다. 메인 컨테이너의 requests 를 절반으로 줄였는데도 여전히 Pending 입니다. 왜일까요?"
+    init 컨테이너의 requests 가 그대로 크기 때문입니다. 파드가 예약하는 양은 max(init 최댓값, 메인 합) 입니다. init 과 메인을 같이 고치고, 롤링 업데이트 중 옛 파드가 자리를 잡고 있지 않도록 0 으로 줄였다가 다시 늘립니다.
+
 ---
 
 ## 다음 단계 — 채점 실습
@@ -1466,5 +1792,6 @@ bash exam.sh start
 | Q1 Requests / Limits 가 설정된 파드 | 2) — `$do` 로 뽑고 resources 추가, `explain` |
 | Q2 Node Affinity 로 파드 배치 | 5) — required · `In` · `get pod -o wide` 로 확인 |
 | Q3 Taint 를 허용하는 Toleration | 6) — Equal toleration, "허용일 뿐" |
-| Q4 HPA (자동 스케일) | 8) — `kubectl autoscale`, requests 전제 |
+| Q4 HPA (자동 스케일) + 스케일 다운 안정화 | 8) — `kubectl autoscale` 후 `edit` 로 `behavior.scaleDown` |
 | Q5 PriorityClass 와 우선순위 | 9) — 기존 값 먼저 보기, 템플릿에 `patch` |
+| Q6 자원 부족 — 노드 자원을 나눠 레플리카 모두 띄우기 | 10) — 0 으로 줄이기, Allocated resources 계산, init·메인 같은 requests |

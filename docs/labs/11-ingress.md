@@ -10,6 +10,7 @@
 - openssl 로 만든 자체 서명 인증서를 **TLS Secret → Ingress** 로 붙이고, 어떤 인증서가 나오는지 확인한다.
 - 404 · 503 · 504 가 **각각 어디의 문제인지** 직접 만들어 보고 구분한다.
 - NetworkPolicy 로 잠근 네임스페이스에 **Ingress 컨트롤러만 들여보내는** 조합을 만든다.
+- 기존 Ingress(호스트 + TLS + 경로)를 **Gateway + HTTPRoute 로 옮기고** Ingress 를 지운다. 필드가 어디로 가는지 표로 정리한다.
 
 ---
 
@@ -831,20 +832,108 @@ kubectl scale deployment board -n guide-ingress --replicas=1
 
 ---
 
-## 더 보기: Gateway API 로 같은 일 하기
+## 9) Ingress 를 Gateway API 로 옮기기
 
-Gateway API 는 12강에서 다룹니다. 클러스터에 GatewayClass 가 설치돼 있다면 같은 라우팅을 이렇게 옮길 수 있습니다.
+Gateway API 는 Ingress 의 뒤를 잇는 표준입니다(구조 전체는 12강에서 다룹니다). 시험에는 **이미 있는 Ingress 를 읽고, 같은 동작을 하는 Gateway + HTTPRoute 를 만든 뒤, Ingress 를 지우는** 문제가 나옵니다. **HTTPS 리스너**까지 옮겨야 합니다.
+
+여기서는 5) 에서 만든 `shop-tls`(호스트 `secure.guide.local` · Secret `guide-tls` · `catalog-svc:80`)를 옮깁니다.
+
+### 준비 — GatewayClass 확인, 7) 의 정책 걷어내기
 
 ```bash
 kubectl get gatewayclass
+kubectl api-resources --api-group=gateway.networking.k8s.io
 ```
 
 ```text
 NAME    CONTROLLER                                   ACCEPTED   AGE
 nginx   gateway.nginx.org/nginx-gateway-controller   True       3d
+
+NAME              SHORTNAMES   APIVERSION                           NAMESPACED   KIND
+gatewayclasses    gc           gateway.networking.k8s.io/v1         false        GatewayClass
+gateways          gtw          gateway.networking.k8s.io/v1         true         Gateway
+grpcroutes                     gateway.networking.k8s.io/v1         true         GRPCRoute
+httproutes                     gateway.networking.k8s.io/v1         true         HTTPRoute
+referencegrants   refgrant     gateway.networking.k8s.io/v1beta1    true         ReferenceGrant
 ```
 
-목록이 비어 있으면(CRD 나 구현이 없으면) 이 절은 건너뜁니다.
+관찰 포인트: Ingress 에서 `get ingressclass` 로 클래스 이름을 확인했듯, 여기서는 **`get gatewayclass` 의 NAME** 이 Gateway 의 `gatewayClassName` 에 들어갑니다. `ACCEPTED` 가 `True` 여야 컨트롤러가 살아 있는 것입니다.
+
+??? note "GatewayClass 가 없다면 — 설치 (NGINX Gateway Fabric)"
+    Gateway API 는 **CRD + 구현(컨트롤러)** 을 따로 설치합니다. 채점 세트 `11-ingress` 의 `start` 가 아래와 같은 버전으로 자동 설치하므로, 채점 세트를 한 번 시작했다면 이미 있습니다.
+    ```bash
+    NGF_VERSION=v2.7.0
+    kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=${NGF_VERSION}" | kubectl apply -f -
+    kubectl apply --server-side -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/${NGF_VERSION}/deploy/crds.yaml
+    kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/${NGF_VERSION}/deploy/nodeport/deploy.yaml
+    kubectl wait --for=condition=Available deployment --all -n nginx-gateway --timeout=180s
+    ```
+    시험 클러스터에는 GatewayClass 가 미리 있습니다. 시험에서는 **설치하지 말고 이름만 확인**합니다.
+
+NGINX Gateway Fabric 은 Gateway 를 하나 만들 때마다 **그 Gateway 와 같은 네임스페이스에** 데이터 플레인 파드를 띄웁니다. 7) 의 기본 거부 정책이 남아 있으면 그 파드로 들어오는 요청도, 그 파드가 백엔드로 가는 요청도(출발지가 `ingress-nginx` 네임스페이스가 아니므로) 막힙니다. 먼저 걷어냅니다.
+
+```bash
+kubectl delete -f from-ingress-nginx.yaml -f deny-in-all.yaml
+```
+
+### ① 옮길 Ingress 를 읽는다
+
+```bash
+kubectl get ingress shop-tls -n guide-ingress -o yaml | sed -n '/^spec:/,/^status:/p'
+```
+
+```text
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: secure.guide.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: catalog-svc
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - secure.guide.local
+    secretName: guide-tls
+status:
+```
+
+이 값들을 한 칸씩 옮겨 적습니다.
+
+| Ingress 필드 | 옮겨 갈 곳 | 이 실습의 값 |
+|--------------|-----------|-------------|
+| `spec.ingressClassName` | Gateway `spec.gatewayClassName` | `nginx` |
+| (컨트롤러 Service 의 443 포트) | Gateway `spec.listeners[]` — `port: 443`, `protocol: HTTPS` | 리스너 이름 `https` |
+| `spec.tls[].hosts[]` | 리스너의 `hostname` | `secure.guide.local` |
+| `spec.tls[].secretName` | 리스너의 `tls.certificateRefs[].name` (`kind: Secret`) | `guide-tls` |
+| (HTTPS 는 컨트롤러에서 끝난다) | 리스너의 `tls.mode: Terminate` (생략하면 기본값) | `Terminate` |
+| `spec.rules[].host` | HTTPRoute `spec.hostnames[]` | `secure.guide.local` |
+| `paths[].pathType: Prefix` + `path` | `rules[].matches[].path` — `type: PathPrefix` + `value` | `/` |
+| `paths[].pathType: Exact` | `type: Exact` | — |
+| `backend.service.name` / `port.number` | `rules[].backendRefs[].name` / `port` | `catalog-svc` / `80` |
+| — (Ingress 에는 없던 개념) | HTTPRoute `spec.parentRefs[]` — 어느 Gateway 에 붙나 | `guide-gw` |
+
+Ingress 한 장이 **두 장으로 나뉩니다.** 입구(포트·프로토콜·호스트·인증서)는 Gateway 로, 라우팅(호스트·경로·백엔드)은 HTTPRoute 로 갑니다. 호스트는 양쪽에 다 적습니다.
+
+### ② Gateway — HTTPS 리스너
+
+필드 이름이 헷갈리면 Ingress 때처럼 `explain` 으로 내려갑니다.
+
+```bash
+kubectl explain gateway.spec.listeners.tls
+```
+
+```text
+FIELDS:
+  certificateRefs     <[]Object>
+  mode                <string>
+  options             <map[string]string>
+```
 
 `guide-gw.yaml`:
 
@@ -855,12 +944,66 @@ metadata:
   name: guide-gw
   namespace: guide-ingress
 spec:
-  gatewayClassName: nginx          # ← Ingress 의 ingressClassName 자리
+  gatewayClassName: nginx               # ← ingressClassName
   listeners:
-    - name: http
-      port: 80
-      protocol: HTTP
----
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: secure.guide.local      # ← tls[].hosts
+      tls:
+        mode: Terminate                 # ← 생략해도 Terminate
+        certificateRefs:
+          - kind: Secret
+            name: guide-tls             # ← tls[].secretName (같은 네임스페이스)
+```
+
+```bash
+kubectl apply -f guide-gw.yaml
+kubectl get gateway guide-gw -n guide-ingress
+kubectl get gateway guide-gw -n guide-ingress -o jsonpath='{range .status.listeners[*]}{.name}{"  attachedRoutes="}{.attachedRoutes}{"\n"}{range .conditions[*]}{"  "}{.type}={.status}{"  "}{.reason}{"\n"}{end}{end}'
+```
+
+```text
+NAME       CLASS   ADDRESS   PROGRAMMED   AGE
+guide-gw   nginx             True         15s
+
+https  attachedRoutes=0
+  Accepted=True  Accepted
+  ResolvedRefs=True  ResolvedRefs        ← 인증서 Secret 을 찾았다
+  Programmed=True  Programmed
+  Conflicted=False  NoConflicts
+```
+
+관찰 포인트: `attachedRoutes=0` — 입구는 열렸지만 **아직 붙은 라우트가 없습니다.** 이 상태로 접속하면 404 입니다. Ingress 에서는 규칙이 입구와 한 몸이었지만, Gateway API 에서는 HTTPRoute 가 와서 붙어야 합니다.
+
+### 실험 — Secret 이름이 틀리면
+
+```bash
+kubectl patch gateway guide-gw -n guide-ingress --type=json \
+  -p='[{"op":"replace","path":"/spec/listeners/0/tls/certificateRefs/0/name","value":"guide-tls-typo"}]'
+sleep 3
+kubectl get gateway guide-gw -n guide-ingress -o jsonpath='{.status.listeners[0].conditions[?(@.type=="ResolvedRefs")]}{"\n"}'
+```
+
+```text
+{"lastTransitionTime":"2026-10-04T06:41:12Z","message":"Secret guide-ingress/guide-tls-typo does not exist","observedGeneration":2,"reason":"InvalidCertificateRef","status":"False","type":"ResolvedRefs"}
+```
+
+관찰 포인트: Ingress 는 Secret 이 틀려도 조용히 **가짜 인증서**를 내줬지만(5)), Gateway 는 리스너 상태에 **`InvalidCertificateRef`** 로 이유를 적어 줍니다. 되돌려 놓습니다.
+
+```bash
+kubectl apply -f guide-gw.yaml
+```
+
+!!! warning "인증서 Secret 은 Gateway 와 같은 네임스페이스에"
+    `certificateRefs` 에 다른 네임스페이스의 Secret 을 적으려면 그쪽 네임스페이스에 **ReferenceGrant** 가 있어야 합니다. 없으면 위와 같은 `ResolvedRefs=False` 가 됩니다.
+    Ingress 를 옮길 때는 Secret 이 이미 Ingress 와 같은 네임스페이스에 있으므로, **Gateway 도 같은 네임스페이스에** 만드는 것이 가장 단순합니다.
+
+### ③ HTTPRoute — 호스트·경로·백엔드
+
+`guide-route.yaml`:
+
+```yaml
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -868,50 +1011,132 @@ metadata:
   namespace: guide-ingress
 spec:
   parentRefs:
-    - name: guide-gw               # ← 어느 Gateway 에 붙나 (Ingress 에는 없던 개념)
+    - name: guide-gw                    # ← 어느 Gateway 에 붙나
+  hostnames:
+    - secure.guide.local                # ← rules[].host
   rules:
     - matches:
-        - path: { type: PathPrefix, value: /catalog }   # ← Ingress 의 Prefix
+        - path:
+            type: PathPrefix            # ← pathType: Prefix
+            value: /
       backendRefs:
-        - name: catalog-svc
+        - name: catalog-svc             # ← backend.service.name
+          port: 80                      # ← backend.service.port.number
+```
+
+```bash
+kubectl apply -f guide-route.yaml
+kubectl get httproute guide-route -n guide-ingress
+kubectl get httproute guide-route -n guide-ingress -o jsonpath='{range .status.parents[*]}{.parentRef.name}{": "}{range .conditions[*]}{.type}={.status} {end}{"\n"}{end}'
+kubectl get gateway guide-gw -n guide-ingress -o jsonpath='{.status.listeners[0].attachedRoutes}{"\n"}'
+```
+
+```text
+NAME          HOSTNAMES                AGE
+guide-route   ["secure.guide.local"]   10s
+
+guide-gw: Accepted=True ResolvedRefs=True
+1
+```
+
+관찰 포인트: HTTPRoute 쪽에도 상태가 있습니다. **`Accepted`** 는 "Gateway 가 이 라우트를 받아들였다"(리스너 hostname 과 라우트 hostnames 가 맞아야 함), **`ResolvedRefs`** 는 "backendRefs 의 Service·포트를 찾았다" 입니다. 그리고 Gateway 의 `attachedRoutes` 가 1 로 올라갔습니다.
+
+| 증상 | 어디를 보나 |
+|------|------------|
+| Gateway `PROGRAMMED` 가 비거나 False | `gatewayClassName` 오타, GatewayClass `ACCEPTED` |
+| 리스너 `ResolvedRefs=False` (`InvalidCertificateRef`) | `certificateRefs` 의 Secret 이름 · 네임스페이스 · 타입 |
+| 라우트 `Accepted=False` (`NoMatchingListenerHostname`) | 리스너 `hostname` 과 라우트 `hostnames` 불일치 |
+| 라우트 `ResolvedRefs=False` (`BackendNotFound`) | `backendRefs` 의 Service 이름 · 포트 |
+| `attachedRoutes=0` | `parentRefs` 의 Gateway 이름 · 네임스페이스 |
+
+### ④ HTTPS 로 확인 — 입구가 두 개인 상태
+
+Gateway 를 만들면 컨트롤러가 그 앞에 Service 를 하나 만듭니다. 그 Service 의 **443 에 붙은 NodePort** 로 들어갑니다.
+
+```bash
+kubectl get svc -n guide-ingress -l gateway.networking.k8s.io/gateway-name=guide-gw
+GW_HTTPS_PORT=$(kubectl get svc -n guide-ingress -l gateway.networking.k8s.io/gateway-name=guide-gw \
+  -o jsonpath='{.items[0].spec.ports[?(@.port==443)].nodePort}')
+echo "gateway https:$GW_HTTPS_PORT   ingress https:$HTTPS_PORT"
+
+echo "== Gateway";  curl -s --cacert guide.crt --resolve secure.guide.local:$GW_HTTPS_PORT:$NODE_IP https://secure.guide.local:$GW_HTTPS_PORT/pay
+echo "== Ingress";  curl -s --cacert guide.crt --resolve secure.guide.local:$HTTPS_PORT:$NODE_IP    https://secure.guide.local:$HTTPS_PORT/pay
+```
+
+```text
+NAME             TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)         AGE
+guide-gw-nginx   LoadBalancer   10.104.77.9   <pending>     443:30943/TCP   2m
+
+gateway https:30943   ingress https:32507
+== Gateway
+served-by=catalog-5f7b9c6d4-m9q4t uri=/pay host=secure.guide.local
+== Ingress
+served-by=catalog-5f7b9c6d4-k2x8p uri=/pay host=secure.guide.local
+```
+
+관찰 포인트: 같은 인증서(`--cacert guide.crt` 로 검증 통과), 같은 백엔드입니다. 지금은 **Ingress 와 Gateway 두 입구가 같은 앱을 가리키는** 이전 중 상태입니다. 실제 운영에서도 새 입구를 확인한 다음에 옛 입구를 닫습니다.
+(Service 이름과 TYPE 은 구현·설치 방식에 따라 다를 수 있습니다. LoadBalancer 가 Pending 이어도 NodePort 는 열려 있습니다.)
+
+!!! note "Gateway 쪽만 응답이 없다면 — externalTrafficPolicy"
+    NGINX Gateway Fabric 이 만드는 Service 는 `externalTrafficPolicy: Local` 이라, **데이터 플레인 파드가 떠 있는 노드로 들어온 요청만** 받습니다.
+    ```bash
+    kubectl get pods -n guide-ingress -l gateway.networking.k8s.io/gateway-name=guide-gw -o wide
+    ```
+    `NODE` 칸의 노드 IP 로 `--resolve` 를 바꿔서 다시 해 봅니다.
+
+### ⑤ Ingress 를 지운다
+
+새 입구가 동작하는 것을 확인했으니 옛 입구를 닫습니다. **시험에서도 이 단계가 채점 항목**입니다.
+
+```bash
+kubectl delete ingress shop-tls -n guide-ingress
+echo "== Gateway";  curl -s --cacert guide.crt --resolve secure.guide.local:$GW_HTTPS_PORT:$NODE_IP https://secure.guide.local:$GW_HTTPS_PORT/pay
+echo "== Ingress";  curl -sk -o /dev/null -w '%{http_code}\n' --resolve secure.guide.local:$HTTPS_PORT:$NODE_IP https://secure.guide.local:$HTTPS_PORT/pay
+```
+
+```text
+ingress.networking.k8s.io "shop-tls" deleted
+== Gateway
+served-by=catalog-5f7b9c6d4-k2x8p uri=/pay host=secure.guide.local
+== Ingress
+404
+```
+
+관찰 포인트: Ingress 쪽은 이제 규칙이 없어 **404**(인증서도 가짜 기본 인증서라 `-k` 가 필요)입니다. 남은 입구는 Gateway 하나입니다. Secret `guide-tls` 와 `catalog-svc` 는 Gateway 가 계속 쓰므로 **지우면 안 됩니다.**
+
+!!! tip "시험 팁 — 옮기기 문제의 순서"
+    1. `kubectl get ingress <이름> -n <ns> -o yaml` 로 **class · host · secretName · path · pathType · backend** 를 메모한다.
+    2. `kubectl get gatewayclass` 로 클래스 이름을 확인한다.
+    3. Gateway(리스너 `https` · 443 · HTTPS · hostname · certificateRefs) → HTTPRoute(parentRefs · hostnames · PathPrefix · backendRefs) 순으로 만든다. `kubectl create` 로 만드는 명령이 없으므로 YAML 로 씁니다. 필드는 `kubectl explain gateway.spec.listeners` · `kubectl explain httproute.spec.rules` 로 확인합니다.
+    4. `kubectl describe gateway` · `describe httproute` 로 Accepted · Programmed · ResolvedRefs 를 확인한다.
+    5. **마지막에 Ingress 를 지운다.** 문제에 적힌 대로 Service · Secret 은 남긴다.
+
+??? note "ingress-nginx 가 해 주던 HTTP → HTTPS 리다이렉트는?"
+    5) 에서 본 308 리다이렉트는 ingress-nginx 가 **알아서** 하던 일입니다. Gateway API 에서는 직접 만들어야 합니다. HTTP 리스너를 하나 더 열고, 그 리스너에만 붙는 리다이렉트 라우트를 둡니다.
+    ```yaml
+    # guide-gw.yaml 의 listeners 에 추가
+        - name: http
           port: 80
-```
-
-```bash
-kubectl apply -f guide-gw.yaml
-kubectl get gateway,httproute -n guide-ingress
-kubectl get svc -n guide-ingress | grep guide-gw
-```
-
-```text
-NAME                                         CLASS   ADDRESS   PROGRAMMED   AGE
-gateway.gateway.networking.k8s.io/guide-gw   nginx             True         20s
-
-NAME                                              HOSTNAMES   AGE
-httproute.gateway.networking.k8s.io/guide-route               20s
-
-guide-gw-nginx   LoadBalancer   10.104.77.9   <pending>   80:31518/TCP   20s
-```
-
-LoadBalancer 는 Pending 이지만 **NodePort(여기서는 31518)는 이미 열려 있습니다.** 그 포트로 확인합니다.
-(Gateway 가 만드는 Service 이름은 구현·버전마다 다를 수 있으니 `get svc` 로 확인합니다.)
-
-```bash
-GW_PORT=$(kubectl get svc -n guide-ingress -l gateway.networking.k8s.io/gateway-name=guide-gw -o jsonpath='{.items[0].spec.ports[0].nodePort}')
-curl -s http://$NODE_IP:$GW_PORT/catalog/items
-```
-
-```text
-served-by=catalog-5f7b9c6d4-m9q4t uri=/catalog/items host=192.168.56.11
-```
-
-| Ingress | Gateway API |
-|---------|-------------|
-| `ingressClassName` | Gateway 의 `gatewayClassName` |
-| (컨트롤러 Service 가 입구) | Gateway 의 `listeners` 가 입구 |
-| `rules[].http.paths[]` | HTTPRoute 의 `rules[].matches[]` |
-| `backend.service.name/port.number` | `backendRefs[].name/port` |
-| — | HTTPRoute 의 `parentRefs` (어느 Gateway 에 붙나) |
+          protocol: HTTP
+          hostname: secure.guide.local
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: guide-redirect
+      namespace: guide-ingress
+    spec:
+      parentRefs:
+        - name: guide-gw
+          sectionName: http           # ← http 리스너에만 붙인다
+      hostnames: [secure.guide.local]
+      rules:
+        - filters:
+            - type: RequestRedirect
+              requestRedirect: { scheme: https, statusCode: 301 }
+    ```
+    이때 `guide-route` 의 `parentRefs` 에도 `sectionName: https` 를 넣어야 합니다. 안 넣으면 `guide-route` 가 두 리스너 모두에 붙어서 HTTP 로도 그냥 응답합니다.
+    rewrite 어노테이션(6))도 같은 사정으로, Gateway API 에서는 HTTPRoute 의 `URLRewrite` 필터로 다시 씁니다.
 
 ---
 
@@ -931,6 +1156,14 @@ kubectl get ingress <n> -n <ns>                               # CLASS · ADDRESS
 kubectl describe ingress <n> -n <ns>                          # Rules · Backends (파드 IP)
 curl -H 'Host: <host>' http://<노드IP>:<NodePort>/<path>
 curl -k --resolve <host>:<https포트>:<노드IP> https://<host>:<https포트>/
+
+# Ingress → Gateway API
+kubectl get gatewayclass                                      # gatewayClassName
+kubectl get ingress <n> -n <ns> -o yaml                       # class · host · secretName · path · backend 메모
+kubectl explain gateway.spec.listeners.tls                    # certificateRefs · mode
+kubectl describe gateway <gw> -n <ns>                         # Accepted · Programmed · 리스너 ResolvedRefs
+kubectl describe httproute <rt> -n <ns>                       # Accepted · ResolvedRefs
+kubectl delete ingress <n> -n <ns>                            # 마지막에 옛 입구를 닫는다
 ```
 
 ---
@@ -940,7 +1173,8 @@ curl -k --resolve <host>:<https포트>:<노드IP> https://<host>:<https포트>/
 ```bash
 kubectl delete namespace guide-ingress
 rm -f backends.yaml probe-ing.yaml shop-paths.yaml shop-hosts.yaml shop-fallback.yaml shop-tls.yaml \
-      shop-rewrite.yaml deny-in-all.yaml from-ingress-nginx.yaml guide-gw.yaml guide.key guide.crt /tmp/hit.out
+      shop-rewrite.yaml deny-in-all.yaml from-ingress-nginx.yaml guide-gw.yaml guide-route.yaml \
+      guide.key guide.crt /tmp/hit.out
 unset -f hit
 ```
 
@@ -974,11 +1208,20 @@ unset -f hit
 ??? question "8. 네임스페이스에 Ingress 기본 거부를 걸었더니 Ingress 로도 접속이 안 됩니다. 어떻게 여나요?"
     컨트롤러가 있는 네임스페이스(`kubernetes.io/metadata.name: ingress-nginx`)에서 오는 트래픽을 백엔드 파드 포트로 허용하는 정책을 추가합니다.
 
+??? question "9. Ingress 의 `tls[].hosts` 와 `tls[].secretName` 은 Gateway API 에서 어디로 가나요?"
+    Gateway 리스너(`port: 443`, `protocol: HTTPS`)의 `hostname` 과 `tls.certificateRefs[].name`(`kind: Secret`)으로 갑니다. `rules[].host` 는 HTTPRoute 의 `hostnames` 로 갑니다.
+
+??? question "10. Gateway 와 HTTPRoute 를 만들었는데 Gateway 리스너의 `attachedRoutes` 가 0 입니다. 무엇을 보나요?"
+    HTTPRoute 의 `parentRefs` 에 적은 Gateway 이름·네임스페이스, 그리고 라우트 `hostnames` 가 리스너 `hostname` 과 맞는지(라우트 `Accepted` 조건) 봅니다.
+
+??? question "11. Ingress 를 Gateway API 로 옮긴 뒤 Secret 이나 Service 도 지워도 되나요?"
+    안 됩니다. Gateway 의 `certificateRefs` 가 같은 Secret 을, HTTPRoute 의 `backendRefs` 가 같은 Service 를 계속 씁니다. 지우는 것은 Ingress 하나입니다.
+
 ---
 
 ## 다음 단계 — 채점 실습
 
-개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.** 컨트롤러가 설치돼 있어야 실제 접속까지 확인할 수 있습니다.
+개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.** 컨트롤러가 설치돼 있어야 실제 접속까지 확인할 수 있습니다. Q5 에 필요한 Gateway API(NGINX Gateway Fabric)는 클러스터에 없으면 `start` 가 자동으로 설치합니다.
 
 ```bash
 cd ~/cka-lab/11-ingress
@@ -991,3 +1234,4 @@ bash exam.sh start
 | Q2 호스트 기반 Ingress | 4) — rules.host, `-H 'Host: ...'` 로 확인 |
 | Q3 자체 서명 인증서로 TLS Ingress | 5) — openssl → `create secret tls` → `spec.tls` |
 | Q4 NetworkPolicy 로 네임스페이스 격리 | 7) (원리는 [10강](10-networkpolicy.md) 의 2) · 3)) |
+| Q5 Ingress 를 Gateway API 로 옮기기 (HTTPS) | 9) — 필드 대응표, HTTPS 리스너 · certificateRefs, HTTPRoute, Ingress 삭제 |

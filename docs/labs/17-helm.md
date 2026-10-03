@@ -8,6 +8,7 @@
 - `--set` 과 `-f values.yaml` 의 **우선순위**, 그리고 upgrade 때 **앞서 준 값이 사라지는 함정**(`--reuse-values`)을 직접 겪어 본다.
 - `history` · `rollback` 으로 **롤백도 새 리비전**이라는 것을 확인한다.
 - `helm template` 으로 **설치하지 않고 매니페스트만** 뽑고, `--version` · `--skip-crds` · `--include-crds` 가 CRD 를 어떻게 다루는지 차트 구조와 함께 확인한다.
+- 릴리스 이름을 **생략**하면 `template` 은 `release-name` 을 쓴다는 것, 그리고 `kubectl get crd` · `kubectl explain` 결과를 **파일로 저장**하는 조회형 문제를 연습한다.
 - `helm pull --untar` 로 차트 속을 열어 보고, `Chart.yaml` 의 **의존성 버전**을 바꿔 `helm dependency update` 한다.
 - Kustomize base/overlay 로 **namePrefix · labels · images · patches · configMapGenerator** 를 써 보고, `kubectl kustomize`(미리 보기)와 `kubectl apply -k`(적용)를 구분한다.
 
@@ -794,7 +795,7 @@ demo                       ← preview 라는 릴리스는 없다
 
 | 옵션 | 뜻 |
 |------|----|
-| `preview` (첫 인자) | 릴리스 이름. 리소스 이름에 들어간다 (`preview-podinfo`) |
+| `preview` (첫 인자) | 릴리스 이름. 리소스 이름에 들어간다 (`preview-podinfo`). **생략할 수 있다** — 바로 아래에서 확인 |
 | `--version` | 차트 버전. **시험에서 버전이 주어지면 반드시** |
 | `--namespace` / `-n` | 렌더링에 쓸 네임스페이스 (`metadata.namespace` 에 반영되는지는 차트마다 다르다) |
 | `-f` / `--set` | install 과 똑같이 값을 준다 |
@@ -805,6 +806,50 @@ demo                       ← preview 라는 릴리스는 없다
 !!! note "`--skip-tests` 를 빼면"
     podinfo 는 `helm test` 용 파드 템플릿을 갖고 있어서, 빼지 않으면 `kind: Pod` 가 세 개 더 나옵니다.
     `install` 은 이런 훅(hook) 리소스를 따로 다루지만 `template` 은 그냥 YAML 로 다 뱉습니다.
+
+### 릴리스 이름 없이 template 하면?
+
+시험에서 "릴리스 이름을 지정하지 말고 렌더링하라" 는 요구가 나올 수 있습니다. `template` 은 인자를 **차트 하나만** 줘도 됩니다.
+이름을 비워 두면 Helm 이 `release-name` 이라는 **기본 이름**을 채워 넣습니다.
+
+```bash
+helm template podinfo/podinfo \
+  --version 6.14.0 \
+  --namespace guide-helm \
+  --skip-tests > ~/guide-helm/podinfo-noname.yaml
+
+grep -E '^kind:|^  name:' ~/guide-helm/podinfo-noname.yaml
+```
+
+```text
+kind: Service
+  name: release-name-podinfo
+kind: Deployment
+  name: release-name-podinfo
+```
+
+관찰 포인트: 위의 `preview-podinfo` 와 비교하면 **릴리스 이름 자리에 `release-name` 이 들어간 것** 말고는 같습니다.
+차트의 레이블 `app.kubernetes.io/instance` 같은 곳에도 `{{ .Release.Name }}` 이 쓰이므로 똑같이 `release-name` 이 들어갑니다.
+
+같은 방식으로 `install` 을 하면 어떻게 될까요?
+
+```bash
+helm install podinfo/podinfo -n guide-helm
+```
+
+```text
+Error: INSTALLATION FAILED: must either provide a name or specify --generate-name
+```
+
+| 명령 | 인자를 차트 하나만 주면 |
+|------|------------------------|
+| `helm template <차트>` | 릴리스 이름 `release-name` 으로 렌더링한다 |
+| `helm install <차트>` | **에러.** 이름을 주거나 `--generate-name` 으로 무작위 이름(`podinfo-1759...`)을 받아야 한다 |
+
+!!! tip "시험 팁 — 지문에 릴리스 이름이 없으면 넣지 않습니다"
+    "릴리스 이름 없이" 라는 지문에 습관처럼 이름을 붙이면 결과 YAML 의 이름·레이블이 전부 달라집니다.
+    뽑은 뒤 `grep -m1 'release-name' <파일>` 로 기본 이름이 들어갔는지 한 번 확인합니다.
+    버전이 주어졌다면 `--version` 도 빠뜨리지 않았는지 `grep -m1 'helm.sh/chart:' <파일>` 로 봅니다.
 
 ### install 과 template 비교
 
@@ -914,6 +959,106 @@ CRD 가 어디 있는지는 `helm pull --untar` 후 `ls crds/ templates/ | grep 
 
 !!! note "CRD 자체가 궁금하다면"
     CRD 와 오퍼레이터가 무엇인지는 **18강 (CRD 와 오퍼레이터)** 에서 다룹니다. 여기서는 "차트가 CRD 를 함께 가져올 수 있다" 까지만 알면 충분합니다.
+
+### ③ CRD 목록과 필드 설명을 파일로 — `kubectl get crd` · `kubectl explain`
+
+차트로 설치한 프로젝트는 CRD 를 여러 개 남깁니다. 시험에는 **"이 프로젝트의 CRD 목록을 기본 출력 형식으로 파일에 저장하라"**,
+**"이 CRD 의 특정 필드 설명을 파일에 저장하라"** 같은 조회형 문제가 나옵니다. 설치는 필요 없고 **CRD 만 있으면** 됩니다.
+
+여기서는 Prometheus Operator 의 CRD 두 개(ServiceMonitor · PodMonitor)만 설치해서 연습합니다. 오퍼레이터 본체는 설치하지 않으므로 파드는 생기지 않습니다.
+
+```bash
+P=https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.77.1/example/prometheus-operator-crd
+kubectl apply --server-side \
+  -f $P/monitoring.coreos.com_servicemonitors.yaml \
+  -f $P/monitoring.coreos.com_podmonitors.yaml
+```
+
+```text
+customresourcedefinition.apiextensions.k8s.io/servicemonitors.monitoring.coreos.com serverside-applied
+customresourcedefinition.apiextensions.k8s.io/podmonitors.monitoring.coreos.com serverside-applied
+```
+
+!!! note "왜 `--server-side` 인가요?"
+    일반 `kubectl apply` 는 적용한 YAML 전체를 `last-applied-configuration` 주석에 넣는데, 주석 크기 한도가 256KiB 입니다.
+    CRD 는 스키마가 길어서 이 한도를 넘는 경우가 많습니다. 서버 쪽 적용은 그 주석을 쓰지 않습니다.
+
+**1) 목록을 기본 출력 형식으로** — `-o` 를 붙이지 않은 그대로가 "기본 출력" 입니다. 프로젝트의 API 그룹 이름으로 거릅니다.
+
+```bash
+kubectl get crd | grep monitoring.coreos.com > ~/guide-helm/monitoring-crds.txt
+cat ~/guide-helm/monitoring-crds.txt
+```
+
+```text
+podmonitors.monitoring.coreos.com       2026-10-04T05:20:11Z
+servicemonitors.monitoring.coreos.com   2026-10-04T05:20:11Z
+```
+
+같은 목록을 다른 형식으로 뽑으면 무엇이 다른지 봅니다.
+
+```bash
+kubectl get crd -o name | grep monitoring.coreos.com
+```
+
+```text
+customresourcedefinition.apiextensions.k8s.io/podmonitors.monitoring.coreos.com
+customresourcedefinition.apiextensions.k8s.io/servicemonitors.monitoring.coreos.com
+```
+
+| 명령 | 한 줄의 모양 | "기본 출력 형식" 인가 |
+|------|-------------|----------------------|
+| `kubectl get crd` | `이름   생성 시각` (머리줄 `NAME  CREATED AT`) | **예** |
+| `kubectl get crd -o name` | `customresourcedefinition.apiextensions.k8s.io/이름` | 아니오 |
+| `kubectl get crd -o yaml` | 스키마 전체 | 아니오 |
+
+!!! tip "시험 팁 — 거른 결과를 그대로 저장하고, 다른 CRD 가 섞이지 않았는지 봅니다"
+    `grep` 의 단어는 **API 그룹**(예: `monitoring.coreos.com`)으로 고르면 다른 프로젝트의 CRD 가 섞이지 않습니다.
+    `grep` 을 쓰면 머리줄(`NAME ...`)은 빠집니다. 머리줄까지 요구하면 `kubectl get crd | head -1` 을 먼저 붙입니다.
+    저장한 뒤 `wc -l` 로 줄 수가 `kubectl get crd -o name | grep -c <그룹>` 과 같은지 맞춰 봅니다.
+
+**2) 필드 설명을 파일로** — `kubectl explain <리소스>.<필드>.<필드>` 입니다. 리소스 이름은 단수·복수·짧은 이름 모두 됩니다.
+먼저 그 그룹에 어떤 리소스가 있는지 확인합니다.
+
+```bash
+kubectl api-resources --api-group=monitoring.coreos.com
+```
+
+```text
+NAME              SHORTNAMES   APIVERSION                 NAMESPACED   KIND
+podmonitors       pmon         monitoring.coreos.com/v1   true         PodMonitor
+servicemonitors   smon         monitoring.coreos.com/v1   true         ServiceMonitor
+```
+
+```bash
+kubectl explain servicemonitor.spec.endpoints > ~/guide-helm/servicemonitor-endpoints.txt
+head -5 ~/guide-helm/servicemonitor-endpoints.txt
+grep -E '^  (interval|path|port)\b' ~/guide-helm/servicemonitor-endpoints.txt
+```
+
+```text
+GROUP:      monitoring.coreos.com
+KIND:       ServiceMonitor
+VERSION:    v1
+
+FIELD: endpoints <[]Object>
+  interval      <string>
+  path          <string>
+  port          <string>
+```
+
+관찰 포인트: 맨 위 `KIND` · `FIELD` 두 줄이 "무엇의 어느 필드인지" 를 말해 줍니다. 그 아래 `DESCRIPTION` 과 `FIELDS`(하위 필드 목록)가 이어집니다.
+CRD 의 설명은 **CRD 안의 스키마(openAPIV3Schema)** 에서 나옵니다. 그래서 컨트롤러가 없어도 CRD 만 있으면 `explain` 이 됩니다.
+
+!!! warning "깨 보기 — 필드 이름 오타"
+    ```bash
+    kubectl explain servicemonitor.spec.endpoint
+    ```
+    ```text
+    error: field "endpoint" does not exist
+    ```
+    필드 이름은 스키마 그대로(대소문자·복수형 포함) 써야 합니다. 모르면 한 단계 위(`servicemonitor.spec`)를 먼저 explain 해서 이름을 확인합니다.
+    하위 필드까지 한 번에 보고 싶으면 `--recursive` 를 붙입니다.
 
 ---
 
@@ -1416,7 +1561,12 @@ helm uninstall <rel> -n <ns>
 
 # 설치하지 않고 뽑기 (CRD 는 결과를 세어서 확인)
 helm template <rel> <repo>/<chart> --version <v> -n <ns> --skip-crds > /path/out.yaml
+helm template <repo>/<chart> --version <v> -n <ns> > /path/out.yaml   # 이름 생략 → release-name
 grep -c '^kind: CustomResourceDefinition' /path/out.yaml
+
+# CRD 조회를 파일로
+kubectl get crd | grep <api-group> > /path/crds.txt          # 기본 출력 형식 (-o 없음)
+kubectl explain <resource>.spec.<field> > /path/explain.txt
 
 # 차트 열어 보기 · 의존성
 helm pull <repo>/<chart> --version <v> --untar -d <dir>
@@ -1433,9 +1583,13 @@ kubectl delete -k <dir>
 ## 정리
 
 Helm 릴리스를 먼저 지우고(릴리스 Secret 과 리소스가 함께 정리됩니다), 네임스페이스와 작업 파일을 지웁니다.
-이 페이지는 클러스터 범위 오브젝트를 만들지 않았습니다(`helm template` 결과는 적용하지 않았습니다).
+클러스터 범위 오브젝트는 7)-③ 에서 설치한 **CRD 두 개뿐**입니다(`helm template` 결과는 적용하지 않았습니다).
+
+!!! warning "Prometheus Operator 를 원래 쓰고 있던 클러스터라면"
+    CRD 를 지우면 그 종류의 오브젝트(ServiceMonitor · PodMonitor)도 **전부** 지워집니다. 7)-③ 의 apply 전에 이미 있던 CRD 라면 지우지 않습니다.
 
 ```bash
+kubectl delete crd servicemonitors.monitoring.coreos.com podmonitors.monitoring.coreos.com
 helm uninstall demo -n guide-helm
 kubectl delete -k ~/guide-helm/kustomize/overlays/prod
 kubectl delete namespace guide-helm
@@ -1446,6 +1600,8 @@ cd ~ && rm -rf ~/guide-helm
 ```
 
 ```text
+customresourcedefinition.apiextensions.k8s.io "servicemonitors.monitoring.coreos.com" deleted
+customresourcedefinition.apiextensions.k8s.io "podmonitors.monitoring.coreos.com" deleted
 release "demo" uninstalled
 ```
 
@@ -1476,10 +1632,18 @@ release "demo" uninstalled
     `helm show values <차트> | grep -i -A3 crd` 로 CRD 를 끄는 값(예: `crds.enabled`, `crds.install`)을 찾아 `--set ...=false` 로 끕니다.
     결과는 `grep -c '^kind: CustomResourceDefinition'` 으로 확인합니다.
 
-??? question "7. `Chart.yaml` 의 의존성 버전을 바꿨는데 렌더링 결과가 옛 버전입니다. 무엇을 빠뜨렸나요?"
+??? question "7. `helm template <차트>` 처럼 릴리스 이름을 빼면 어떻게 되나요? `helm install <차트>` 는요?"
+    `template` 은 기본 이름 `release-name` 으로 렌더링합니다. 리소스 이름과 `app.kubernetes.io/instance` 레이블에 `release-name` 이 들어갑니다.
+    `install` 은 `must either provide a name or specify --generate-name` 에러가 납니다.
+
+??? question "8. CRD 목록을 '기본 출력 형식' 으로 저장하라는 문제에 `kubectl get crd -o name | grep ...` 을 쓰면 왜 틀리나요?"
+    `-o name` 은 `customresourcedefinition.apiextensions.k8s.io/<이름>` 만 찍는 **다른 출력 형식**입니다. 기본 출력은 `-o` 없이 `NAME  CREATED AT` 두 열입니다.
+    `kubectl get crd | grep <api-group> > 파일` 로 저장하고, 필드 설명은 `kubectl explain <리소스>.spec.<필드> > 파일` 로 저장합니다.
+
+??? question "9. `Chart.yaml` 의 의존성 버전을 바꿨는데 렌더링 결과가 옛 버전입니다. 무엇을 빠뜨렸나요?"
     `helm dependency update` 입니다. `helm dependency list` 의 STATUS 가 `wrong version` 이면 `charts/` 에 옛 tgz 가 남아 있다는 뜻입니다.
 
-??? question "8. Kustomize overlay 의 patch 파일에 적는 `metadata.name` 은 `prod-catalog` 인가요, `catalog` 인가요?"
+??? question "10. Kustomize overlay 의 patch 파일에 적는 `metadata.name` 은 `prod-catalog` 인가요, `catalog` 인가요?"
     base 의 원래 이름인 `catalog` 입니다. namePrefix 는 패치가 끝난 뒤 결과에 붙습니다.
 
 ---
@@ -1499,4 +1663,6 @@ bash exam.sh start
 | Q2 릴리스 업그레이드 | 4) upgrade 와 값이 사라지는 함정 |
 | Q3 릴리스 롤백 | 5) history · rollback |
 | Q4 Kustomize base 와 overlay | 9) base · overlay · namePrefix · `apply -k` |
-| Q5 설치하지 않고 매니페스트만 뽑기 | 6) `helm template` · 7) CRD 확인 |
+| Q5 릴리스 이름 없이 매니페스트만 뽑기 | 6) `helm template` · 릴리스 이름 없이 template 하면? · 7) CRD 확인 |
+| Q6 CRD 를 빼고 차트 설치 | 2) install · 7)-② 차트 값으로 CRD 끄기 |
+| Q7 CRD 목록과 필드 설명을 파일로 | 7)-③ `kubectl get crd` · `kubectl explain` 을 파일로 |

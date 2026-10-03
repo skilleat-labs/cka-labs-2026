@@ -7,6 +7,7 @@
 - Service 가 **셀렉터 → EndpointSlice → 파드 IP** 순서로 대상을 찾는다는 것을 직접 확인한다.
 - ClusterIP · NodePort · LoadBalancer · Headless 를 모두 띄워 보고 **무엇이 다른지** 비교한다.
 - `port` · `targetPort` · `nodePort` 세 포트를 **일부러 다르게** 줘 보고, 틀렸을 때의 증상을 구분한다.
+- 기존 Deployment 에 **이름 붙은 포트**를 추가하고, Service 의 `targetPort` 를 **이름으로** 지정해 NodePort 로 연다.
 - 파드 안에서 **DNS 이름 규칙**(짧은 이름 · 네임스페이스 · FQDN · Headless)을 확인한다.
 - 실제 전달을 맡는 **kube-proxy / Cilium** 의 흔적을 노드에서 찾아본다.
 - NetworkPolicy 를 **맛보기로** 한 번 걸어 보고, 10강으로 넘어갈 준비를 한다.
@@ -361,6 +362,145 @@ The Service "dup" is invalid: spec.ports[0].nodePort: Invalid value: 31234: prov
     다만 **셀렉터가 `app=<Service 이름>` 으로 자동 설정**됩니다. 파드 레이블과 Service 이름이 다르면 Endpoints 가 비므로,
     이름이 다를 때는 `$do` 로 뽑아 셀렉터를 고치거나 위처럼 `expose` + YAML 을 씁니다.
 
+### 기존 Deployment 에 이름 붙은 포트를 추가하고 NodePort 로 열기
+
+시험에는 "**이미 있는** Deployment 의 컨테이너에 포트를 **이름과 함께** 추가하고, 그 포트를 NodePort 로 노출하라" 는 형태가 나옵니다.
+Deployment 를 새로 만드는 게 아니라 **고치는** 문제이고, Service 의 `targetPort` 에 **번호 대신 이름**을 적는 것이 핵심입니다.
+
+포트 선언 없이 Deployment 를 하나 만듭니다. `kubectl create deployment` 에 `--port` 를 안 주면 `ports` 가 아예 없습니다.
+
+```bash
+kubectl create deployment kitchen -n guide-net --image=nginx:1.27 --replicas=2
+kubectl get deployment kitchen -n guide-net -o jsonpath='{.spec.template.spec.containers[0].ports}{"\n"}'
+```
+
+```text
+                      ← 빈 줄. ports 가 없다
+```
+
+!!! note "ports 를 안 적어도 nginx 는 80 을 듣습니다"
+    `containerPort` 는 **문서 겸 이름표**입니다. 적지 않아도 컨테이너는 80 을 듣고, 숫자 targetPort 로는 접속도 됩니다.
+    하지만 **이름으로 가리키려면** 파드 스펙에 그 이름이 반드시 있어야 합니다.
+
+**① 컨테이너에 이름 붙은 포트 추가** — 방법은 둘입니다. 컨테이너 이름부터 확인합니다(`create deployment` 는 이미지 이름을 씁니다 → `nginx`).
+
+```bash
+kubectl get deployment kitchen -n guide-net -o jsonpath='{.spec.template.spec.containers[*].name}{"\n"}'
+```
+
+```text
+nginx
+```
+
+방법 A — `kubectl edit` 로 직접 고치기:
+
+```bash
+kubectl edit deployment kitchen -n guide-net
+```
+
+```yaml
+    spec:
+      containers:
+      - image: nginx:1.27
+        name: nginx
+        ports:                  # ← 이 4줄 추가 (image · name 과 같은 들여쓰기)
+        - name: web
+          containerPort: 80
+          protocol: TCP
+```
+
+방법 B — `kubectl patch` 한 줄. 컨테이너는 **이름(`nginx`)으로 찾아 합쳐지므로** 이미지 등 다른 필드는 그대로 남습니다.
+
+```bash
+kubectl patch deployment kitchen -n guide-net \
+  -p '{"spec":{"template":{"spec":{"containers":[{"name":"nginx","ports":[{"name":"web","containerPort":80,"protocol":"TCP"}]}]}}}}'
+kubectl rollout status deployment/kitchen -n guide-net
+kubectl get deployment kitchen -n guide-net -o jsonpath='{.spec.template.spec.containers[0].ports}{"\n"}'
+```
+
+```text
+deployment.apps/kitchen patched
+Waiting for deployment "kitchen" rollout to finish: 1 out of 2 new replicas have been updated...
+deployment "kitchen" successfully rolled out
+[{"containerPort":80,"name":"web","protocol":"TCP"}]
+```
+
+관찰 포인트: 포트 추가도 **파드 템플릿 변경**이라 롤아웃이 일어납니다(새 ReplicaSet). 포트 정보는 실행 중인 파드에 덧붙일 수 없고, 새 파드로 바뀌어야 반영됩니다.
+
+**② targetPort 를 이름으로 지정해 NodePort 로 노출** — `expose` 의 `--target-port` 는 번호뿐 아니라 **이름**도 받습니다.
+
+```bash
+kubectl expose deployment kitchen -n guide-net --name=kitchen-np --type=NodePort --port=80 --target-port=web
+kubectl get svc kitchen-np -n guide-net
+kubectl describe svc kitchen-np -n guide-net | grep -E 'TargetPort|NodePort|Endpoints'
+```
+
+```text
+NAME         TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kitchen-np   NodePort   10.103.44.120   <none>        80:30517/TCP   3s
+
+TargetPort:               web/TCP
+NodePort:                 <unset>  30517/TCP
+Endpoints:                10.0.1.31:80,10.0.2.66:80
+```
+
+관찰 포인트: Service 에는 `web` 이라는 **이름**이 저장되고, Endpoints 에는 그 이름이 파드마다 **실제 번호(80)로 풀려서** 찍힙니다.
+nodePort 는 지정하지 않았으니 30000–32767 에서 자동으로 골라졌습니다. 번호를 꺼내 접속해 봅니다.
+
+```bash
+NP=$(kubectl get svc kitchen-np -n guide-net -o jsonpath='{.spec.ports[0].nodePort}')
+curl -s --max-time 3 http://192.168.56.10:$NP | grep -o '<title>.*</title>'
+```
+
+```text
+<title>Welcome to nginx!</title>
+```
+
+YAML 로 쓰면 이렇게 됩니다. `targetPort` 가 따옴표 없는 문자열이어도 됩니다(정수 또는 문자열 `IntOrString`).
+
+```yaml
+spec:
+  type: NodePort
+  selector:
+    app: kitchen
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: web           # ← 컨테이너 ports[].name 과 정확히 같아야 한다
+```
+
+**왜 이름으로 가리키나**
+
+| 상황 | 숫자 targetPort | 이름 targetPort |
+|------|-----------------|-----------------|
+| 앱이 듣는 포트를 80 → 8080 으로 바꿈 | Service 도 같이 고쳐야 한다 | Deployment 의 `containerPort` 만 바꾸면 된다 |
+| 롤링 업데이트 중 옛 파드는 80, 새 파드는 8080 | 한쪽은 접속 실패 | 파드마다 자기 번호로 풀려서 둘 다 된다 |
+| 사람이 YAML 을 읽을 때 | `targetPort: 9090` — 뭔지 모른다 | `targetPort: metrics` — 바로 안다 |
+
+### 실험 — 포트 이름이 틀리면
+
+```bash
+kubectl expose deployment kitchen -n guide-net --name=kitchen-typo --port=80 --target-port=http   # 컨테이너 포트 이름은 web
+kubectl get endpoints kitchen-typo -n guide-net
+```
+
+```text
+NAME           ENDPOINTS   AGE
+kitchen-typo   <none>      4s
+```
+
+관찰 포인트: 파드는 Ready 이고 셀렉터도 맞는데 **Endpoints 가 비었습니다.** 이름을 번호로 풀 수 없는 파드는 대상에서 빠지기 때문입니다.
+셀렉터 오타와 같은 증상이니, Endpoints 가 비었을 때는 `describe svc` 의 **TargetPort 가 이름인지**도 함께 봅니다.
+
+```bash
+kubectl delete svc kitchen-typo -n guide-net
+```
+
+!!! tip "시험 팁 — 이름 · 번호 · 프로토콜을 한 번에 확인"
+    - 문제에 "named `http`" 처럼 이름이 주어지면 **대소문자까지** 그대로 씁니다. 포트 이름은 소문자·숫자·`-` 만, 15자 이하입니다.
+    - `protocol` 은 생략하면 TCP 지만, 문제에 `80/TCP` 라고 적혀 있으면 명시해 두는 편이 채점에서 안전합니다.
+    - 확인: `kubectl get deploy <d> -o jsonpath='{.spec.template.spec.containers[0].ports}'` 와 `kubectl describe svc <svc>` 의 `TargetPort: <이름>/TCP`, `Endpoints` 세 가지.
+
 ---
 
 ## 5) LoadBalancer 는 Pending, Headless 는 IP 가 없다
@@ -651,6 +791,8 @@ kubectl expose deploy <d> --name=<svc> --port=<p> --target-port=<tp>            
 kubectl expose deploy <d> --name=<svc> --port=<p> --type=NodePort $do > s.yaml       # nodePort 는 YAML 에 추가
 kubectl create service nodeport <이름=앱레이블> --tcp=<p>:<tp> --node-port=<np>       # 셀렉터 app=<이름>
 kubectl expose deploy <d> --name=<svc> --port=<p> --cluster-ip=None                  # Headless
+kubectl patch deploy <d> -p '{"spec":{"template":{"spec":{"containers":[{"name":"<c>","ports":[{"name":"<이름>","containerPort":<p>}]}]}}}}'
+kubectl expose deploy <d> --name=<svc> --type=NodePort --port=<p> --target-port=<이름>  # targetPort 를 이름으로
 
 # 진단 순서
 kubectl get svc,endpoints <svc> -n <ns>          # ① 비었나 차 있나
@@ -705,6 +847,10 @@ kubectl get deployment coredns -n kube-system      # READY 가 원래 수(보통
 ??? question "8. NetworkPolicy 의 `ports.port` 에는 Service 의 port 와 targetPort 중 무엇을 적나요?"
     targetPort(파드가 듣는 포트)입니다. 정책은 파드에 도착하는 패킷을 기준으로 판단합니다.
 
+??? question "9. Service 의 `targetPort: web` 인데 Endpoints 가 `<none>` 입니다. 파드는 Ready 이고 셀렉터도 맞습니다. 무엇을 보나요?"
+    파드 스펙의 `containers[].ports[].name` 에 `web` 이 있는지 봅니다. 이름을 번호로 풀 수 없는 파드는 Endpoints 에서 빠집니다.
+    포트를 나중에 추가했다면 롤아웃이 끝나 **새 파드**로 바뀌었는지도 확인합니다(`kubectl rollout status`).
+
 ---
 
 ## 다음 단계 — 채점 실습
@@ -722,3 +868,4 @@ bash exam.sh start
 | Q2 NodePort Service (포트 고정) | 3) 4) — `$do` 로 뽑아 nodePort 추가 |
 | Q3 NetworkPolicy — frontend 에서만 backend 로 | 8) (자세한 원리는 [10강](10-networkpolicy.md)) |
 | Q4 파드 안에서 클러스터 DNS 확인 | 6) — resolv.conf, 짧은 이름과 FQDN |
+| Q5 이름 붙은 컨테이너 포트 추가 + NodePort 로 노출 | 4) "기존 Deployment 에 이름 붙은 포트를 추가하고 NodePort 로 열기" — edit/patch, `--target-port=<이름>` |

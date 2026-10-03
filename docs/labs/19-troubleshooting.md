@@ -9,6 +9,8 @@
 - Service 의 Endpoints 가 비는 두 원인(**셀렉터 불일치 · 준비 안 된 파드**)과, 차 있는데도 안 되는 원인(**targetPort**)을 가른다.
 - 워커의 kubelet 을 멈춰 **NotReady 노드**를 만들고 `systemctl` · `journalctl` 로 복구한다.
 - kubectl 로 볼 수 없을 때를 대비해 **컨트롤플레인 로그를 `crictl` · `/var/log/pods`** 에서 읽는다.
+- **API 서버가 내려간 클러스터**를 `crictl` → 매니페스트 플래그 순서로 되살리고, kubelet 로그의 `6443 refused` 를 증상으로 읽는다.
+- 스태틱 파드의 **CPU 요청을 노드 CPU 의 몇 %** 로 맞추는 계산(코어 → 밀리코어)과, kubelet 의 `OutOfcpu` 거부를 확인한다.
 
 ---
 
@@ -19,7 +21,8 @@ kubectl create namespace guide-trouble
 mkdir -p ~/guide-trouble && cd ~/guide-trouble
 ```
 
-이 페이지는 일부러 고장을 냅니다. 9) 은 **워커 노드의 kubelet 을**, 10) 은 **컨트롤플레인의 스케줄러를** 잠시 멈춥니다.
+이 페이지는 일부러 고장을 냅니다. 9) 은 **워커 노드의 kubelet 을**, 10) 은 **컨트롤플레인의 스케줄러를**, 11) 은 **API 서버를** 잠시 멈추고, 12) 는 컨트롤플레인 노드에 **실습용 스태틱 파드**를 둡니다.
+11) 을 하기 전에는 **컨트롤플레인 VM 스냅샷**을 찍어 두세요.
 두 절에는 되돌리는 명령이 바로 붙어 있고, **정리** 절에서 한 번 더 확인합니다.
 
 !!! warning "노드 이름을 확인하세요"
@@ -1062,6 +1065,302 @@ after-break   1/1     Running   0          1m        ← 스케줄러가 돌아�
 
 ---
 
+## 11) 컨트롤플레인 복구 — API 서버가 내려갔을 때
+
+### 왜
+
+10) 에서는 API 서버가 살아 있어서 `kubectl` 로 증상을 볼 수 있었습니다. 시험에서는 **"kubectl 이 안 된다"** 에서 출발하는 문제가 나옵니다.
+원인은 대개 `kube-apiserver.yaml` 의 **플래그 한 줄**입니다. kubectl 도 `kubectl logs` 도 못 쓰니, 컨트롤플레인 노드에서 **런타임(crictl)과 kubelet** 에게 직접 묻습니다.
+
+| 순서 | 명령 | 알 수 있는 것 |
+|------|------|---------------|
+| ① | `kubectl get nodes` | `refused` → API 서버 프로세스 자체가 없다 |
+| ② | `sudo crictl ps -a --name kube-apiserver` | 컨테이너가 `Exited` 를 반복하나, 아예 없나 |
+| ③ | `sudo crictl logs <ID>` | **왜** 죽는지 — 마지막 몇 줄에 파일·주소가 찍힌다 |
+| ④ | `sudo grep ... kube-apiserver.yaml` | 로그가 가리킨 플래그를 매니페스트에서 찾는다 |
+| ⑤ (②에서 컨테이너가 없을 때) | `sudo journalctl -u kubelet` | YAML 문법 오류처럼 kubelet 이 파드를 못 만드는 이유 |
+
+!!! warning "VM 스냅샷을 먼저 찍으세요"
+    이 절은 **API 서버를 멈춥니다.** 되돌리는 명령이 바로 붙어 있지만, 매니페스트를 잘못 고치면 클러스터 전체가 멈춘 채로 남습니다.
+    시작 전에 컨트롤플레인 VM 의 스냅샷을 찍어 두세요. 백업은 10) 과 같이 **manifests 디렉터리 밖**에 둡니다.
+
+### 깨 보기 — etcd CA 파일 경로를 틀리게
+
+컨트롤플레인 노드에서:
+
+```bash
+sudo cp /etc/kubernetes/manifests/kube-apiserver.yaml ~/guide-trouble/kube-apiserver.yaml.bak
+sudo sed -i 's#--etcd-cafile=/etc/kubernetes/pki/etcd/ca.crt#--etcd-cafile=/etc/kubernetes/pki/etcd/ca-typo.crt#' \
+  /etc/kubernetes/manifests/kube-apiserver.yaml
+sudo grep -n 'etcd-cafile' /etc/kubernetes/manifests/kube-apiserver.yaml
+```
+
+```text
+22:    - --etcd-cafile=/etc/kubernetes/pki/etcd/ca-typo.crt
+```
+
+kubelet 이 파일 변경을 알아채고 API 서버를 다시 띄우려 합니다. 30초~1분 뒤:
+
+```bash
+kubectl get nodes
+```
+
+```text
+The connection to the server 192.168.56.10:6443 was refused - did you specify the right host or port?
+```
+
+처음 20초쯤은 옛 컨테이너가 아직 응답할 수 있습니다. `refused` 가 나올 때까지 기다리세요.
+
+### 증상 — kubelet 로그의 6443 refused 는 범인이 아니다
+
+```bash
+sudo journalctl -u kubelet --since "2 min ago" --no-pager | grep 6443 | tail -2
+```
+
+```text
+Sep 29 08:31:02 control-plane kubelet[812]: E0929 08:31:02.118 ... failed to list *v1.Node: Get "https://192.168.56.10:6443/api/v1/nodes?...": dial tcp 192.168.56.10:6443: connect: connection refused
+Sep 29 08:31:04 control-plane kubelet[812]: E0929 08:31:04.522 ... "Failed to update lease" err="Put \"https://192.168.56.10:6443/apis/coordination.k8s.io/v1/namespaces/kube-node-lease/leases/control-plane?timeout=10s\": dial tcp 192.168.56.10:6443: connect: connection refused"
+```
+
+관찰 포인트:
+
+- kubelet 도 API 서버의 **클라이언트**입니다. `6443 ... connection refused` 는 "API 서버가 없다" 는 사실을 kubelet 이 한 번 더 말해 주는 **증상**입니다.
+- 이 줄을 보고 kubelet 설정을 뒤지거나 `systemctl restart kubelet` 을 반복하면 시간만 갑니다. 원인은 **API 서버 컨테이너의 로그**에 있습니다.
+
+### 원인 — crictl 로 API 서버 컨테이너를 본다
+
+```bash
+sudo crictl ps -a --name kube-apiserver | head -3
+sudo crictl logs $(sudo crictl ps -a -q --name kube-apiserver | head -1) 2>&1 | tail -2
+```
+
+```text
+CONTAINER       IMAGE           CREATED          STATE    NAME             ATTEMPT   POD ID          POD
+5d1c7e9a2b4f8   6e6d5fe7d4ac9   15 seconds ago   Exited   kube-apiserver   3         7a3c1e0b9d2f4   kube-apiserver-control-plane
+
+I0929 08:31:19.981204       1 options.go:...] ...
+E0929 08:31:20.004512       1 run.go:72] "command failed" err="open /etc/kubernetes/pki/etcd/ca-typo.crt: no such file or directory"
+```
+
+마지막 줄의 형식은 버전마다 조금 다르지만, **어느 파일 · 어느 주소에서 실패했는지**가 찍힙니다. 그 값을 매니페스트에서 찾고, 짝이 되는 etcd 쪽 설정과 맞춰 봅니다.
+
+```bash
+sudo grep -nE 'etcd-(servers|cafile|certfile|keyfile)' /etc/kubernetes/manifests/kube-apiserver.yaml
+sudo grep -nE 'listen-client-urls|listen-peer-urls|trusted-ca-file' /etc/kubernetes/manifests/etcd.yaml
+ls /etc/kubernetes/pki/etcd/
+```
+
+```text
+22:    - --etcd-cafile=/etc/kubernetes/pki/etcd/ca-typo.crt      ← 이 파일이 없다
+23:    - --etcd-certfile=/etc/kubernetes/pki/apiserver-etcd-client.crt
+24:    - --etcd-keyfile=/etc/kubernetes/pki/apiserver-etcd-client.key
+25:    - --etcd-servers=https://127.0.0.1:2379
+
+20:    - --listen-client-urls=https://127.0.0.1:2379,https://192.168.56.10:2379
+22:    - --listen-peer-urls=https://192.168.56.10:2380
+29:    - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+
+ca.crt  ca.key  healthcheck-client.crt  healthcheck-client.key  peer.crt  peer.key  server.crt  server.key
+```
+
+### 2379 와 2380 — 포트 하나 차이
+
+같은 패턴의 고장으로 **`--etcd-servers` 의 포트**가 틀리는 경우가 자주 나옵니다. etcd 는 포트를 두 개 엽니다.
+
+| 포트 | etcd 의 플래그 | 누가 붙나 |
+|------|----------------|-----------|
+| **2379** | `--listen-client-urls` | **클라이언트** — kube-apiserver, etcdctl |
+| 2380 | `--listen-peer-urls` | etcd **멤버끼리** (복제 · 리더 선출) |
+
+API 서버는 etcd 의 클라이언트이므로 `--etcd-servers` 는 **반드시 2379** 입니다. 2380 으로 바뀌어 있으면 API 서버 로그에
+`127.0.0.1:2380` 에 붙지 못한다는 줄(연결 거부나 `context deadline exceeded`)이 반복되다가 컨테이너가 죽습니다.
+위 출력처럼 kubeadm 의 peer 포트는 **노드 IP 에만** 열려 있어서 `127.0.0.1:2380` 에는 듣는 쪽조차 없습니다.
+
+| 로그 · 상태에 보이는 것 | 의심할 플래그 |
+|-------------------------|---------------|
+| `127.0.0.1:2380` · `:2381` 등 다른 포트로 etcd 연결 실패 | `--etcd-servers` 포트 → `etcd.yaml` 의 `--listen-client-urls` 와 맞춘다 |
+| `open ... .crt/.key: no such file or directory` | `--etcd-cafile` · `--etcd-certfile` · `--tls-*-file` · `--client-ca-file` 경로 → `ls /etc/kubernetes/pki` |
+| `tls: ... certificate signed by unknown authority` | `--etcd-cafile` 이 엉뚱한 CA(`/etc/kubernetes/pki/ca.crt`)를 가리킨다 |
+| `unknown flag` | 플래그 이름 오타 (10절) |
+| `crictl ps -a` 에 컨테이너가 아예 없다 | 매니페스트 YAML 문법 → `journalctl -u kubelet` |
+| etcd 컨테이너가 `Exited` | API 서버가 아니라 etcd 가 먼저 → `crictl logs` 를 etcd 쪽에서 |
+
+### 고치기
+
+```bash
+sudo cp ~/guide-trouble/kube-apiserver.yaml.bak /etc/kubernetes/manifests/kube-apiserver.yaml
+# 시험에서는 백업이 없으니 vi 로 그 줄만 고칩니다 (ca-typo.crt → ca.crt)
+watch -n2 'sudo crictl ps --name kube-apiserver'     # STATE 가 Running 으로 바뀌면 Ctrl+C
+kubectl get nodes
+kubectl get pods -n kube-system -l component=kube-apiserver
+```
+
+```text
+NAME            STATUS   ROLES           AGE   VERSION
+control-plane   Ready    control-plane   5d    v1.32.x
+worker-1        Ready    <none>          5d    v1.32.x
+worker-2        Ready    <none>          5d    v1.32.x
+
+NAME                           READY   STATUS    RESTARTS   AGE
+kube-apiserver-control-plane   1/1     Running   0          40s
+```
+
+관찰 포인트: API 서버가 돌아오면 kubelet 로그의 `6443 refused` 도 **저절로** 멈춥니다. kubelet 은 처음부터 고장이 아니었습니다.
+
+!!! tip "시험 팁 — 고쳤는데 1~2분이 지나도 그대로라면"
+    kubelet 은 manifests 디렉터리를 주기적으로(약 20초) 다시 읽습니다. 그래도 컨테이너가 안 바뀌면 `sudo systemctl restart kubelet` 을 한 번 해 봅니다.
+    그래도 컨테이너가 없으면 `sudo journalctl -u kubelet -n 50 --no-pager | grep -i apiserver` 로 YAML 오류를 찾습니다. 탭 문자 · 들여쓰기가 흔한 원인입니다.
+
+---
+
+## 12) static pod 의 자원 요청 고치기 — 노드 CPU 의 10%
+
+### 왜
+
+2) 에서 64 코어를 요청한 **일반 파드**는 `Pending` 이었고, 스케줄러가 `FailedScheduling` 이벤트를 남겼습니다.
+**스태틱 파드**는 스케줄러를 거치지 않고 그 노드의 kubelet 이 바로 띄웁니다. 그래서 자원이 모자라면 Pending 이 아니라
+**kubelet 이 입장(admission)을 거부**하고, 이유는 `OutOfcpu` 입니다. 컨트롤플레인 구성 요소가 이렇게 되면 그 구성 요소가 통째로 사라집니다.
+
+kubeadm 이 만든 컨트롤플레인 스태틱 파드에도 requests 가 있습니다.
+
+```bash
+sudo grep -A1 'requests:' /etc/kubernetes/manifests/*.yaml
+```
+
+```text
+/etc/kubernetes/manifests/etcd.yaml:      requests:
+/etc/kubernetes/manifests/etcd.yaml-        cpu: 100m
+--
+/etc/kubernetes/manifests/kube-apiserver.yaml:      requests:
+/etc/kubernetes/manifests/kube-apiserver.yaml-        cpu: 250m
+--
+/etc/kubernetes/manifests/kube-controller-manager.yaml:      requests:
+/etc/kubernetes/manifests/kube-controller-manager.yaml-        cpu: 200m
+--
+/etc/kubernetes/manifests/kube-scheduler.yaml:      requests:
+/etc/kubernetes/manifests/kube-scheduler.yaml-        cpu: 100m
+```
+
+### 노드 CPU 읽기 → 밀리코어 → 10%
+
+```bash
+kubectl get node control-plane -o jsonpath='{.status.capacity.cpu}{" / "}{.status.allocatable.cpu}{"\n"}'
+nproc
+```
+
+```text
+2 / 2
+2
+```
+
+`capacity` 는 노드가 가진 전체, `allocatable` 은 시스템 예약을 뺀 나머지입니다. kubeadm 기본은 예약이 없어 둘이 같습니다.
+문제가 "노드의 CPU" 라고 하면 **capacity** 를 씁니다. **1 CPU = 1000m(밀리코어)** 입니다.
+
+| capacity.cpu | 밀리코어 | 10% | 매니페스트에 쓸 값 |
+|--------------|----------|-----|--------------------|
+| 2 | 2000m | 200m | `cpu: 200m` |
+| 3 | 3000m | 300m | `cpu: 300m` |
+| 4 | 4000m | 400m | `cpu: 400m` |
+| 8 | 8000m | 800m | `cpu: 800m` |
+
+```bash
+CAP=$(kubectl get node control-plane -o jsonpath='{.status.capacity.cpu}')
+echo "$(( CAP * 1000 / 10 ))m"
+```
+
+```text
+200m
+```
+
+`0.2` 와 `200m` 은 같은 값이지만, 시험에서는 단위가 눈에 보이는 **`m` 표기**가 실수가 적습니다.
+
+### 깨 보기 — 요청이 너무 큰 스태틱 파드
+
+컨트롤플레인 구성 요소 대신 **실습용 스태틱 파드**로 같은 현상을 만듭니다. 컨트롤플레인 노드에서:
+
+```bash
+cat <<'EOF' | sudo tee /etc/kubernetes/manifests/guide-cpu-hog.yaml >/dev/null
+apiVersion: v1
+kind: Pod
+metadata:
+  name: guide-cpu-hog
+  namespace: guide-trouble
+spec:
+  containers:
+  - name: web
+    image: nginx:1.27
+    resources:
+      requests:
+        cpu: "64"            # ← 64 코어
+EOF
+```
+
+30초쯤 뒤:
+
+```bash
+kubectl get pods -n guide-trouble | grep cpu-hog
+kubectl get events -n guide-trouble --field-selector reason=OutOfcpu
+sudo crictl pods --name guide-cpu-hog
+```
+
+```text
+guide-cpu-hog-control-plane   0/1     OutOfcpu   0          25s
+
+LAST SEEN   TYPE      REASON     OBJECT                            MESSAGE
+25s         Warning   OutOfcpu   Pod/guide-cpu-hog-control-plane   Node didn't have enough resource: cpu, requested: 64000, used: 950, capacity: 2000
+
+POD ID   CREATED   STATE   NAME   NAMESPACE   ATTEMPT   RUNTIME          ← 샌드박스조차 만들지 않았다
+```
+
+관찰 포인트:
+
+- **Pending 이 아닙니다.** 스케줄러가 아니라 **kubelet** 이 거부했습니다. 메시지의 숫자는 모두 밀리코어입니다(`requested: 64000`, `capacity: 2000`).
+- `used` 는 그 노드에 이미 있는 파드들의 **requests 합**입니다. 새 요청이 `allocatable − used` 안에 들어와야 입장합니다.
+- 첫 줄(미러 파드)은 타이밍에 따라 보이지 않을 수 있습니다. 그래서 **이벤트 · `crictl pods` · kubelet 로그**를 같이 봅니다.
+  `sudo journalctl -u kubelet --since "5 min ago" --no-pager | grep -iE 'outofcpu|enough resource'`
+- 이 파드가 **kube-scheduler** 였다면? 스케줄러가 사라지고, 그 뒤 만든 파드는 **이벤트 없이 Pending** 입니다(10절 표).
+
+### 고치기 — 노드 CPU 의 10% 로
+
+미러 파드는 kubelet 이 만든 **읽기 전용 사본**이라 `kubectl edit` 으로는 고칠 수 없습니다. **매니페스트 파일**을 고칩니다.
+
+```bash
+CAP=$(kubectl get node control-plane -o jsonpath='{.status.capacity.cpu}')
+sudo vi /etc/kubernetes/manifests/guide-cpu-hog.yaml          # cpu: "64" → cpu: 200m
+# vi 대신 한 줄로:
+# sudo sed -i "s/cpu: \"64\"/cpu: $(( CAP * 100 ))m/" /etc/kubernetes/manifests/guide-cpu-hog.yaml
+```
+
+kubelet 이 바뀐 파일을 읽고 파드를 **새로** 만듭니다. 30초쯤 뒤:
+
+```bash
+kubectl get pods -n guide-trouble -o wide | grep cpu-hog
+kubectl get pod guide-cpu-hog-control-plane -n guide-trouble \
+  -o jsonpath='{.spec.containers[0].resources.requests.cpu}{"\n"}'
+```
+
+```text
+guide-cpu-hog-control-plane   1/1     Running   0          20s   10.0.0.123   control-plane   <none>   <none>
+200m
+```
+
+관찰 포인트: RESTARTS 가 `0` 이고 AGE 가 새로 시작합니다. 컨테이너를 재시작한 게 아니라 **파드를 새로 만든** 것입니다(스태틱 파드는 매니페스트 내용이 바뀌면 다른 파드로 취급됩니다).
+
+!!! warning "미러 파드를 kubectl 로 지우거나 고치지 마세요"
+    `kubectl delete pod guide-cpu-hog-control-plane` 을 해도 kubelet 이 곧 다시 만듭니다(매니페스트가 그대로이므로). 원인은 언제나 **파일**에 있습니다.
+
+!!! tip "시험 팁 — 컨트롤플레인 구성 요소도 순서는 같습니다"
+    ① capacity 확인 → 밀리코어로 바꿔 % 계산 ② 매니페스트를 **manifests 밖**에 백업 ③ `resources.requests.cpu` **한 줄만** 바꾼다(다른 플래그는 손대지 않는다)
+    ④ `sudo crictl ps --name <구성요소>` 로 Running 확인 ⑤ 그 구성 요소가 하는 일까지 확인 — 스케줄러라면 `kubectl run` 으로 새 파드가 **노드에 배치되는지**까지 봅니다.
+
+실습용 스태틱 파드를 치웁니다. 파일을 지우면 kubelet 이 파드를 거둬 갑니다.
+
+```bash
+sudo rm /etc/kubernetes/manifests/guide-cpu-hog.yaml
+```
+
+---
+
 ## 시험에서 빠르게
 
 ```bash
@@ -1094,6 +1393,11 @@ sudo systemctl enable --now kubelet
 # 컨트롤플레인
 sudo crictl ps -a --name <component>; sudo crictl logs <ID>
 ls /var/log/pods/ ; ls /etc/kubernetes/manifests/
+sudo grep -nE 'etcd-servers|listen-client-urls' /etc/kubernetes/manifests/{kube-apiserver,etcd}.yaml   # 2379 끼리 맞나
+
+# 스태틱 파드 CPU 를 노드의 N%
+kubectl get node <n> -o jsonpath='{.status.capacity.cpu}'        # 2 → 2000m → 10% = 200m
+kubectl get events -n <ns> --field-selector reason=OutOfcpu
 ```
 
 ---
@@ -1103,10 +1407,12 @@ ls /var/log/pods/ ; ls /etc/kubernetes/manifests/
 **먼저 노드와 컨트롤플레인이 정상인지** 확인하고, 그다음 실습 리소스를 지웁니다.
 
 ```bash
-# 9) · 10) 을 되돌렸는지
+# 9) · 10) · 11) · 12) 를 되돌렸는지
 kubectl get nodes                                             # 모두 Ready
-kubectl get pods -n kube-system -l component=kube-scheduler   # 1/1 Running
+kubectl get pods -n kube-system -l tier=control-plane         # 모두 1/1 Running
 sudo grep -c no-such-flag /etc/kubernetes/manifests/kube-scheduler.yaml   # 0
+sudo grep -c ca-typo /etc/kubernetes/manifests/kube-apiserver.yaml        # 0
+sudo rm -f /etc/kubernetes/manifests/guide-cpu-hog.yaml                   # 12) 의 실습용 스태틱 파드
 kubectl get deploy coredns -n kube-system                     # 8) 에서 되돌린 개수 (예: 2/2)
 
 # 2) 에서 붙인 노드 레이블
@@ -1157,6 +1463,15 @@ cd ~ && rm -rf ~/guide-trouble
     kubelet 은 그 디렉터리의 파일을 모두 스태틱 파드로 읽으려 하므로 같은 이름의 파드가 중복 정의되어 문제가 생깁니다.
     백업은 반드시 manifests 디렉터리 **밖**에 둡니다.
 
+??? question "9. kubectl 이 refused 이고 `journalctl -u kubelet` 에 `dial tcp ...:6443: connect: connection refused` 가 가득합니다. kubelet 을 고쳐야 하나요?"
+    아닙니다. kubelet 도 API 서버의 클라이언트라서, API 서버가 없다는 **증상**을 보여 줄 뿐입니다.
+    `sudo crictl ps -a --name kube-apiserver` → `crictl logs` 로 API 서버가 왜 죽는지 보고, 가리키는 플래그를 매니페스트에서 고칩니다.
+    `--etcd-servers` 라면 etcd 의 **클라이언트 포트 2379** 여야 합니다(2380 은 etcd 멤버끼리 쓰는 peer 포트).
+
+??? question "10. CPU 가 4개인 노드에서 스태틱 파드의 CPU 요청을 노드 CPU 의 10% 로 하라고 합니다. 무엇을 어디에 씁니까? 요청이 너무 크면 어떤 상태가 됩니까?"
+    4 CPU = 4000m 이므로 10% 는 **`400m`** 입니다. `/etc/kubernetes/manifests/<파드>.yaml` 의 `resources.requests.cpu` 를 바꾸면 kubelet 이 파드를 새로 만듭니다.
+    요청이 노드에 들어가지 않으면 스태틱 파드는 Pending 이 아니라 kubelet 이 **`OutOfcpu`** 로 거부합니다(스케줄러를 거치지 않으므로).
+
 ---
 
 ## 다음 단계 — 채점 실습
@@ -1174,3 +1489,9 @@ bash exam.sh start
 | Q2 ImagePullBackOff 수정 | 3) Events 의 pull 실패 메시지 · 이미지 교체 |
 | Q3 Endpoints 가 비어 있는 Service | 7) ① 셀렉터 · 6) Ready 아닌 파드 |
 | Q4 노드 상태 점검 | 9) NotReady · Conditions · `systemctl` · `journalctl` |
+| Q5 API 서버 복구 (kubectl refused) | 11) crictl → 로그 → 매니페스트 플래그 · 2379 vs 2380 · kubelet 의 6443 refused 는 증상 |
+| Q6 kube-scheduler CPU 요청 (노드 CPU 의 10%) | 12) capacity → 밀리코어 계산 · `OutOfcpu` · 매니페스트 수정 · 10) 스케줄러가 없을 때의 Pending |
+
+!!! warning "Q5 · Q6 은 컨트롤플레인을 고장 냅니다"
+    그 문제로 **넘어가는 순간** 채점 스크립트가 `kube-apiserver.yaml`(Q5) · `kube-scheduler.yaml`(Q6)을 바꿉니다. Q4 를 마치면 **VM 스냅샷**을 먼저 찍으세요.
+    컨트롤플레인 노드에서, 암호 없는 sudo 로 실행해야 합니다. 원본은 `/var/tmp/cka-lab-backup/` 에 백업되고 `bash exam.sh clean` 이 되돌립니다.

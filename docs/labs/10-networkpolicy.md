@@ -9,6 +9,7 @@
 - 하이픈 하나로 바뀌는 **AND 와 OR** 를 두 정책으로 만들어 결과를 표로 비교한다.
 - Egress 를 막으면 **DNS 부터 죽는다**는 것을 보고, 53 번을 여는 정석 규칙을 손에 익힌다.
 - 이미 있는 정책 목록을 읽고 **누가 누구에게 닿는지 예측**한 뒤 실제로 검증한다.
+- 미리 준비된 정책 파일 여러 개를 비교해 **맞는 것 하나만 골라 적용**한다(2026 실제 출제 유형).
 
 ---
 
@@ -764,6 +765,204 @@ guide-netpol-other/outsider    -> archive.guide-netpol   BLOCKED
 
 ---
 
+## 9) 여러 정책 중 맞는 것 고르기
+
+2026 시험에는 "디렉터리에 정책 파일이 몇 개 있다. **맞는 것 하나만** 적용하라" 는 문제가 나왔습니다. 파일은 거의 똑같이 생겼고, 한두 줄만 다릅니다.
+
+- 하나는 **너무 넓다** — 허용할 필요 없는 파드까지 연다.
+- 하나는 **레이블이 살짝 다르다** — 지켜야 할 파드를 고르지 못하거나, 허용할 파드와 맞지 않는다.
+- 하나가 **딱 맞다** — 필요한 것만 연다.
+
+YAML 을 새로 쓰는 문제가 아니라 **읽고 대조하는 문제**입니다. 앞 절과 섞이지 않게 새 네임스페이스에서 연습합니다.
+
+### 준비 — 파드 세 개와 후보 파일 세 개
+
+```bash
+kubectl create namespace guide-netpol-pick
+kubectl run orders     -n guide-netpol-pick --image=nginx:1.27   --labels=app=orders,tier=backend --port=80 --expose
+kubectl run storefront -n guide-netpol-pick --image=busybox:1.36 --labels=app=storefront,team=shop --command -- sleep 36000
+kubectl run crawler    -n guide-netpol-pick --image=busybox:1.36 --labels=app=crawler,team=shop    --command -- sleep 36000
+kubectl wait --for=condition=Ready pod --all -n guide-netpol-pick --timeout=120s
+```
+
+요구사항은 이렇다고 합시다: **storefront 만 orders 의 TCP 80 에 닿게 하고, crawler 는 막는다.**
+
+후보 파일 세 개를 만듭니다(시험에서는 이미 만들어져 있습니다).
+
+```bash
+mkdir -p choice
+for f in a:orders:'team: shop' b:order:'app: storefront' c:orders:'app: storefront'; do
+  id=${f%%:*}; rest=${f#*:}; target=${rest%%:*}; from=${rest#*:}
+  cat > choice/candidate-$id.yaml <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: orders-ingress-$id
+  namespace: guide-netpol-pick
+spec:
+  podSelector:
+    matchLabels:
+      app: $target
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              $from
+      ports:
+        - protocol: TCP
+          port: 80
+EOF
+done
+ls choice
+```
+
+```text
+candidate-a.yaml  candidate-b.yaml  candidate-c.yaml
+```
+
+### ① 파드 레이블부터 본다
+
+정책은 레이블로 파드를 고릅니다. 파일을 보기 전에 **실제 레이블**을 먼저 확인합니다.
+
+```bash
+kubectl get pods -n guide-netpol-pick --show-labels
+```
+
+```text
+NAME         READY   STATUS    RESTARTS   AGE   LABELS
+crawler      1/1     Running   0          40s   app=crawler,team=shop
+orders       1/1     Running   0          41s   app=orders,tier=backend
+storefront   1/1     Running   0          40s   app=storefront,team=shop
+```
+
+관찰 포인트: storefront 와 crawler 는 `team=shop` 을 **같이** 가지고 있습니다. 둘을 가르는 레이블은 `app` 뿐입니다.
+
+### ② 파일끼리 diff 로 다른 줄만 본다
+
+세 파일을 처음부터 끝까지 읽지 말고, **다른 줄만** 뽑아 봅니다.
+
+```bash
+diff choice/candidate-a.yaml choice/candidate-c.yaml
+diff choice/candidate-b.yaml choice/candidate-c.yaml
+```
+
+```text
+4c4
+<   name: orders-ingress-a
+---
+>   name: orders-ingress-c
+16c16
+<               team: shop
+---
+>               app: storefront
+4c4
+<   name: orders-ingress-b
+---
+>   name: orders-ingress-c
+9c9
+<       app: order
+---
+>       app: orders
+```
+
+관찰 포인트: 이름을 빼면 a 는 16 번째 줄(**from**), b 는 9 번째 줄(**대상 podSelector**)만 다릅니다.
+
+### ③ 다른 줄의 셀렉터를 실제로 돌려 본다
+
+다른 줄에 있는 셀렉터를 그대로 `-l` 에 넣으면, 그 정책이 **몇 개를 고르는지** 바로 나옵니다.
+
+```bash
+kubectl get pods -n guide-netpol-pick -l team=shop         # a 의 from
+kubectl get pods -n guide-netpol-pick -l app=order         # b 의 대상
+kubectl get pods -n guide-netpol-pick -l app=storefront    # c 의 from
+kubectl get pods -n guide-netpol-pick -l app=orders        # c 의 대상
+```
+
+```text
+NAME         READY   STATUS    RESTARTS   AGE
+crawler      1/1     Running   0          2m
+storefront   1/1     Running   0          2m
+No resources found in guide-netpol-pick namespace.
+NAME         READY   STATUS    RESTARTS   AGE
+storefront   1/1     Running   0          2m
+NAME     READY   STATUS    RESTARTS   AGE
+orders   1/1     Running   0          2m
+```
+
+| 후보 | 대상 (`spec.podSelector`) | 허용 (`from`) | 포트 | 판정 |
+|------|--------------------------|---------------|------|------|
+| a | `app=orders` → orders ✅ | `team=shop` → storefront **+ crawler** | TCP 80 | ❌ 너무 넓다 |
+| b | `app=order` → **0개** | `app=storefront` | TCP 80 | ❌ 아무것도 지키지 않는다 |
+| c | `app=orders` → orders ✅ | `app=storefront` → storefront 만 | TCP 80 | ✅ 정답 |
+
+b 가 특히 위험합니다. 대상이 0개라서 orders 는 **어떤 정책에도 선택되지 않고**, 그래서 기본 거부도 걸리지 않습니다. 적용해도 에러 없이 `created` 가 나오고, **crawler 까지 그대로 통합니다.**
+
+### ④ 하나만 적용하고 검증한다
+
+```bash
+kubectl apply -f choice/candidate-c.yaml
+kubectl get networkpolicy -n guide-netpol-pick
+probe guide-netpol-pick storefront orders.guide-netpol-pick
+probe guide-netpol-pick crawler    orders.guide-netpol-pick
+```
+
+```text
+networkpolicy.networking.k8s.io/orders-ingress-c created
+NAME               POD-SELECTOR   AGE
+orders-ingress-c   app=orders     2s
+guide-netpol-pick/storefront   -> orders.guide-netpol-pick OK
+guide-netpol-pick/crawler      -> orders.guide-netpol-pick BLOCKED
+```
+
+(`probe` 는 [0) 준비](#0) 에서 만든 함수입니다. 새 터미널이면 다시 정의합니다.)
+
+### 실험 — 잘못 적용한 뒤 정답을 덧붙이면
+
+"일단 a 를 넣어 보고, 아니면 c 를 넣지 뭐" 는 통하지 않습니다.
+
+```bash
+kubectl apply -f choice/candidate-a.yaml
+kubectl get networkpolicy -n guide-netpol-pick
+probe guide-netpol-pick crawler orders.guide-netpol-pick
+```
+
+```text
+networkpolicy.networking.k8s.io/orders-ingress-a created
+NAME               POD-SELECTOR   AGE
+orders-ingress-a   app=orders     3s
+orders-ingress-c   app=orders     1m
+guide-netpol-pick/crawler      -> orders.guide-netpol-pick OK
+```
+
+관찰 포인트: 이름이 다르니 c 를 덮어쓰지 않고 **정책이 하나 더** 생깁니다. 3) 에서 본 것처럼 허용은 **합집합**이라 a 가 연 crawler 가 다시 통합니다. 잘못 넣었으면 반드시 지웁니다.
+
+```bash
+kubectl delete networkpolicy orders-ingress-a -n guide-netpol-pick
+probe guide-netpol-pick crawler orders.guide-netpol-pick
+```
+
+```text
+networkpolicy.networking.k8s.io "orders-ingress-a" deleted
+guide-netpol-pick/crawler      -> orders.guide-netpol-pick BLOCKED
+```
+
+!!! tip "시험 팁 — 고르는 순서"
+    ① `get pods --show-labels` 로 실제 레이블 → ② `diff` 로 다른 줄만 → ③ 그 셀렉터를 `get pods -l` 로 돌려 개수 확인 →
+    ④ **하나만** `apply` → ⑤ `get netpol` 로 하나뿐인지 확인 → ⑥ 허용·차단 양쪽 `wget`.
+    문제가 "파일을 고치지 말라" 고 하면 정말 고치지 않습니다. 맞는 파일이 이미 그 안에 있습니다.
+
+!!! warning "너무 넓은 정책의 흔한 모양"
+    | 모양 | 실제 의미 |
+    |------|-----------|
+    | `from: [ { podSelector: {} } ]` | 같은 네임스페이스의 **모든 파드** |
+    | `from: [ { namespaceSelector: {} } ]` | **모든 네임스페이스의 모든 파드** |
+    | `ports` 없음 | **모든 포트** |
+    | 여러 파드가 공유하는 레이블(`team=shop`) | 원하지 않은 파드까지 |
+
+---
+
 ## 시험에서 빠르게
 
 ```yaml
@@ -800,6 +999,8 @@ kubectl exec -n <ns> <client> -- wget -qO- --timeout=2 http://<svc>.<ns>   # tim
 kubectl delete namespace guide-netpol guide-netpol-other
 rm -f deny-in.yaml ledger-from-teller.yaml ledger-from-audit-ns.yaml archive-and.yaml archive-or.yaml \
       deny-out.yaml teller-to-ledger.yaml allow-dns.yaml probe-to-cf.yaml
+kubectl delete namespace guide-netpol-pick
+rm -rf choice
 unset -f probe matrix
 ```
 
@@ -833,6 +1034,11 @@ unset -f probe matrix
 ??? question "8. 차단된 연결이 `Connection refused` 가 아니라 timeout 으로 나오는 이유는?"
     NetworkPolicy 는 패킷을 거부 응답 없이 버립니다(drop). 그래서 클라이언트는 응답을 기다리다 시간 초과가 납니다.
 
+??? question "9. 후보 정책 파일 중 하나를 적용했더니 에러 없이 `created` 가 나왔는데, 막아야 할 파드까지 그대로 통합니다. 무엇을 의심하나요?"
+    두 가지입니다. `spec.podSelector` 가 실제 파드를 0개 고르고 있어(레이블 오타) 대상이 격리되지 않았거나,
+    `from` 이 너무 넓은 경우(`podSelector: {}` · `namespaceSelector: {}` · 여러 파드가 공유하는 레이블)입니다.
+    셀렉터를 `kubectl get pods -l <셀렉터>` 로 돌려 보고, `kubectl get netpol` 로 다른 후보가 같이 적용돼 있지 않은지도 봅니다(허용은 합집합).
+
 ---
 
 ## 다음 단계 — 채점 실습
@@ -851,3 +1057,4 @@ bash exam.sh start
 | Q3 다른 네임스페이스를 허용 | 4) 5) — namespaceSelector, AND/OR 모양 |
 | Q4 Egress — DNS 를 열어 둬야 한다 | 6) — Egress 목적지 + 53 번 |
 | Q5 정책을 읽어 낸다 | 8) — `get` / `describe` 로 읽고 예측 |
+| Q6 정책 파일 중 맞는 것 하나 고르기 | 9) — `--show-labels` · `diff` · `get pods -l` 로 대조, 하나만 적용 |

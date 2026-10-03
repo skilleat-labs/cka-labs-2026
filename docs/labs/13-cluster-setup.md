@@ -10,6 +10,8 @@
 - kubectl 없이 **crictl** 로 컨테이너 · 파드 · 로그 · 이미지를 본다.
 - CNI 설정과 바이너리가 **어디에 있는지**, CNI 가 없으면 노드와 파드가 **어떻게 되는지** 확인한다.
 - kubelet 이 **어떤 파일들로** 설정되는지(systemd 드롭인 · config.yaml · flags.env)와 **로그 보는 법**을 익힌다.
+- 문서의 CNI 매니페스트를 **내려받아 cidr 를 클러스터 값으로** 고친다.
+- CRI 패키지(cri-dockerd)를 **dpkg 로 설치 · enable --now · sysctl 영구 설정**까지 해 본다.
 
 ---
 
@@ -21,7 +23,7 @@
 |--------|------|--------------|
 | ① | `control-plane` (192.168.56.10) | kubectl · kubeadm · crictl |
 | ② | `worker-1` (192.168.56.11) | 5) 빼고 다시 넣기 |
-| ③ | `worker-2` (192.168.56.12) | 6) crictl · 7) CNI 실험 |
+| ③ | `worker-2` (192.168.56.12) | 6) crictl · 7) CNI 실험 · 9) CRI 패키지 |
 
 ```bash
 # 내 노트북(호스트)에서 — 사용자 이름은 VM 을 만들 때 정한 것으로
@@ -107,7 +109,7 @@ ls /etc/modules-load.d/
     | `sudo sysctl -w net.ipv4.ip_forward=1` | `/etc/sysctl.d/<이름>.conf` 에 쓰고 `sudo sysctl --system` |
     | `sudo systemctl start <서비스>` | `sudo systemctl enable --now <서비스>` |
 
-    `.deb` 파일을 주고 설치 후 서비스로 띄우라는 문제도 나옵니다: `sudo dpkg -i <파일>.deb` → `sudo systemctl enable --now <서비스>` → `systemctl status <서비스>`.
+    `.deb` 파일을 주고 설치 후 서비스로 띄우라는 문제도 나옵니다: `sudo dpkg -i <파일>.deb` → `sudo systemctl enable --now <서비스>` → `systemctl status <서비스>`. 9) 에서 cri-dockerd 로 직접 해 봅니다.
 
 ### 대조 실험 — preflight 는 무엇을 검사하나
 
@@ -714,6 +716,131 @@ cilium version
     이 클러스터에는 이미 CNI 가 있으니 **실행하지는 마세요.** 시험에서는 문서 링크나 주어진 URL 을 보고 이 중 한 형태로 설치합니다.
     `--pod-network-cidr` 을 요구하는 CNI(Flannel · Calico 기본 설정)는 init 때 준 값과 맞아야 합니다.
 
+### 문서의 매니페스트가 바로 안 될 때 — 내려받아 cidr 맞추기
+
+시험에서는 "문서대로 `kubectl create -f <URL>` 했더니 안 된다" 가 그대로 문제로 나옵니다. Calico 의 operator 방식이 대표적입니다. 문서는 두 줄을 칩니다.
+
+```bash
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/<버전>/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/<버전>/manifests/custom-resources.yaml
+```
+
+두 번째 파일(`custom-resources.yaml`)을 URL 그대로 쓰면 안 되는 이유가 두 가지입니다.
+
+| 이유 | 증상 |
+|------|------|
+| IP 풀 `cidr` 가 문서 기본값 **192.168.0.0/16** 이다 | 클러스터의 파드 CIDR 와 달라 파드 IP 가 엉뚱한 대역에서 나오거나 노드 간 라우팅이 어긋난다 |
+| `Installation` 은 operator 가 만드는 **CRD 종류**다 | operator 를 먼저 안 깔았으면 `no matches for kind "Installation"` 으로 실패한다 |
+
+그래서 **파일로 내려받아 cidr 를 클러스터 값으로 고친 뒤** 적용합니다. 여기서는 이미 Cilium 이 있으므로 **고치기까지만** 하고 적용은 하지 않습니다.
+
+#### ① 클러스터의 파드 CIDR 찾기
+
+```bash
+# control-plane 에서
+kubectl -n kube-system get cm kubeadm-config -o jsonpath='{.data.ClusterConfiguration}' | grep podSubnet
+kubectl get nodes -o custom-columns=NAME:.metadata.name,PODCIDR:.spec.podCIDR
+```
+
+```text
+  podSubnet: 10.244.0.0/16
+NAME            PODCIDR
+control-plane   10.244.0.0/24
+worker-1        10.244.1.0/24
+worker-2        10.244.2.0/24
+```
+
+| 어디서 | 보이는 값 | 쓰임 |
+|--------|-----------|------|
+| `kubeadm-config` 의 `podSubnet` | **클러스터 전체** 대역 (`--pod-network-cidr`) | CNI 매니페스트의 cidr 에 넣는 값 |
+| 노드의 `spec.podCIDR` | 그 노드에 떼어 준 **/24 조각** | 전체 대역을 짐작하는 단서 — 이 값을 그대로 넣으면 안 된다 |
+
+!!! note "이 클러스터의 파드 IP 는 10.0.x.x 인데요?"
+    2) 에서 본 것처럼 Cilium 기본 모드는 자체 IPAM 을 써서 `podSubnet` 과 다른 대역을 씁니다. 하지만 "클러스터의 파드 CIDR" 를 묻는 문제의 답은 **kubeadm 에 기록된 값**(`podSubnet`)입니다. `kubectl get pods -o wide` 의 IP 를 보고 고르지 마세요.
+
+#### ② 내려받아서 고치기
+
+버전만 다를 뿐 파일 구조는 같습니다. 이 페이지에서는 v3.30.3 을 받아 봅니다.
+
+```bash
+# control-plane 에서
+cd ~/guide-cluster
+curl -fsSLo calico-cr.yaml https://raw.githubusercontent.com/projectcalico/calico/v3.30.3/manifests/custom-resources.yaml
+grep -n -B2 -A3 'cidr' calico-cr.yaml
+```
+
+```text
+11-    - name: default-ipv4-ippool
+12-      blockSize: 26
+13:      cidr: 192.168.0.0/16
+14-      encapsulation: VXLANCrossSubnet
+15-      natOutgoing: Enabled
+16-      nodeSelector: all()
+```
+
+`vi` 로 고쳐도 되고, 값이 한 군데뿐이면 `sed` 가 빠릅니다. 값은 **손으로 치지 말고** 클러스터에서 읽은 것을 넣습니다.
+
+```bash
+# control-plane 에서
+POD_CIDR=$(kubectl -n kube-system get cm kubeadm-config -o jsonpath='{.data.ClusterConfiguration}' | awk '/podSubnet:/{print $2}')
+echo "$POD_CIDR"
+sed -i "s#cidr: 192.168.0.0/16#cidr: ${POD_CIDR}#" calico-cr.yaml
+grep -n 'cidr' calico-cr.yaml
+```
+
+```text
+10.244.0.0/16
+13:      cidr: 10.244.0.0/16
+```
+
+#### ③ 고친 파일이 YAML 로 멀쩡한지 확인
+
+`kubectl create --dry-run=client` 는 이 파일에 쓸 수 없습니다. `Installation` CRD 가 없어서 dry-run 도 **같은 이유로 실패**합니다. YAML 문법만 보려면 파이썬으로 읽어 봅니다.
+
+```bash
+# control-plane 에서
+python3 -c 'import yaml,sys; [print(d["kind"], d.get("spec",{}).get("calicoNetwork",{}).get("ipPools",[{}])[0].get("cidr","")) for d in yaml.safe_load_all(open(sys.argv[1])) if d]' calico-cr.yaml
+```
+
+```text
+Installation 10.244.0.0/16
+APIServer
+Goldmane
+Whisker
+```
+
+들여쓰기를 망가뜨렸다면 `yaml.scanner.ScannerError` 가 나옵니다. 특히 `vi` 에서 **탭**이 들어가면 YAML 이 깨집니다.
+
+#### ④ 적용 명령 — URL 이 아니라 고친 파일
+
+```bash
+# 실제 클러스터를 새로 만들 때라면 (여기서는 실행하지 않는다)
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.30.3/manifests/tigera-operator.yaml
+kubectl create -f ~/guide-cluster/calico-cr.yaml
+```
+
+### 대조 실험 — operator 없이 custom-resources 를 적용하면
+
+이 실험은 **아무것도 만들지 않고 실패**하므로 안전합니다. 문서의 두 번째 줄만 먼저 치면 어떻게 되는지 봅니다.
+
+```bash
+# control-plane 에서
+kubectl create -f ~/guide-cluster/calico-cr.yaml
+```
+
+```text
+error: resource mapping not found for name: "default" namespace: "" from "/home/<사용자>/guide-cluster/calico-cr.yaml": no matches for kind "Installation" in version "operator.tigera.io/v1"
+ensure CRDs are installed first
+...                                              ← APIServer · Goldmane · Whisker 도 같은 오류
+```
+
+**관찰 포인트:** "문서 명령이 실패한다" 의 원인은 대개 **순서**(CRD/operator 먼저)이거나 **값**(cidr)입니다. 오류 메시지의 `ensure CRDs are installed first` 가 순서 문제라는 힌트입니다.
+
+!!! tip "시험 팁 — URL 을 바로 create 하지 말고 받아서 본다"
+    - `curl -LO <URL>` 또는 `wget <URL>` 로 받아 `grep -n cidr` 부터 봅니다.
+    - cidr 는 `kubeadm-config` 의 **podSubnet** 으로 맞춥니다. 노드의 `/24` 조각을 넣지 않습니다.
+    - 적용은 `kubectl create -f <고친 파일>`. operator 매니페스트가 따로 있으면 그것을 **먼저** 적용합니다.
+
 ### 대조 실험 — worker-2 에서 CNI 설정을 치우면
 
 !!! danger "worker-2 의 네트워크를 잠깐 끊습니다"
@@ -898,6 +1025,211 @@ kubelet 을 멈추고 고치는 실험은 [16강 · NotReady 복구](16-node-ops
 
 ---
 
+## 9) CRI 패키지 설치 (dpkg · systemctl enable --now · sysctl 영구 설정)
+
+시험에는 "이 노드에 **cri-dockerd** 를 설치하고 서비스로 띄운 뒤, 커널 파라미터를 영구 설정하라" 가 나옵니다. cri-dockerd 는 Docker 엔진을 CRI 로 감싸 주는 어댑터입니다. 손이 가는 곳은 세 군데입니다.
+
+| 단계 | 명령 | 확인 |
+|------|------|------|
+| 패키지 설치 | `sudo dpkg -i <파일>.deb` | `dpkg -s <패키지>` 의 `Status: install ok installed` |
+| 서비스 | `sudo systemctl enable --now <유닛>` | `systemctl is-enabled` · `is-active` |
+| 커널 파라미터 | `/etc/sysctl.d/<이름>.conf` 에 쓰고 `sudo sysctl --system` | `sysctl <키>` |
+
+!!! warning "이 실습 노드에는 Docker 엔진이 없습니다"
+    이 과정의 클러스터는 containerd 를 쓰고 Docker 엔진은 깔지 않았습니다. 그래서 cri-docker 서비스는 **enable 은 되지만 active 로 유지되지 못합니다**(시작 실패 · 재시작 반복).
+    여기서는 그것이 정상입니다. **kubelet 은 계속 containerd 를 쓰므로** 노드는 Ready 로 남습니다. 실제 시험 환경에서는 Docker 가 있어 active 까지 확인됩니다.
+
+### ① 패키지 파일 고르기와 내려받기
+
+GitHub 릴리스에는 배포판 · 아키텍처별 `.deb` 가 따로 있습니다. 노드에 맞는 이름을 먼저 확인합니다.
+
+```bash
+# worker-2 에서
+dpkg --print-architecture
+. /etc/os-release; echo "$VERSION_CODENAME"
+```
+
+```text
+amd64                     ← Apple Silicon 맥의 VM 이면 arm64
+noble                     ← Ubuntu 24.04
+```
+
+파일 이름은 `cri-dockerd_<버전>.3-0.ubuntu-<코드네임>_<아키텍처>.deb` 형태입니다.
+
+```bash
+# worker-2 에서
+mkdir -p ~/guide-cri && cd ~/guide-cri
+ARCH=$(dpkg --print-architecture)
+curl -fLO "https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.26/cri-dockerd_0.3.26.3-0.ubuntu-noble_${ARCH}.deb"
+ls -l
+```
+
+```text
+-rw-rw-r-- 1 <사용자> <사용자> 11922052 ... cri-dockerd_0.3.26.3-0.ubuntu-noble_amd64.deb
+```
+
+### ② dpkg 로 설치
+
+```bash
+# worker-2 에서
+sudo dpkg -i ~/guide-cri/cri-dockerd_*.deb
+dpkg -s cri-dockerd | grep -E '^(Status|Version|Depends)'
+```
+
+```text
+Selecting previously unselected package cri-dockerd.
+(Reading database ... 8xxxx files and directories currently installed.)
+Preparing to unpack .../cri-dockerd_0.3.26.3-0.ubuntu-noble_amd64.deb ...
+Unpacking cri-dockerd (0.3.26~3-0~ubuntu-noble) ...
+Setting up cri-dockerd (0.3.26~3-0~ubuntu-noble) ...
+
+Status: install ok installed
+Version: 0:0.3.26~3-0~ubuntu-noble
+Depends: containerd (>= 1.2.2-3) | containerd.io (>= 1.2.2-3) | moby-containerd (>= 1.2.2), iptables, libseccomp2 (>= 2.3.0), libc6 (>= 2.34)
+```
+
+**관찰 포인트:** `dpkg` 는 의존성을 **검사만 하고 받아 오지 않습니다.** 이 노드에는 apt 로 깐 `containerd` 가 있어서 바로 `install ok installed` 가 됩니다. 의존성이 모자라면 `install ok unpacked` 에 멈추고 `dependency problems` 가 나옵니다. 그때는 `sudo apt-get install -f -y` 로 채웁니다.
+
+!!! note "패키지 이름과 서비스 이름이 다르다"
+    패키지는 `cri-dockerd`, 서비스는 `cri-docker.service` 와 `cri-docker.socket` 입니다. 이름이 헷갈리면 목록으로 찾습니다.
+    ```bash
+    systemctl list-unit-files 'cri-docker*'
+    dpkg -L cri-dockerd | grep systemd
+    ```
+
+### ③ enable --now — 그리고 Docker 없는 노드에서 보이는 것
+
+데비안 패키지는 설치하면서 유닛을 **스스로 enable** 해 두기도 합니다. 그래도 시험에서는 지문대로 직접 enable 하고 시작합니다.
+
+```bash
+# worker-2 에서
+sudo systemctl enable --now cri-docker.service
+systemctl is-enabled cri-docker.service cri-docker.socket
+systemctl is-active cri-docker.service
+```
+
+```text
+A dependency job for cri-docker.service failed. See 'journalctl -xe' for details.
+enabled
+enabled
+failed                    ← Docker 엔진이 없어서 (이 실습에서는 정상)
+```
+
+왜 실패하는지 유닛과 로그로 확인합니다.
+
+```bash
+# worker-2 에서
+systemctl cat cri-docker.socket | grep -E 'ListenStream|SocketGroup'
+sudo journalctl -u cri-docker.socket -n 5 --no-pager
+```
+
+```text
+ListenStream=%t/cri-dockerd.sock
+SocketGroup=docker
+... cri-docker.socket: Failed to resolve group docker: No such process
+... Failed to listen on cri-docker.socket - CRI Docker Socket for the API.
+```
+
+**관찰 포인트:** 소켓 유닛이 `docker` 그룹 소유로 소켓을 만들려는데, Docker 엔진을 깔지 않아 그 그룹이 없습니다. 메시지는 버전마다 조금 다르지만 **원인은 같습니다** — 이 노드에 Docker 가 없다. kubelet 은 여전히 containerd 소켓을 씁니다.
+
+```bash
+# worker-2 에서
+grep -o 'container-runtime-endpoint=[^ "]*' /var/lib/kubelet/kubeadm-flags.env
+```
+
+```text
+container-runtime-endpoint=unix:///var/run/containerd/containerd.sock
+```
+
+| 명령 | 하는 일 | 재부팅 뒤 |
+|------|---------|-----------|
+| `systemctl start` | 지금 시작 | 안 뜬다 |
+| `systemctl enable` | 부팅 때 시작하도록 링크 생성 | 뜬다 (지금은 안 뜸) |
+| `systemctl enable --now` | 둘 다 | 뜬다 |
+
+### ④ sysctl 영구 설정
+
+`sysctl -w` 는 지금만 바꿉니다. 재부팅 뒤에도 남기려면 `/etc/sysctl.d/` 에 파일로 씁니다. 먼저 지금 값을 적어 둡니다(정리할 때 되돌리려고).
+
+```bash
+# worker-2 에서
+sysctl net.ipv6.conf.all.forwarding net.netfilter.nf_conntrack_max | tee ~/guide-cri/sysctl-before.txt
+```
+
+```text
+net.ipv6.conf.all.forwarding = 0
+net.netfilter.nf_conntrack_max = 131072       ← kube-proxy 가 이미 맞춰 둔 값일 수 있다
+```
+
+```bash
+# worker-2 에서
+cat <<'EOF' | sudo tee /etc/sysctl.d/90-guide-cri.conf
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv6.conf.all.forwarding = 1
+net.ipv4.ip_forward = 1
+net.netfilter.nf_conntrack_max = 131072
+EOF
+sudo sysctl --system | grep -A4 90-guide-cri
+```
+
+```text
+* Applying /etc/sysctl.d/90-guide-cri.conf ...
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv6.conf.all.forwarding = 1
+net.ipv4.ip_forward = 1
+net.netfilter.nf_conntrack_max = 131072
+```
+
+| 키 | 뜻 |
+|----|----|
+| `net.bridge.bridge-nf-call-iptables` | 브리지를 지나는 트래픽도 iptables 를 거친다 (`br_netfilter` 모듈 필요) |
+| `net.ipv4.ip_forward` · `net.ipv6.conf.all.forwarding` | 노드가 패킷을 다른 인터페이스로 넘겨 준다 (파드 ↔ 바깥) |
+| `net.netfilter.nf_conntrack_max` | 연결 추적 테이블 크기 (`nf_conntrack` 모듈이 올라와 있어야 키가 보인다) |
+
+!!! tip "시험 팁 — 파일 하나만 다시 읽기"
+    `sudo sysctl --system` 은 모든 설정 파일을 다시 읽습니다. 방금 쓴 파일만 적용하려면 `sudo sysctl -p /etc/sysctl.d/<이름>.conf`.
+    `sysctl: cannot stat /proc/sys/net/bridge/...` 가 나오면 `br_netfilter` 모듈이 안 올라온 것입니다 → `sudo modprobe br_netfilter` (영구는 1) 의 표 참고).
+
+### 대조 실험 — 파일 없이 -w 만 하면
+
+```bash
+# worker-2 에서
+sudo sysctl -w net.ipv6.conf.all.forwarding=0
+sudo sysctl -p /etc/sysctl.d/90-guide-cri.conf | grep ipv6
+```
+
+```text
+net.ipv6.conf.all.forwarding = 0
+net.ipv6.conf.all.forwarding = 1               ← 파일이 있으니 다시 읽으면 돌아온다
+```
+
+**관찰 포인트:** 재부팅은 "파일을 다시 읽는 것" 과 같습니다. `-w` 만 한 값은 재부팅에서 사라지고, **파일에 있는 값**만 살아남습니다. 채점도 보통 두 가지를 다 봅니다 — 지금 값(`sysctl`)과 파일.
+
+### ⑤ 되돌리기
+
+```bash
+# worker-2 에서
+sudo dpkg --purge cri-dockerd
+sudo systemctl reset-failed cri-docker.service cri-docker.socket 2>/dev/null
+sudo rm -f /etc/sysctl.d/90-guide-cri.conf
+cat ~/guide-cri/sysctl-before.txt                  # ④ 에서 적어 둔 값
+sudo sysctl -w net.ipv6.conf.all.forwarding=0      # 적어 둔 값으로
+sudo sysctl --system > /dev/null                   # k8s.conf 의 ip_forward · bridge = 1 은 그대로 유지된다
+sysctl net.ipv4.ip_forward net.bridge.bridge-nf-call-iptables
+rm -rf ~/guide-cri
+```
+
+```text
+net.ipv4.ip_forward = 1
+net.bridge.bridge-nf-call-iptables = 1
+```
+
+!!! warning "`ip_forward` 와 `bridge-nf-call-iptables` 를 0 으로 되돌리지 마세요"
+    이 두 값은 클러스터가 원래 쓰던 값(1)입니다(1) 의 `/etc/sysctl.d/k8s.conf`). 0 으로 바꾸면 파드 통신과 Service 가 망가집니다.
+    `dpkg --purge` 는 `cri-dockerd` 만 지우고 의존성인 `containerd` 는 건드리지 않습니다. `apt autoremove` 는 쓰지 않습니다.
+
+---
+
 ## 시험에서 빠르게
 
 ```bash
@@ -923,17 +1255,25 @@ systemctl cat kubelet
 sudo grep staticPodPath /var/lib/kubelet/config.yaml
 sudo journalctl -u kubelet -n 30 --no-pager
 
+# CNI 매니페스트를 받아서 cidr 맞추기
+kubectl -n kube-system get cm kubeadm-config -o yaml | grep podSubnet
+curl -LO <custom-resources URL> && grep -n cidr custom-resources.yaml
+sed -i 's#cidr: 192.168.0.0/16#cidr: <podSubnet>#' custom-resources.yaml
+kubectl create -f custom-resources.yaml          # operator 매니페스트가 있으면 그것 먼저
+
 # 노드 준비 (영구)
 echo br_netfilter | sudo tee /etc/modules-load.d/<이름>.conf
 echo 'net.ipv4.ip_forward = 1' | sudo tee /etc/sysctl.d/<이름>.conf && sudo sysctl --system
 sudo dpkg -i <패키지>.deb && sudo systemctl enable --now <서비스>
+dpkg -s <패키지> | grep Status                   # install ok installed
+systemctl list-unit-files '<이름>*'              # 패키지 이름 ≠ 서비스 이름 (cri-dockerd → cri-docker)
 ```
 
 ---
 
 ## 정리
 
-5) 와 7) 에서 바꾼 것이 원래대로 돌아왔는지 먼저 확인합니다.
+5) 와 7) 에서 바꾼 것이 원래대로 돌아왔는지 먼저 확인합니다. 9) 는 그 절의 ⑤ 되돌리기를 했는지 봅니다.
 
 ```bash
 # control-plane 에서
@@ -948,6 +1288,8 @@ sudo kubeadm token delete <토큰ID>               # 예: 7k2m9x
 # worker-2 에서
 ls /etc/cni/net.d/                               # 05-cilium.conflist 가 있어야 한다
 sudo ls /root/05-cilium.conflist.guide 2>/dev/null || echo "백업 파일 없음 (정상)"
+dpkg -s cri-dockerd 2>/dev/null | grep Status || echo "cri-dockerd 없음 (정상)"
+ls /etc/sysctl.d/90-guide-cri.conf 2>/dev/null || echo "실습 sysctl 파일 없음 (정상)"
 ```
 
 !!! note "일부가 끝내 돌아오지 않으면"
@@ -985,6 +1327,14 @@ sudo ls /root/05-cilium.conflist.guide 2>/dev/null || echo "백업 파일 없음
 ??? question "8. `/etc/systemd/system/kubelet.service.d/` 의 드롭인을 고쳤는데 반영이 안 됩니다. 무엇을 빠뜨렸나요?"
     `sudo systemctl daemon-reload` 입니다. 유닛 · 드롭인을 고친 뒤에는 daemon-reload 후 `restart kubelet` 을 해야 새 설정을 읽습니다.
 
+??? question "9. 문서의 `kubectl create -f <custom-resources URL>` 를 그대로 쓰면 안 되는 이유는? cidr 에는 어떤 값을 넣나요?"
+    IP 풀 cidr 가 문서 기본값(192.168.0.0/16)이라 클러스터의 파드 CIDR 와 다르고, `Installation` 은 operator 가 만드는 CRD 종류라 operator 없이는 `no matches for kind` 로 실패합니다.
+    파일로 받아 cidr 를 `kubeadm-config` 의 **podSubnet** 으로 고친 뒤 `kubectl create -f <고친 파일>` 로 적용합니다. 노드의 `spec.podCIDR`(/24 조각)를 그대로 넣지 않습니다.
+
+??? question "10. `.deb` 로 설치한 서비스가 재부팅 뒤에도 뜨게 하고, 커널 파라미터도 유지하려면?"
+    `sudo dpkg -i <파일>.deb` → `sudo systemctl enable --now <서비스>`(enable 이 재부팅 뒤 시작을 맡는다) → `/etc/sysctl.d/<이름>.conf` 에 값을 쓰고 `sudo sysctl --system`.
+    확인은 `dpkg -s` 의 `install ok installed`, `systemctl is-enabled`, `sysctl <키>`. 이 실습 노드처럼 Docker 엔진이 없으면 cri-docker 는 enabled 여도 active 가 되지 못합니다.
+
 ---
 
 ## 다음 단계 — 채점 실습
@@ -1000,4 +1350,5 @@ bash exam.sh start
 |------|------------------------|
 | Q1 워커 노드를 클러스터에 조인 | 4) 토큰 · 5) 빼고 다시 넣기 |
 | Q2 crictl 로 컨테이너 로그 수집 | 6) crictl logs · `2>&1` |
-| Q3 CNI 확인하고 설치 명령 적기 | 7) CNI 찾기 · 설치 방식 표 |
+| Q3 CNI 매니페스트 cidr 를 클러스터 값으로 고치기 | 7) 문서의 매니페스트가 바로 안 될 때 — 내려받아 cidr 맞추기 |
+| Q4 CRI 패키지 설치와 커널 파라미터 영구 설정 | 9) CRI 패키지 설치 · 1) 영구 설정 표 |

@@ -7,7 +7,7 @@
 - 명령으로 **YAML 뼈대를 뽑고**(`$do`), 필드를 `kubectl explain` 으로 찾아 채우고, `apply` · `edit` · `replace --force` 를 상황에 맞게 고른다.
 - Deployment 가 **ReplicaSet 을 갈아 끼우는 방식**으로 업데이트·롤백하고, **레이블이 소유 관계를 정한다**는 것을 눈으로 확인한다.
 - `maxSurge` · `maxUnavailable` · `Recreate` 를 바꿔 가며 **롤아웃 모양이 어떻게 달라지는지** 비교하고, `pause` · `resume` 으로 변경을 묶는다.
-- ConfigMap · Secret 을 환경변수로 넣을 때와 볼륨으로 넣을 때 **값이 바뀌는 시점이 다르다**는 것을 확인한다.
+- ConfigMap · Secret 을 환경변수로 넣을 때와 볼륨으로 넣을 때 **값이 바뀌는 시점이 다르다**는 것을 확인하고, Deployment 에는 `rollout restart` 로 반영한 뒤 `immutable` 로 잠근다.
 - Job(`completions` · `parallelism` · `backoffLimit`) · CronJob · DaemonSet(`updateStrategy`) 이 Deployment 와 **무엇이 다른지** 직접 띄워 보고 비교한다.
 - 일반 initContainer 와 **네이티브 사이드카**의 차이를 확인한다.
 
@@ -662,8 +662,180 @@ prod               ← 볼륨만 바뀌었다
 | `env` / `envFrom` | **파드를 다시 만들어야** 반영됩니다. 환경변수는 컨테이너가 시작할 때 한 번 정해집니다 |
 | 볼륨 | kubelet 이 주기적으로 파일을 갱신합니다 (보통 1분 이내). 단 `subPath` 로 마운트하면 갱신되지 않습니다 |
 
-!!! tip "Deployment 라면"
-    `kubectl rollout restart deployment/<이름>` 으로 파드를 새로 만들면 환경변수에도 새 값이 들어갑니다.
+### Deployment 에 반영하기 — `rollout restart`
+
+시험에서는 파드 하나가 아니라 **Deployment 가 읽는 ConfigMap 을 고치고, 새 값이 실제로 들어갔는지까지** 확인하라는 형태로 나옵니다. 끝에 "다시는 못 바꾸게 잠가라(`immutable`)" 가 붙기도 합니다.
+
+`greeter.yaml` — 인사말을 ConfigMap 에서 환경변수로 읽는 Deployment:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: greeter-config
+  namespace: guide-wl
+data:
+  GREETING: hello
+  TARGET: world
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greeter
+  namespace: guide-wl
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: greeter }
+  template:
+    metadata:
+      labels: { app: greeter }
+    spec:
+      terminationGracePeriodSeconds: 2     # 실습 속도용 — sh 는 SIGTERM 을 무시해서 기본 30초를 다 기다린다
+      containers:
+        - name: app
+          image: busybox:1.36
+          command: ["sh", "-c", "echo \"$GREETING, $TARGET\"; sleep 3600"]
+          env:
+            - name: GREETING
+              valueFrom:
+                configMapKeyRef: { name: greeter-config, key: GREETING }
+            - name: TARGET
+              valueFrom:
+                configMapKeyRef: { name: greeter-config, key: TARGET }
+```
+
+```bash
+kubectl apply -f greeter.yaml
+kubectl rollout status deployment/greeter -n guide-wl
+kubectl get pods -n guide-wl -l app=greeter
+kubectl exec deploy/greeter -n guide-wl -- printenv GREETING
+```
+
+```text
+NAME                       READY   STATUS    RESTARTS   AGE
+greeter-7c9d8b6f5d-4kq2x   1/1     Running   0          15s
+greeter-7c9d8b6f5d-tz8wm   1/1     Running   0          15s
+hello
+```
+
+**① 값 바꾸기** — `edit` 로 열어 `GREETING: hello` 를 `GREETING: hola` 로 고칩니다. (한 줄이면 `patch` 가 빠릅니다.)
+
+```bash
+kubectl edit configmap greeter-config -n guide-wl
+#   또는
+kubectl patch configmap greeter-config -n guide-wl -p '{"data":{"GREETING":"hola"}}'
+
+kubectl get configmap greeter-config -n guide-wl -o jsonpath='{.data.GREETING}{"\n"}'
+kubectl exec deploy/greeter -n guide-wl -- printenv GREETING
+```
+
+```text
+hola       ← ConfigMap 은 바뀌었다
+hello      ← 파드는 그대로
+```
+
+**관찰 포인트** — Deployment 입장에서는 **파드 템플릿이 하나도 바뀌지 않았습니다.** 그래서 새 ReplicaSet 도, 롤아웃도 일어나지 않습니다. ConfigMap 을 고쳤다고 Deployment 가 알아서 파드를 다시 만들지는 않습니다.
+
+**② 파드를 새로 만들기** — `rollout restart` 는 파드 템플릿에 재시작 시각 annotation 을 넣어서 **롤링 업데이트를 일으킵니다.**
+
+```bash
+kubectl rollout restart deployment/greeter -n guide-wl
+kubectl rollout status deployment/greeter -n guide-wl
+kubectl get pods -n guide-wl -l app=greeter
+```
+
+```text
+deployment.apps/greeter restarted
+Waiting for deployment "greeter" rollout to finish: 1 out of 2 new replicas have been updated...
+...
+deployment "greeter" successfully rolled out
+
+NAME                       READY   STATUS    RESTARTS   AGE
+greeter-5f6b9c7d48-8mxlp   1/1     Running   0          6s     ← 해시가 바뀐 새 파드
+greeter-5f6b9c7d48-q2hvn   1/1     Running   0          9s
+```
+
+**③ 확인 — 파드마다 하나씩** — `exec deploy/...` 는 파드 하나만 고릅니다. 전부 바뀌었는지 보려면 파드마다 확인합니다.
+
+```bash
+for p in $(kubectl get pods -n guide-wl -l app=greeter -o name); do
+  echo "$p: $(kubectl exec -n guide-wl $p -- printenv GREETING)"
+done
+kubectl get deployment greeter -n guide-wl -o jsonpath='{.spec.template.metadata.annotations}{"\n"}'
+```
+
+```text
+pod/greeter-5f6b9c7d48-8mxlp: hola
+pod/greeter-5f6b9c7d48-q2hvn: hola
+{"kubectl.kubernetes.io/restartedAt":"2026-10-04T01:12:31Z"}
+```
+
+!!! warning "막 재시작한 직후에는 옛 파드가 섞여 보입니다"
+    `rollout status` 가 끝나기 전에 확인하면 `Terminating` 인 옛 파드도 목록에 나오고, 그 파드는 여전히 `hello` 를 출력합니다.
+    **`rollout status` 가 끝난 뒤에** 확인하세요.
+
+`rollout restart` 대신 `kubectl delete pod -l app=greeter -n guide-wl` 로 파드를 지워도 새 값이 들어갑니다. 다만 **한꺼번에 내려가서 잠깐 서비스가 비고**, 롤아웃 기록에도 남지 않습니다. Deployment 라면 `rollout restart` 를 씁니다.
+
+### 잠그기 — `immutable: true`
+
+`immutable: true` 를 주면 그 ConfigMap 의 `data` · `binaryData` 를 **아무도 고칠 수 없습니다.** 운영 중 실수로 설정이 바뀌는 것을 막고, kubelet 이 그 ConfigMap 을 계속 감시(watch)하지 않아도 되어 API 서버 부담도 줄어듭니다. Secret 에도 같은 필드가 있습니다.
+
+```bash
+kubectl patch configmap greeter-config -n guide-wl -p '{"immutable":true}'
+kubectl get configmap greeter-config -n guide-wl -o yaml | grep -E '^immutable|GREETING'
+```
+
+```text
+configmap/greeter-config patched
+  GREETING: hola
+immutable: true
+```
+
+!!! tip "시험 팁 — 순서가 곧 정답입니다"
+    "값 바꾸기 → 재배포 → 마지막에 immutable" 처럼 나오면 **반드시 그 순서대로** 합니다. 먼저 잠가 버리면 값을 고칠 수 없어서 지우고 다시 만드는 수고가 생깁니다.
+    `immutable` 은 `metadata` 아래가 아니라 **`data` 와 같은 높이(최상위)** 입니다. `kubectl explain configmap.immutable` 로 확인할 수 있습니다.
+
+### 깨 보기 — 잠근 ConfigMap 을 고치려면
+
+```bash
+kubectl patch configmap greeter-config -n guide-wl -p '{"data":{"GREETING":"bonjour"}}'
+kubectl patch configmap greeter-config -n guide-wl -p '{"immutable":false}'
+```
+
+```text
+The ConfigMap "greeter-config" is invalid: data: Forbidden: field is immutable when `immutable` is set
+The ConfigMap "greeter-config" is invalid: immutable: Forbidden: field is immutable when `immutable` is set
+```
+
+**관찰 포인트** — 값도, **잠금 자체도** 되돌릴 수 없습니다. `kubectl edit` 로 열어 고쳐도 저장할 때 같은 이유로 거절되고, 고친 내용은 `/tmp/kubectl-edit-XXXX.yaml` 에 남습니다. (레이블 · annotation 같은 `metadata` 는 여전히 바꿀 수 있습니다.)
+
+그래도 값을 바꿔야 한다면 **지우고 다시 만드는 것**이 유일한 방법입니다. 1) 에서 파드 고치기가 거절될 때 쓴 `replace --force` 가 바로 그것입니다.
+
+```bash
+kubectl get configmap greeter-config -n guide-wl -o yaml > greeter-config.yaml
+#   greeter-config.yaml 에서 GREETING: hola → bonjour 로 고친다 (immutable: true 는 그대로 둔다)
+kubectl replace --force -f greeter-config.yaml
+kubectl get configmap greeter-config -n guide-wl -o jsonpath='{.data.GREETING} {.immutable}{"\n"}'
+```
+
+```text
+configmap "greeter-config" deleted
+configmap/greeter-config replaced
+bonjour true
+```
+
+새 ConfigMap 이 생긴 것이므로 **파드는 여전히 `hola`** 입니다. 반영하려면 다시 `rollout restart` 합니다.
+
+```bash
+kubectl rollout restart deployment/greeter -n guide-wl
+kubectl rollout status deployment/greeter -n guide-wl
+kubectl exec deploy/greeter -n guide-wl -- printenv GREETING        # bonjour
+```
+
+!!! tip "운영에서는 이름을 바꿔 갈아 끼웁니다"
+    immutable ConfigMap 은 보통 `greeter-config-v2` 처럼 **새 이름으로 만들고, Deployment 의 참조를 바꿉니다.**
+    파드 템플릿이 바뀌므로 롤아웃이 저절로 일어나고, `rollout undo` 로 옛 설정으로 되돌릴 수도 있습니다.
 
 ### 깨 보기 — 없는 ConfigMap 을 참조하면
 
@@ -1386,6 +1558,8 @@ kubectl rollout undo deployment/<이름> --to-revision=N
 kubectl create configmap <이름> --from-literal=K=V [--from-file=<파일>] [--from-env-file=<파일>]
 kubectl create secret generic <이름> --from-literal=K=V
 kubectl get secret <이름> -o jsonpath='{.data.<키>}' | base64 -d
+kubectl patch configmap <이름> -p '{"data":{"K":"V2"}}'     # 값 바꾸기 → env 로 읽으면 rollout restart 필요
+kubectl patch configmap <이름> -p '{"immutable":true}'     # 잠그기 (되돌릴 수 없다 — 바꾸려면 replace --force)
 
 # Job · CronJob
 kubectl create job <이름> --from=cronjob/<크론잡>
@@ -1450,6 +1624,11 @@ cd ~ && rm -rf ~/guide-wl
     ReplicaSet 은 레이블 셀렉터로 자기 파드를 셉니다. 레이블을 뗀 파드는 셀렉터에서 빠져 주인 없는 파드가 되고,
     ReplicaSet 은 개수가 모자란다고 보고 새 파드를 만듭니다. 뗀 파드는 계속 돌기 때문에 직접 지워야 합니다.
 
+??? question "10. `immutable: true` 인 ConfigMap 의 값을 바꿔야 합니다. 어떻게 하나요?"
+    `edit` · `patch` 로는 거절됩니다(`data: Forbidden: field is immutable when immutable is set`). `immutable: false` 로 되돌리는 것도 안 됩니다.
+    `get -o yaml > f` 로 뽑아 고친 뒤 `kubectl replace --force -f f` 로 지우고 다시 만들고,
+    env 로 읽는 파드라면 `rollout restart` 까지 해야 새 값이 들어갑니다.
+
 ---
 
 ## 다음 단계 — 채점 실습
@@ -1468,3 +1647,4 @@ bash exam.sh start
 | Q3 CronJob | 6) |
 | Q4 DaemonSet (hostNetwork · hostPID) | 1) 7) — 필드 위치는 `kubectl explain pod.spec` 으로 |
 | Q5 네이티브 사이드카 | 8) |
+| Q6 ConfigMap 수정 → 재배포 → immutable | 4) Deployment 에 반영하기 · 잠그기 |
