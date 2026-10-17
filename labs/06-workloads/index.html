@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/06-workloads/">
       
       
-        <link rel="prev" href="../04-cluster-build/">
+        <link rel="prev" href="../13-cluster-setup/">
       
       
-        <link rel="next" href="../07-scheduling/">
+        <link rel="next" href="../09-networking/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>6강 · 워크로드 - CKA 실습 가이드</title>
+        <title>4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카) - CKA 실습 가이드</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#6" class="md-skip">
+        <a href="#4610-deployment-configmap-job-daemonset" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              6강 · 워크로드
+              4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
             
           </span>
         </div>
@@ -267,7 +267,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../03-architecture/" class="md-tabs__link">
+        <a href="../04-cluster-build/" class="md-tabs__link">
           
   
   
@@ -442,14 +442,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../03-architecture/" class="md-nav__link">
+      <a href="../04-cluster-build/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    3강 · 아키텍처
+    3강 · 내 클러스터 만들기 (VirtualBox)
   
 
     
@@ -470,14 +470,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../04-cluster-build/" class="md-nav__link">
+      <a href="../13-cluster-setup/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    4강 · 클러스터 구축 (VirtualBox)
+    3·19강 · 노드 조인 · CNI · CRI
   
 
     
@@ -514,7 +514,7 @@
   <span class="md-ellipsis">
     
   
-    6강 · 워크로드
+    4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
   
 
     
@@ -532,7 +532,7 @@
   <span class="md-ellipsis">
     
   
-    6강 · 워크로드
+    4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
   
 
     
@@ -1138,62 +1138,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../07-scheduling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    7강 · 스케줄링
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../08-storage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    8강 · 스토리지
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../09-networking/" class="md-nav__link">
         
   
@@ -1201,7 +1145,7 @@
   <span class="md-ellipsis">
     
   
-    9강 · 서비스와 내부 통신
+    5강 · 서비스와 내부 통신
   
 
     
@@ -1222,14 +1166,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../10-networkpolicy/" class="md-nav__link">
+      <a href="../07-scheduling/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    10강 · NetworkPolicy
+    7·11·12강 · 자원 · 스케줄링 · HPA
   
 
     
@@ -1257,7 +1201,7 @@
   <span class="md-ellipsis">
     
   
-    11강 · Ingress
+    8강 · Ingress → Gateway API
   
 
     
@@ -1278,14 +1222,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../13-cluster-setup/" class="md-nav__link">
+      <a href="../08-storage/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    13강 · 클러스터 구축
+    13강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · NetworkPolicy
   
 
     
@@ -1313,63 +1285,7 @@
   <span class="md-ellipsis">
     
   
-    14강 · RBAC
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../15-maintenance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    15강 · 유지보수
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../16-node-ops/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    16강 · 노드 운영
+    15강 · RBAC
   
 
     
@@ -1397,7 +1313,91 @@
   <span class="md-ellipsis">
     
   
-    17강 · Helm과 Kustomize
+    16·17강 · Helm · Kustomize · CRD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18강 · 아키텍처 (컨트롤플레인)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-node-ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)
   
 
     
@@ -1425,7 +1425,7 @@
   <span class="md-ellipsis">
     
   
-    19강 · 트러블슈팅
+    22·23강 · 트러블슈팅
   
 
     
@@ -2057,9 +2057,9 @@
   
 
 
-<h1 id="6">6강 · 워크로드<a class="headerlink" href="#6" title="Permanent link">&para;</a></h1>
+<h1 id="4610-deployment-configmap-job-daemonset">4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)<a class="headerlink" href="#4610-deployment-configmap-job-daemonset" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>영상: <strong>06강-워크로드</strong> · 이어서 풀 채점 세트: <code>06-workloads</code></p>
+<p>영상: <strong>4강 파드에서 Deployment 까지</strong> (1~3) · <strong>6강 설정을 이미지 밖으로</strong> (4~5) · <strong>10강 Deployment 로는 안 되는 일</strong> (6~8) · 이어서 풀 채점 세트: <code>04-pods</code> · <code>06-config</code> · <code>10-workloads</code></p>
 </blockquote>
 <h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -2814,7 +2814,7 @@
 </span></code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">base64 는 인코딩이지 암호화가 아닙니다</p>
-<p>Secret 을 <code>get</code> 할 수 있는 사람은 값을 읽을 수 있습니다. 실제 보호는 <strong>RBAC 으로 Secret 읽기 권한을 제한</strong>하는 것(14강)과 etcd 저장 암호화 설정입니다.
+<p>Secret 을 <code>get</code> 할 수 있는 사람은 값을 읽을 수 있습니다. 실제 보호는 <strong>RBAC 으로 Secret 읽기 권한을 제한</strong>하는 것(15강)과 etcd 저장 암호화 설정입니다.
 <code>--from-literal</code> 에 쓴 값은 셸 히스토리에도 남습니다.</p>
 </div>
 <p>YAML 로 직접 쓸 때는 <code>stringData</code> 를 쓰면 평문으로 적어도 됩니다.</p>
@@ -2871,7 +2871,7 @@
 <td><code>create secret tls</code></td>
 <td><code>kubernetes.io/tls</code></td>
 <td><code>tls.crt</code>, <code>tls.key</code></td>
-<td>Ingress TLS (11강)</td>
+<td>Ingress TLS (8강)</td>
 </tr>
 <tr>
 <td><code>create secret docker-registry</code></td>
@@ -3568,7 +3568,9 @@ env 로 읽는 파드라면 <code>rollout restart</code> 까지 해야 새 값�
 <hr />
 <h2 id="_21">다음 단계 — 채점 실습<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-147-1"><a id="__codelineno-147-1" name="__codelineno-147-1" href="#__codelineno-147-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/06-workloads
+<p>이 페이지는 세 강의에 걸쳐 있어 채점 세트도 세 개입니다. 강의를 본 순서대로 푸세요.</p>
+<p><strong>4강 → <code>04-pods</code></strong> (1) ~ 3))</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-147-1"><a id="__codelineno-147-1" name="__codelineno-147-1" href="#__codelineno-147-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/04-pods
 </span><span id="__span-147-2"><a id="__codelineno-147-2" name="__codelineno-147-2" href="#__codelineno-147-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
 </span></code></pre></div>
 <table>
@@ -3580,28 +3582,77 @@ env 로 읽는 파드라면 <code>rollout restart</code> 까지 해야 새 값�
 </thead>
 <tbody>
 <tr>
-<td>Q1 Deployment 생성 · 스케일 · 업데이트 · 롤백</td>
+<td>Q6 Deployment 만들고 버전 바꾸기</td>
 <td>2) 3)</td>
 </tr>
 <tr>
-<td>Q2 ConfigMap 을 envFrom 으로 주입</td>
+<td>Q7 멈춘 롤아웃 되돌리기</td>
+<td>2) 롤백 · <code>rollout undo</code></td>
+</tr>
+</tbody>
+</table>
+<p>Q1 ~ Q5(파드 · 라벨 · ReplicaSet)는 4강 영상 범위입니다. 이 페이지에는 따로 단계가 없습니다.</p>
+<p><strong>6강 → <code>06-config</code></strong> (4) · 5))</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-148-1"><a id="__codelineno-148-1" name="__codelineno-148-1" href="#__codelineno-148-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/06-config
+</span><span id="__span-148-2"><a id="__codelineno-148-2" name="__codelineno-148-2" href="#__codelineno-148-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>문제</th>
+<th>이 페이지에서 연습한 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1 ConfigMap 생성 + 파드에 환경변수로 주입</td>
 <td>1) 뼈대 뽑기 · 4)</td>
 </tr>
 <tr>
-<td>Q3 CronJob</td>
+<td>Q2 키 하나만 골라 다른 이름의 환경변수로</td>
+<td>4)</td>
+</tr>
+<tr>
+<td>Q3 파일로 만든 ConfigMap 을 볼륨으로 마운트</td>
+<td>4) 볼륨으로 넣기</td>
+</tr>
+<tr>
+<td>Q4 Secret — 풀어 읽기 · 만들기 · 환경변수로 넣기</td>
+<td>5)</td>
+</tr>
+<tr>
+<td>Q5 ConfigMap 수정 → 재배포 → immutable</td>
+<td>4) Deployment 에 반영하기 · 잠그기</td>
+</tr>
+</tbody>
+</table>
+<p><strong>10강 → <code>10-workloads</code></strong> (6) ~ 8))</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-149-1"><a id="__codelineno-149-1" name="__codelineno-149-1" href="#__codelineno-149-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/10-workloads
+</span><span id="__span-149-2"><a id="__codelineno-149-2" name="__codelineno-149-2" href="#__codelineno-149-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>문제</th>
+<th>이 페이지에서 연습한 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1 Deployment 생성 · 스케일 · 롤링 업데이트 · 롤백</td>
+<td>2) 3) (4강 복습)</td>
+</tr>
+<tr>
+<td>Q2 CronJob</td>
 <td>6)</td>
 </tr>
 <tr>
-<td>Q4 DaemonSet (hostNetwork · hostPID)</td>
+<td>Q3 DaemonSet (hostNetwork · hostPID)</td>
 <td>1) 7) — 필드 위치는 <code>kubectl explain pod.spec</code> 으로</td>
 </tr>
 <tr>
-<td>Q5 네이티브 사이드카</td>
+<td>Q4 네이티브 사이드카</td>
 <td>8)</td>
-</tr>
-<tr>
-<td>Q6 ConfigMap 수정 → 재배포 → immutable</td>
-<td>4) Deployment 에 반영하기 · 잠그기</td>
 </tr>
 </tbody>
 </table>
@@ -3640,7 +3691,7 @@ env 로 읽는 파드라면 <code>rollout restart</code> 까지 해야 새 값�
       <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
         
           
-          <a href="../04-cluster-build/" class="md-footer__link md-footer__link--prev" aria-label="이전: 4강 · 클러스터 구축 (VirtualBox)">
+          <a href="../13-cluster-setup/" class="md-footer__link md-footer__link--prev" aria-label="이전: 3·19강 · 노드 조인 · CNI · CRI">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3650,20 +3701,20 @@ env 로 읽는 파드라면 <code>rollout restart</code> 까지 해야 새 값�
                 이전
               </span>
               <div class="md-ellipsis">
-                4강 · 클러스터 구축 (VirtualBox)
+                3·19강 · 노드 조인 · CNI · CRI
               </div>
             </div>
           </a>
         
         
           
-          <a href="../07-scheduling/" class="md-footer__link md-footer__link--next" aria-label="다음: 7강 · 스케줄링">
+          <a href="../09-networking/" class="md-footer__link md-footer__link--next" aria-label="다음: 5강 · 서비스와 내부 통신">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 다음
               </span>
               <div class="md-ellipsis">
-                7강 · 스케줄링
+                5강 · 서비스와 내부 통신
               </div>
             </div>
             <div class="md-footer__button md-icon">

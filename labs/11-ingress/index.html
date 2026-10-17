@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/11-ingress/">
       
       
-        <link rel="prev" href="../10-networkpolicy/">
+        <link rel="prev" href="../07-scheduling/">
       
       
-        <link rel="next" href="../13-cluster-setup/">
+        <link rel="next" href="../08-storage/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>11강 · Ingress - CKA 실습 가이드</title>
+        <title>8강 · Ingress → Gateway API - CKA 실습 가이드</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#11-ingress" class="md-skip">
+        <a href="#8-ingress-gateway-api" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              11강 · Ingress
+              8강 · Ingress → Gateway API
             
           </span>
         </div>
@@ -267,7 +267,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../03-architecture/" class="md-tabs__link">
+        <a href="../04-cluster-build/" class="md-tabs__link">
           
   
   
@@ -442,14 +442,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../03-architecture/" class="md-nav__link">
+      <a href="../04-cluster-build/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    3강 · 아키텍처
+    3강 · 내 클러스터 만들기 (VirtualBox)
   
 
     
@@ -470,14 +470,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../04-cluster-build/" class="md-nav__link">
+      <a href="../13-cluster-setup/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    4강 · 클러스터 구축 (VirtualBox)
+    3·19강 · 노드 조인 · CNI · CRI
   
 
     
@@ -505,63 +505,7 @@
   <span class="md-ellipsis">
     
   
-    6강 · 워크로드
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-scheduling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    7강 · 스케줄링
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../08-storage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    8강 · 스토리지
+    4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
   
 
     
@@ -589,7 +533,7 @@
   <span class="md-ellipsis">
     
   
-    9강 · 서비스와 내부 통신
+    5강 · 서비스와 내부 통신
   
 
     
@@ -610,14 +554,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../10-networkpolicy/" class="md-nav__link">
+      <a href="../07-scheduling/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    10강 · NetworkPolicy
+    7·11·12강 · 자원 · 스케줄링 · HPA
   
 
     
@@ -654,7 +598,7 @@
   <span class="md-ellipsis">
     
   
-    11강 · Ingress
+    8강 · Ingress → Gateway API
   
 
     
@@ -672,7 +616,7 @@
   <span class="md-ellipsis">
     
   
-    11강 · Ingress
+    8강 · Ingress → Gateway API
   
 
     
@@ -1140,14 +1084,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../13-cluster-setup/" class="md-nav__link">
+      <a href="../08-storage/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    13강 · 클러스터 구축
+    13강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · NetworkPolicy
   
 
     
@@ -1175,63 +1147,7 @@
   <span class="md-ellipsis">
     
   
-    14강 · RBAC
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../15-maintenance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    15강 · 유지보수
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../16-node-ops/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    16강 · 노드 운영
+    15강 · RBAC
   
 
     
@@ -1259,7 +1175,91 @@
   <span class="md-ellipsis">
     
   
-    17강 · Helm과 Kustomize
+    16·17강 · Helm · Kustomize · CRD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18강 · 아키텍처 (컨트롤플레인)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-node-ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)
   
 
     
@@ -1287,7 +1287,7 @@
   <span class="md-ellipsis">
     
   
-    19강 · 트러블슈팅
+    22·23강 · 트러블슈팅
   
 
     
@@ -1781,9 +1781,9 @@
   
 
 
-<h1 id="11-ingress">11강 · Ingress<a class="headerlink" href="#11-ingress" title="Permanent link">&para;</a></h1>
+<h1 id="8-ingress-gateway-api">8강 · Ingress → Gateway API<a class="headerlink" href="#8-ingress-gateway-api" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>영상: <strong>11강-외부노출Ingress</strong> · 이어서 풀 채점 세트: <code>11-ingress</code></p>
+<p>영상: <strong>8강 밖에서 이름으로 들어오기 — Ingress → Gateway API</strong> · 이어서 풀 채점 세트: <code>08-ingress</code></p>
 </blockquote>
 <h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1817,7 +1817,7 @@
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>ingress-nginx-controller             NodePort    10.99.215.40   80:31692/TCP,443:32507/TCP   3d
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>ingress-nginx-controller-admission   ClusterIP   10.108.33.12   443/TCP                      3d
 </span></code></pre></div>
-<p>관찰 포인트: 컨트롤러 자체도 <strong>NodePort Service</strong> 뒤에 있습니다. 베어메탈이라 LoadBalancer 가 없으니, 밖에서는 <code>&lt;노드IP&gt;:&lt;NodePort&gt;</code> 로 들어옵니다(<a href="../09-networking/#4-nodeport">9강 의 NodePort</a>).
+<p>관찰 포인트: 컨트롤러 자체도 <strong>NodePort Service</strong> 뒤에 있습니다. 베어메탈이라 LoadBalancer 가 없으니, 밖에서는 <code>&lt;노드IP&gt;:&lt;NodePort&gt;</code> 로 들어옵니다(<a href="../09-networking/#4-nodeport">5강 의 NodePort</a>).
 포트 번호는 설치할 때 정해지므로 <strong>내 클러스터의 값</strong>을 씁니다.</p>
 <details class="note">
 <summary>컨트롤러가 없다면 — 설치 (베어메탈용 매니페스트)</summary>
@@ -2386,7 +2386,7 @@
 </div>
 <hr />
 <h2 id="7-networkpolicy">7) NetworkPolicy 와 함께 — 컨트롤러만 들여보내기<a class="headerlink" href="#7-networkpolicy" title="Permanent link">&para;</a></h2>
-<p>"밖은 Ingress 로 열고, 안은 NetworkPolicy 로 잠근다" 는 조합입니다. 원리는 <a href="../10-networkpolicy/">10강 · NetworkPolicy</a> 에서 다뤘으니 여기서는 결과만 확인합니다.</p>
+<p>"밖은 Ingress 로 열고, 안은 NetworkPolicy 로 잠근다" 는 조합입니다. 원리는 <a href="../10-networkpolicy/">14강 · NetworkPolicy</a> 에서 다루니 여기서는 결과만 확인합니다.</p>
 <p><code>deny-in-all.yaml</code>:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-56-1"><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
 </span><span id="__span-56-2"><a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NetworkPolicy</span>
@@ -2534,7 +2534,7 @@
 </table>
 <hr />
 <h2 id="9-ingress-gateway-api">9) Ingress 를 Gateway API 로 옮기기<a class="headerlink" href="#9-ingress-gateway-api" title="Permanent link">&para;</a></h2>
-<p>Gateway API 는 Ingress 의 뒤를 잇는 표준입니다(구조 전체는 12강에서 다룹니다). 시험에는 <strong>이미 있는 Ingress 를 읽고, 같은 동작을 하는 Gateway + HTTPRoute 를 만든 뒤, Ingress 를 지우는</strong> 문제가 나옵니다. <strong>HTTPS 리스너</strong>까지 옮겨야 합니다.</p>
+<p>Gateway API 는 Ingress 의 뒤를 잇는 표준입니다(구조 전체는 8강 후반의 Gateway API 부분에서 다룹니다). 시험에는 <strong>이미 있는 Ingress 를 읽고, 같은 동작을 하는 Gateway + HTTPRoute 를 만든 뒤, Ingress 를 지우는</strong> 문제가 나옵니다. <strong>HTTPS 리스너</strong>까지 옮겨야 합니다.</p>
 <p>여기서는 5) 에서 만든 <code>shop-tls</code>(호스트 <code>secure.guide.local</code> · Secret <code>guide-tls</code> · <code>catalog-svc:80</code>)를 옮깁니다.</p>
 <h3 id="gatewayclass-7">준비 — GatewayClass 확인, 7) 의 정책 걷어내기<a class="headerlink" href="#gatewayclass-7" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>gatewayclass
@@ -2553,7 +2553,7 @@
 <p>관찰 포인트: Ingress 에서 <code>get ingressclass</code> 로 클래스 이름을 확인했듯, 여기서는 <strong><code>get gatewayclass</code> 의 NAME</strong> 이 Gateway 의 <code>gatewayClassName</code> 에 들어갑니다. <code>ACCEPTED</code> 가 <code>True</code> 여야 컨트롤러가 살아 있는 것입니다.</p>
 <details class="note">
 <summary>GatewayClass 가 없다면 — 설치 (NGINX Gateway Fabric)</summary>
-<p>Gateway API 는 <strong>CRD + 구현(컨트롤러)</strong> 을 따로 설치합니다. 채점 세트 <code>11-ingress</code> 의 <code>start</code> 가 아래와 같은 버전으로 자동 설치하므로, 채점 세트를 한 번 시작했다면 이미 있습니다.
+<p>Gateway API 는 <strong>CRD + 구현(컨트롤러)</strong> 을 따로 설치합니다. 채점 세트 <code>08-ingress</code> 의 <code>start</code> 가 아래와 같은 버전으로 자동 설치하므로, 채점 세트를 한 번 시작했다면 이미 있습니다.
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a><span class="nv">NGF_VERSION</span><span class="o">=</span>v2.7.0
 </span><span id="__span-72-2"><a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a>kubectl<span class="w"> </span>kustomize<span class="w"> </span><span class="s2">"https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=</span><span class="si">${</span><span class="nv">NGF_VERSION</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
 </span><span id="__span-72-3"><a id="__codelineno-72-3" name="__codelineno-72-3" href="#__codelineno-72-3"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>--server-side<span class="w"> </span>-f<span class="w"> </span>https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/<span class="si">${</span><span class="nv">NGF_VERSION</span><span class="si">}</span>/deploy/crds.yaml
@@ -2932,7 +2932,7 @@ HTTPS 는 SNI 까지 맞추는 <code>--resolve</code> 가 정확합니다.</p>
 <hr />
 <h2 id="_12">다음 단계 — 채점 실습<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong> 컨트롤러가 설치돼 있어야 실제 접속까지 확인할 수 있습니다. Q5 에 필요한 Gateway API(NGINX Gateway Fabric)는 클러스터에 없으면 <code>start</code> 가 자동으로 설치합니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-95-1"><a id="__codelineno-95-1" name="__codelineno-95-1" href="#__codelineno-95-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/11-ingress
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-95-1"><a id="__codelineno-95-1" name="__codelineno-95-1" href="#__codelineno-95-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/08-ingress
 </span><span id="__span-95-2"><a id="__codelineno-95-2" name="__codelineno-95-2" href="#__codelineno-95-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
 </span></code></pre></div>
 <table>
@@ -2957,7 +2957,7 @@ HTTPS 는 SNI 까지 맞추는 <code>--resolve</code> 가 정확합니다.</p>
 </tr>
 <tr>
 <td>Q4 NetworkPolicy 로 네임스페이스 격리</td>
-<td>7) (원리는 <a href="../10-networkpolicy/">10강</a> 의 2) · 3))</td>
+<td>7) (원리는 <a href="../10-networkpolicy/">14강</a> 의 2) · 3))</td>
 </tr>
 <tr>
 <td>Q5 Ingress 를 Gateway API 로 옮기기 (HTTPS)</td>
@@ -3000,7 +3000,7 @@ HTTPS 는 SNI 까지 맞추는 <code>--resolve</code> 가 정확합니다.</p>
       <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
         
           
-          <a href="../10-networkpolicy/" class="md-footer__link md-footer__link--prev" aria-label="이전: 10강 · NetworkPolicy">
+          <a href="../07-scheduling/" class="md-footer__link md-footer__link--prev" aria-label="이전: 7·11·12강 · 자원 · 스케줄링 · HPA">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3010,20 +3010,20 @@ HTTPS 는 SNI 까지 맞추는 <code>--resolve</code> 가 정확합니다.</p>
                 이전
               </span>
               <div class="md-ellipsis">
-                10강 · NetworkPolicy
+                7·11·12강 · 자원 · 스케줄링 · HPA
               </div>
             </div>
           </a>
         
         
           
-          <a href="../13-cluster-setup/" class="md-footer__link md-footer__link--next" aria-label="다음: 13강 · 클러스터 구축">
+          <a href="../08-storage/" class="md-footer__link md-footer__link--next" aria-label="다음: 13강 · 스토리지">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 다음
               </span>
               <div class="md-ellipsis">
-                13강 · 클러스터 구축
+                13강 · 스토리지
               </div>
             </div>
             <div class="md-footer__button md-icon">

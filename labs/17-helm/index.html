@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/17-helm/">
       
       
-        <link rel="prev" href="../16-node-ops/">
+        <link rel="prev" href="../14-rbac/">
       
       
-        <link rel="next" href="../19-troubleshooting/">
+        <link rel="next" href="../03-architecture/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>17강 · Helm과 Kustomize - CKA 실습 가이드</title>
+        <title>16·17강 · Helm · Kustomize · CRD - CKA 실습 가이드</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#17-helm-kustomize" class="md-skip">
+        <a href="#1617-helm-kustomize-crd" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              17강 · Helm과 Kustomize
+              16·17강 · Helm · Kustomize · CRD
             
           </span>
         </div>
@@ -267,7 +267,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../03-architecture/" class="md-tabs__link">
+        <a href="../04-cluster-build/" class="md-tabs__link">
           
   
   
@@ -442,34 +442,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../03-architecture/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    3강 · 아키텍처
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../04-cluster-build/" class="md-nav__link">
         
   
@@ -477,175 +449,7 @@
   <span class="md-ellipsis">
     
   
-    4강 · 클러스터 구축 (VirtualBox)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../06-workloads/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    6강 · 워크로드
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-scheduling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    7강 · 스케줄링
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../08-storage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    8강 · 스토리지
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../09-networking/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    9강 · 서비스와 내부 통신
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../10-networkpolicy/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    10강 · NetworkPolicy
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../11-ingress/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    11강 · Ingress
+    3강 · 내 클러스터 만들기 (VirtualBox)
   
 
     
@@ -673,7 +477,175 @@
   <span class="md-ellipsis">
     
   
-    13강 · 클러스터 구축
+    3·19강 · 노드 조인 · CNI · CRI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-workloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5강 · 서비스와 내부 통신
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7·11·12강 · 자원 · 스케줄링 · HPA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8강 · Ingress → Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · NetworkPolicy
   
 
     
@@ -701,63 +673,7 @@
   <span class="md-ellipsis">
     
   
-    14강 · RBAC
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../15-maintenance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    15강 · 유지보수
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../16-node-ops/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    16강 · 노드 운영
+    15강 · RBAC
   
 
     
@@ -794,7 +710,7 @@
   <span class="md-ellipsis">
     
   
-    17강 · Helm과 Kustomize
+    16·17강 · Helm · Kustomize · CRD
   
 
     
@@ -812,7 +728,7 @@
   <span class="md-ellipsis">
     
   
-    17강 · Helm과 Kustomize
+    16·17강 · Helm · Kustomize · CRD
   
 
     
@@ -1490,6 +1406,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18강 · 아키텍처 (컨트롤플레인)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-node-ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../19-troubleshooting/" class="md-nav__link">
         
   
@@ -1497,7 +1497,7 @@
   <span class="md-ellipsis">
     
   
-    19강 · 트러블슈팅
+    22·23강 · 트러블슈팅
   
 
     
@@ -2201,9 +2201,9 @@
   
 
 
-<h1 id="17-helm-kustomize">17강 · Helm과 Kustomize<a class="headerlink" href="#17-helm-kustomize" title="Permanent link">&para;</a></h1>
+<h1 id="1617-helm-kustomize-crd">16·17강 · Helm · Kustomize · CRD<a class="headerlink" href="#1617-helm-kustomize-crd" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>영상: <strong>17강-Helm과Kustomize</strong> · 이어서 풀 채점 세트: <code>17-helm</code></p>
+<p>영상: <strong>16강 Helm · Kustomize</strong> (CRD 확인 부분은 <strong>17강 CRD · 오퍼레이터</strong>) · 이어서 풀 채점 세트: <code>16-helm</code></p>
 </blockquote>
 <h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3312,7 +3312,7 @@ CRD 가 어디 있는지는 <code>helm pull --untar</code> 후 <code>ls crds/ te
 끄는 값의 이름은 <code>helm show values &lt;차트&gt; | grep -i -A3 crd</code> 로 찾습니다.</p>
 <div class="admonition note">
 <p class="admonition-title">CRD 자체가 궁금하다면</p>
-<p>CRD 와 오퍼레이터가 무엇인지는 <strong>18강 (CRD 와 오퍼레이터)</strong> 에서 다룹니다. 여기서는 "차트가 CRD 를 함께 가져올 수 있다" 까지만 알면 충분합니다.</p>
+<p>CRD 와 오퍼레이터가 무엇인지는 <strong>17강 (CRD 와 오퍼레이터)</strong> 에서 다룹니다. 여기서는 "차트가 CRD 를 함께 가져올 수 있다" 까지만 알면 충분합니다.</p>
 </div>
 <h3 id="3-crd-kubectl-get-crd-kubectl-explain">③ CRD 목록과 필드 설명을 파일로 — <code>kubectl get crd</code> · <code>kubectl explain</code><a class="headerlink" href="#3-crd-kubectl-get-crd-kubectl-explain" title="Permanent link">&para;</a></h3>
 <p>차트로 설치한 프로젝트는 CRD 를 여러 개 남깁니다. 시험에는 <strong>"이 프로젝트의 CRD 목록을 기본 출력 형식으로 파일에 저장하라"</strong>,
@@ -3973,7 +3973,7 @@ kubectl 에 들어 있어서 따로 설치할 것이 없습니다(<code>kubectl 
 <hr />
 <h2 id="_23">다음 단계 — 채점 실습<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
 <p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong> 차트를 내려받으므로 인터넷이 필요합니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-124-1"><a id="__codelineno-124-1" name="__codelineno-124-1" href="#__codelineno-124-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/17-helm
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-124-1"><a id="__codelineno-124-1" name="__codelineno-124-1" href="#__codelineno-124-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/16-helm
 </span><span id="__span-124-2"><a id="__codelineno-124-2" name="__codelineno-124-2" href="#__codelineno-124-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
 </span></code></pre></div>
 <table>
@@ -4049,7 +4049,7 @@ kubectl 에 들어 있어서 따로 설치할 것이 없습니다(<code>kubectl 
       <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
         
           
-          <a href="../16-node-ops/" class="md-footer__link md-footer__link--prev" aria-label="이전: 16강 · 노드 운영">
+          <a href="../14-rbac/" class="md-footer__link md-footer__link--prev" aria-label="이전: 15강 · RBAC">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -4059,20 +4059,20 @@ kubectl 에 들어 있어서 따로 설치할 것이 없습니다(<code>kubectl 
                 이전
               </span>
               <div class="md-ellipsis">
-                16강 · 노드 운영
+                15강 · RBAC
               </div>
             </div>
           </a>
         
         
           
-          <a href="../19-troubleshooting/" class="md-footer__link md-footer__link--next" aria-label="다음: 19강 · 트러블슈팅">
+          <a href="../03-architecture/" class="md-footer__link md-footer__link--next" aria-label="다음: 18강 · 아키텍처 (컨트롤플레인)">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 다음
               </span>
               <div class="md-ellipsis">
-                19강 · 트러블슈팅
+                18강 · 아키텍처 (컨트롤플레인)
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/13-cluster-setup/">
       
       
-        <link rel="prev" href="../11-ingress/">
+        <link rel="prev" href="../04-cluster-build/">
       
       
-        <link rel="next" href="../14-rbac/">
+        <link rel="next" href="../06-workloads/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>13강 · 클러스터 구축 - CKA 실습 가이드</title>
+        <title>3·19강 · 노드 조인 · CNI · CRI - CKA 실습 가이드</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#13" class="md-skip">
+        <a href="#319-cni-cri" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              13강 · 클러스터 구축
+              3·19강 · 노드 조인 · CNI · CRI
             
           </span>
         </div>
@@ -267,7 +267,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../03-architecture/" class="md-tabs__link">
+        <a href="../04-cluster-build/" class="md-tabs__link">
           
   
   
@@ -442,34 +442,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../03-architecture/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    3강 · 아키텍처
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../04-cluster-build/" class="md-nav__link">
         
   
@@ -477,175 +449,7 @@
   <span class="md-ellipsis">
     
   
-    4강 · 클러스터 구축 (VirtualBox)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../06-workloads/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    6강 · 워크로드
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-scheduling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    7강 · 스케줄링
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../08-storage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    8강 · 스토리지
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../09-networking/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    9강 · 서비스와 내부 통신
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../10-networkpolicy/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    10강 · NetworkPolicy
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../11-ingress/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    11강 · Ingress
+    3강 · 내 클러스터 만들기 (VirtualBox)
   
 
     
@@ -682,7 +486,7 @@
   <span class="md-ellipsis">
     
   
-    13강 · 클러스터 구축
+    3·19강 · 노드 조인 · CNI · CRI
   
 
     
@@ -700,7 +504,7 @@
   <span class="md-ellipsis">
     
   
-    13강 · 클러스터 구축
+    3·19강 · 노드 조인 · CNI · CRI
   
 
     
@@ -1257,6 +1061,174 @@
   
   
     <li class="md-nav__item">
+      <a href="../06-workloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5강 · 서비스와 내부 통신
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7·11·12강 · 자원 · 스케줄링 · HPA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8강 · Ingress → Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · NetworkPolicy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../14-rbac/" class="md-nav__link">
         
   
@@ -1264,63 +1236,7 @@
   <span class="md-ellipsis">
     
   
-    14강 · RBAC
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../15-maintenance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    15강 · 유지보수
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../16-node-ops/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    16강 · 노드 운영
+    15강 · RBAC
   
 
     
@@ -1348,7 +1264,91 @@
   <span class="md-ellipsis">
     
   
-    17강 · Helm과 Kustomize
+    16·17강 · Helm · Kustomize · CRD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18강 · 아키텍처 (컨트롤플레인)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-node-ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)
   
 
     
@@ -1376,7 +1376,7 @@
   <span class="md-ellipsis">
     
   
-    19강 · 트러블슈팅
+    22·23강 · 트러블슈팅
   
 
     
@@ -1959,9 +1959,9 @@
   
 
 
-<h1 id="13">13강 · 클러스터 구축<a class="headerlink" href="#13" title="Permanent link">&para;</a></h1>
+<h1 id="319-cni-cri">3·19강 · 노드 조인 · CNI · CRI<a class="headerlink" href="#319-cni-cri" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>영상: <strong>13강-클러스터구축</strong> · 이어서 풀 채점 세트: <code>13-cluster-setup</code></p>
+<p>영상: <strong>3강 내 클러스터 만들기</strong> (kubeadm init/join · CNI) · <strong>19강 노드 안을 열어 보기</strong> (crictl · kubelet · CRI 설치) · 이어서 풀 채점 세트: <code>03-cluster-setup</code></p>
 </blockquote>
 <h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -2191,7 +2191,7 @@
 <tr>
 <td>certs</td>
 <td><code>/etc/kubernetes/pki/</code> (CA 10년 · 나머지 1년)</td>
-<td><a href="../15-maintenance/">15강 · 인증서</a></td>
+<td><a href="../15-maintenance/">20강 · 인증서</a></td>
 </tr>
 <tr>
 <td>kubeconfig</td>
@@ -2201,7 +2201,7 @@
 <tr>
 <td>etcd · control-plane</td>
 <td><code>/etc/kubernetes/manifests/*.yaml</code> (스태틱 파드)</td>
-<td><a href="../16-node-ops/">16강 · static pod</a></td>
+<td><a href="../16-node-ops/">19강 · static pod</a></td>
 </tr>
 <tr>
 <td>kubelet-start</td>
@@ -2233,7 +2233,7 @@
 </span></code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">podSubnet 은 10.244.0.0/16 인데 파드 IP 는 10.0.x.x</p>
-<p><code>cilium install</code> 기본 모드는 Cilium 자체 IPAM(cluster-pool, 10.0.0.0/8)으로 파드 IP 를 나눠 줍니다. kubeadm 에 준 <code>--pod-network-cidr</code> 은 기록만 되고 Cilium 은 쓰지 않습니다. 자세한 배경은 <a href="../04-cluster-build/">4강 · 실습 클러스터 구축</a>의 8) 을 보세요.</p>
+<p><code>cilium install</code> 기본 모드는 Cilium 자체 IPAM(cluster-pool, 10.0.0.0/8)으로 파드 IP 를 나눠 줍니다. kubeadm 에 준 <code>--pod-network-cidr</code> 은 기록만 되고 Cilium 은 쓰지 않습니다. 자세한 배경은 <a href="../04-cluster-build/">3강 · 내 클러스터 만들기</a>의 8) 을 보세요.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">기본값과 비교해 보기</p>
@@ -2292,7 +2292,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>관찰 포인트:</strong> 일상 작업은 <code>admin.conf</code> 로, RBAC 를 망가뜨려 잠겼을 때만 <code>super-admin.conf</code> 를 씁니다. 권한 구조는 <a href="../14-rbac/">14강 · RBAC</a> 에서 이어집니다.</p>
+<p><strong>관찰 포인트:</strong> 일상 작업은 <code>admin.conf</code> 로, RBAC 를 망가뜨려 잠겼을 때만 <code>super-admin.conf</code> 를 씁니다. 권한 구조는 <a href="../14-rbac/">15강 · RBAC</a> 에서 이어집니다.</p>
 <hr />
 <h2 id="4">4) 조인 토큰 — 무엇이 무엇을 증명하나<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <p>join 명령에는 두 가지 값이 들어 있습니다.</p>
@@ -2394,7 +2394,7 @@
 </span><span id="__span-28-9"><a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a>control-plane   Ready    control-plane   3d    v1.32.x
 </span><span id="__span-28-10"><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a>worker-2        Ready    &lt;none&gt;          3d    v1.32.x
 </span></code></pre></div>
-<p>drain 플래그의 의미는 <a href="../15-maintenance/">15강 · drain</a> 과 <a href="../16-node-ops/">16강 · drain 의 걸림돌</a> 에서 자세히 봅니다.</p>
+<p>drain 플래그의 의미는 <a href="../15-maintenance/">20강 · drain</a> 과 <a href="../16-node-ops/">19강 · drain 의 걸림돌</a> 에서 자세히 봅니다.</p>
 <h3 id="2">② 노드 쪽 흔적 지우기<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
 <p>노드 오브젝트를 지워도 <strong>worker-1 의 kubelet 은 아직 옛 인증서로 돌고 있습니다.</strong> 노드 쪽을 초기화합니다.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># worker-1 에서</span>
@@ -2451,7 +2451,7 @@
 <div class="admonition warning">
 <p class="admonition-title">INTERNAL-IP 가 10.0.2.15 로 나오면</p>
 <p>VirtualBox 는 NAT 어댑터(10.0.2.x)가 기본 경로라서, kubelet 이 그 주소를 노드 IP 로 고를 수 있습니다.
-이 과정의 클러스터는 <code>/etc/hosts</code> 에 <code>192.168.56.11 worker-1</code> 이 있어서 kubelet 이 hostname 을 해석해 192.168.56.x 를 고릅니다(<a href="../04-cluster-build/">4강</a> 1-5). hosts 가 맞는데도 10.0.2.15 가 나오면 <code>/etc/default/kubelet</code> 에 <code>KUBELET_EXTRA_ARGS=--node-ip=...</code> 를 넣습니다. <code>kubeadm reset</code> 은 이 파일을 지우지 않습니다. 8) 에서 이 파일을 확인합니다.</p>
+이 과정의 클러스터는 <code>/etc/hosts</code> 에 <code>192.168.56.11 worker-1</code> 이 있어서 kubelet 이 hostname 을 해석해 192.168.56.x 를 고릅니다(<a href="../04-cluster-build/">3강</a> 1-5). hosts 가 맞는데도 10.0.2.15 가 나오면 <code>/etc/default/kubelet</code> 에 <code>KUBELET_EXTRA_ARGS=--node-ip=...</code> 를 넣습니다. <code>kubeadm reset</code> 은 이 파일을 지우지 않습니다. 8) 에서 이 파일을 확인합니다.</p>
 </div>
 <div class="admonition question">
 <p class="admonition-title">노드 오브젝트를 안 지우고 reset → join 하면?</p>
@@ -2877,7 +2877,7 @@
 </tr>
 <tr>
 <td><code>Kubelet stopped posting node status</code></td>
-<td>kubelet 이 멈췄다 → 노드에 들어가 <code>systemctl status kubelet</code> (<a href="../16-node-ops/">16강</a>)</td>
+<td>kubelet 이 멈췄다 → 노드에 들어가 <code>systemctl status kubelet</code> (<a href="../16-node-ops/">19강</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -3012,7 +3012,7 @@
 </tr>
 </tbody>
 </table>
-<p>kubelet 을 멈추고 고치는 실험은 <a href="../16-node-ops/">16강 · NotReady 복구</a> 에서 합니다.</p>
+<p>kubelet 을 멈추고 고치는 실험은 <a href="../16-node-ops/">19강 · NotReady 복구</a> 에서 합니다.</p>
 <hr />
 <h2 id="9-cri-dpkg-systemctl-enable-now-sysctl">9) CRI 패키지 설치 (dpkg · systemctl enable --now · sysctl 영구 설정)<a class="headerlink" href="#9-cri-dpkg-systemctl-enable-now-sysctl" title="Permanent link">&para;</a></h2>
 <p>시험에는 "이 노드에 <strong>cri-dockerd</strong> 를 설치하고 서비스로 띄운 뒤, 커널 파라미터를 영구 설정하라" 가 나옵니다. cri-dockerd 는 Docker 엔진을 CRI 로 감싸 주는 어댑터입니다. 손이 가는 곳은 세 군데입니다.</p>
@@ -3328,7 +3328,7 @@ control-plane 쪽에서는 <code>kubectl delete node &lt;이름&gt;</code> 으�
 <hr />
 <h2 id="_9">다음 단계 — 채점 실습<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-113-1"><a id="__codelineno-113-1" name="__codelineno-113-1" href="#__codelineno-113-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/13-cluster-setup
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-113-1"><a id="__codelineno-113-1" name="__codelineno-113-1" href="#__codelineno-113-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/03-cluster-setup
 </span><span id="__span-113-2"><a id="__codelineno-113-2" name="__codelineno-113-2" href="#__codelineno-113-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
 </span></code></pre></div>
 <table>
@@ -3392,7 +3392,7 @@ control-plane 쪽에서는 <code>kubectl delete node &lt;이름&gt;</code> 으�
       <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
         
           
-          <a href="../11-ingress/" class="md-footer__link md-footer__link--prev" aria-label="이전: 11강 · Ingress">
+          <a href="../04-cluster-build/" class="md-footer__link md-footer__link--prev" aria-label="이전: 3강 · 내 클러스터 만들기 (VirtualBox)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3402,20 +3402,20 @@ control-plane 쪽에서는 <code>kubectl delete node &lt;이름&gt;</code> 으�
                 이전
               </span>
               <div class="md-ellipsis">
-                11강 · Ingress
+                3강 · 내 클러스터 만들기 (VirtualBox)
               </div>
             </div>
           </a>
         
         
           
-          <a href="../14-rbac/" class="md-footer__link md-footer__link--next" aria-label="다음: 14강 · RBAC">
+          <a href="../06-workloads/" class="md-footer__link md-footer__link--next" aria-label="다음: 4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 다음
               </span>
               <div class="md-ellipsis">
-                14강 · RBAC
+                4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/09-networking/">
       
       
-        <link rel="prev" href="../08-storage/">
+        <link rel="prev" href="../06-workloads/">
       
       
-        <link rel="next" href="../10-networkpolicy/">
+        <link rel="next" href="../07-scheduling/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>9강 · 서비스와 내부 통신 - CKA 실습 가이드</title>
+        <title>5강 · 서비스와 내부 통신 - CKA 실습 가이드</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#9" class="md-skip">
+        <a href="#5" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              9강 · 서비스와 내부 통신
+              5강 · 서비스와 내부 통신
             
           </span>
         </div>
@@ -267,7 +267,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../03-architecture/" class="md-tabs__link">
+        <a href="../04-cluster-build/" class="md-tabs__link">
           
   
   
@@ -442,14 +442,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../03-architecture/" class="md-nav__link">
+      <a href="../04-cluster-build/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    3강 · 아키텍처
+    3강 · 내 클러스터 만들기 (VirtualBox)
   
 
     
@@ -470,14 +470,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../04-cluster-build/" class="md-nav__link">
+      <a href="../13-cluster-setup/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    4강 · 클러스터 구축 (VirtualBox)
+    3·19강 · 노드 조인 · CNI · CRI
   
 
     
@@ -505,63 +505,7 @@
   <span class="md-ellipsis">
     
   
-    6강 · 워크로드
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-scheduling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    7강 · 스케줄링
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../08-storage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    8강 · 스토리지
+    4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
   
 
     
@@ -598,7 +542,7 @@
   <span class="md-ellipsis">
     
   
-    9강 · 서비스와 내부 통신
+    5강 · 서비스와 내부 통신
   
 
     
@@ -616,7 +560,7 @@
   <span class="md-ellipsis">
     
   
-    9강 · 서비스와 내부 통신
+    5강 · 서비스와 내부 통신
   
 
     
@@ -1051,14 +995,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../10-networkpolicy/" class="md-nav__link">
+      <a href="../07-scheduling/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    10강 · NetworkPolicy
+    7·11·12강 · 자원 · 스케줄링 · HPA
   
 
     
@@ -1086,7 +1030,7 @@
   <span class="md-ellipsis">
     
   
-    11강 · Ingress
+    8강 · Ingress → Gateway API
   
 
     
@@ -1107,14 +1051,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../13-cluster-setup/" class="md-nav__link">
+      <a href="../08-storage/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    13강 · 클러스터 구축
+    13강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · NetworkPolicy
   
 
     
@@ -1142,63 +1114,7 @@
   <span class="md-ellipsis">
     
   
-    14강 · RBAC
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../15-maintenance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    15강 · 유지보수
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../16-node-ops/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    16강 · 노드 운영
+    15강 · RBAC
   
 
     
@@ -1226,7 +1142,91 @@
   <span class="md-ellipsis">
     
   
-    17강 · Helm과 Kustomize
+    16·17강 · Helm · Kustomize · CRD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18강 · 아키텍처 (컨트롤플레인)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-node-ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)
   
 
     
@@ -1254,7 +1254,7 @@
   <span class="md-ellipsis">
     
   
-    19강 · 트러블슈팅
+    22·23강 · 트러블슈팅
   
 
     
@@ -1715,9 +1715,9 @@
   
 
 
-<h1 id="9">9강 · 서비스와 내부 통신<a class="headerlink" href="#9" title="Permanent link">&para;</a></h1>
+<h1 id="5">5강 · 서비스와 내부 통신<a class="headerlink" href="#5" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>영상: <strong>09강-서비스와내부통신</strong> · 이어서 풀 채점 세트: <code>09-networking</code></p>
+<p>영상: <strong>5강 서비스</strong> · 이어서 풀 채점 세트: <code>05-networking</code></p>
 </blockquote>
 <h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1727,7 +1727,7 @@
 <li>기존 Deployment 에 <strong>이름 붙은 포트</strong>를 추가하고, Service 의 <code>targetPort</code> 를 <strong>이름으로</strong> 지정해 NodePort 로 연다.</li>
 <li>파드 안에서 <strong>DNS 이름 규칙</strong>(짧은 이름 · 네임스페이스 · FQDN · Headless)을 확인한다.</li>
 <li>실제 전달을 맡는 <strong>kube-proxy / Cilium</strong> 의 흔적을 노드에서 찾아본다.</li>
-<li>NetworkPolicy 를 <strong>맛보기로</strong> 한 번 걸어 보고, 10강으로 넘어갈 준비를 한다.</li>
+<li>NetworkPolicy 를 <strong>맛보기로</strong> 한 번 걸어 보고, 14강(NetworkPolicy)으로 넘어갈 준비를 한다.</li>
 </ul>
 <hr />
 <h2 id="0">0) 준비<a class="headerlink" href="#0" title="Permanent link">&para;</a></h2>
@@ -2407,7 +2407,7 @@ ClusterIP 는 포트 규칙만 있는 가상 IP 라서 <code>ping</code> 에는 
 <p>관찰 포인트: <code>-&gt; 80</code> 입니다. port-forward 는 Service 의 셀렉터로 <strong>파드 하나를 골라 그 파드의 targetPort 로 바로</strong> 붙습니다. 부하 분산이 없고 디버깅용입니다.</p>
 <hr />
 <h2 id="8-networkpolicy">8) NetworkPolicy 미리 보기 — 한 번만 막아 본다<a class="headerlink" href="#8-networkpolicy" title="Permanent link">&para;</a></h2>
-<p>지금까지는 <strong>모든 파드가 menu 에 닿습니다.</strong> 두 클라이언트를 만들고, 한쪽만 허용해 봅니다. 원리와 함정은 <a href="../10-networkpolicy/">10강 · NetworkPolicy</a> 에서 자세히 다룹니다.</p>
+<p>지금까지는 <strong>모든 파드가 menu 에 닿습니다.</strong> 두 클라이언트를 만들고, 한쪽만 허용해 봅니다. 원리와 함정은 <a href="../10-networkpolicy/">14강 · NetworkPolicy</a> 에서 자세히 다룹니다.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-77-1"><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a>kubectl<span class="w"> </span>run<span class="w"> </span>cashier<span class="w"> </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--labels<span class="o">=</span><span class="nv">role</span><span class="o">=</span>cashier<span class="w"> </span>--command<span class="w"> </span>--<span class="w"> </span>sleep<span class="w"> </span><span class="m">3600</span>
 </span><span id="__span-77-2"><a id="__codelineno-77-2" name="__codelineno-77-2" href="#__codelineno-77-2"></a>kubectl<span class="w"> </span>run<span class="w"> </span>guest<span class="w">   </span>-n<span class="w"> </span>guide-net<span class="w"> </span>--image<span class="o">=</span>busybox:1.36<span class="w"> </span>--labels<span class="o">=</span><span class="nv">role</span><span class="o">=</span>guest<span class="w">   </span>--command<span class="w"> </span>--<span class="w"> </span>sleep<span class="w"> </span><span class="m">3600</span>
 </span></code></pre></div>
@@ -2524,7 +2524,7 @@ refused 가 아니라 <strong>timeout</strong> 이라면 NetworkPolicy 나 CNI �
 <hr />
 <h2 id="_10">다음 단계 — 채점 실습<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong> 채점은 실제로 임시 파드와 노드 IP 로 접속까지 확인합니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-86-1"><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/09-networking
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-86-1"><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/05-networking
 </span><span id="__span-86-2"><a id="__codelineno-86-2" name="__codelineno-86-2" href="#__codelineno-86-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
 </span></code></pre></div>
 <table>
@@ -2544,19 +2544,16 @@ refused 가 아니라 <strong>timeout</strong> 이라면 NetworkPolicy 나 CNI �
 <td>3) 4) — <code>$do</code> 로 뽑아 nodePort 추가</td>
 </tr>
 <tr>
-<td>Q3 NetworkPolicy — frontend 에서만 backend 로</td>
-<td>8) (자세한 원리는 <a href="../10-networkpolicy/">10강</a>)</td>
-</tr>
-<tr>
-<td>Q4 파드 안에서 클러스터 DNS 확인</td>
+<td>Q3 파드 안에서 클러스터 DNS 확인</td>
 <td>6) — resolv.conf, 짧은 이름과 FQDN</td>
 </tr>
 <tr>
-<td>Q5 이름 붙은 컨테이너 포트 추가 + NodePort 로 노출</td>
+<td>Q4 이름 붙은 컨테이너 포트 추가 + NodePort 로 노출</td>
 <td>4) "기존 Deployment 에 이름 붙은 포트를 추가하고 NodePort 로 열기" — edit/patch, <code>--target-port=&lt;이름&gt;</code></td>
 </tr>
 </tbody>
 </table>
+<p>8) 의 NetworkPolicy 맛보기는 이 세트에 없습니다. 같은 유형은 14강 채점 세트 <code>14-networkpolicy</code> 의 Q2(한 레이블만 허용)에서 풉니다 — 원리는 <a href="../10-networkpolicy/">14강 · NetworkPolicy</a>.</p>
 
 
 
@@ -2592,7 +2589,7 @@ refused 가 아니라 <strong>timeout</strong> 이라면 NetworkPolicy 나 CNI �
       <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
         
           
-          <a href="../08-storage/" class="md-footer__link md-footer__link--prev" aria-label="이전: 8강 · 스토리지">
+          <a href="../06-workloads/" class="md-footer__link md-footer__link--prev" aria-label="이전: 4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2602,20 +2599,20 @@ refused 가 아니라 <strong>timeout</strong> 이라면 NetworkPolicy 나 CNI �
                 이전
               </span>
               <div class="md-ellipsis">
-                8강 · 스토리지
+                4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
               </div>
             </div>
           </a>
         
         
           
-          <a href="../10-networkpolicy/" class="md-footer__link md-footer__link--next" aria-label="다음: 10강 · NetworkPolicy">
+          <a href="../07-scheduling/" class="md-footer__link md-footer__link--next" aria-label="다음: 7·11·12강 · 자원 · 스케줄링 · HPA">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 다음
               </span>
               <div class="md-ellipsis">
-                10강 · NetworkPolicy
+                7·11·12강 · 자원 · 스케줄링 · HPA
               </div>
             </div>
             <div class="md-footer__button md-icon">

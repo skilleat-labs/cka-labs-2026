@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/14-rbac/">
       
       
-        <link rel="prev" href="../13-cluster-setup/">
+        <link rel="prev" href="../10-networkpolicy/">
       
       
-        <link rel="next" href="../15-maintenance/">
+        <link rel="next" href="../17-helm/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>14강 · RBAC - CKA 실습 가이드</title>
+        <title>15강 · RBAC - CKA 실습 가이드</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#14-rbac" class="md-skip">
+        <a href="#15-rbac" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              14강 · RBAC
+              15강 · RBAC
             
           </span>
         </div>
@@ -267,7 +267,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../03-architecture/" class="md-tabs__link">
+        <a href="../04-cluster-build/" class="md-tabs__link">
           
   
   
@@ -442,34 +442,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../03-architecture/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    3강 · 아키텍처
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../04-cluster-build/" class="md-nav__link">
         
   
@@ -477,175 +449,7 @@
   <span class="md-ellipsis">
     
   
-    4강 · 클러스터 구축 (VirtualBox)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../06-workloads/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    6강 · 워크로드
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-scheduling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    7강 · 스케줄링
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../08-storage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    8강 · 스토리지
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../09-networking/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    9강 · 서비스와 내부 통신
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../10-networkpolicy/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    10강 · NetworkPolicy
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../11-ingress/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    11강 · Ingress
+    3강 · 내 클러스터 만들기 (VirtualBox)
   
 
     
@@ -673,7 +477,175 @@
   <span class="md-ellipsis">
     
   
-    13강 · 클러스터 구축
+    3·19강 · 노드 조인 · CNI · CRI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-workloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5강 · 서비스와 내부 통신
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7·11·12강 · 자원 · 스케줄링 · HPA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8강 · Ingress → Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · NetworkPolicy
   
 
     
@@ -710,7 +682,7 @@
   <span class="md-ellipsis">
     
   
-    14강 · RBAC
+    15강 · RBAC
   
 
     
@@ -728,7 +700,7 @@
   <span class="md-ellipsis">
     
   
-    14강 · RBAC
+    15강 · RBAC
   
 
     
@@ -1317,14 +1289,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../15-maintenance/" class="md-nav__link">
+      <a href="../17-helm/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    15강 · 유지보수
+    16·17강 · Helm · Kustomize · CRD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18강 · 아키텍처 (컨트롤플레인)
   
 
     
@@ -1352,7 +1352,7 @@
   <span class="md-ellipsis">
     
   
-    16강 · 노드 운영
+    19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
   
 
     
@@ -1373,14 +1373,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../17-helm/" class="md-nav__link">
+      <a href="../15-maintenance/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    17강 · Helm과 Kustomize
+    20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)
   
 
     
@@ -1408,7 +1408,7 @@
   <span class="md-ellipsis">
     
   
-    19강 · 트러블슈팅
+    22·23강 · 트러블슈팅
   
 
     
@@ -2023,9 +2023,9 @@
   
 
 
-<h1 id="14-rbac">14강 · RBAC<a class="headerlink" href="#14-rbac" title="Permanent link">&para;</a></h1>
+<h1 id="15-rbac">15강 · RBAC<a class="headerlink" href="#15-rbac" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>영상: <strong>14강-RBAC</strong> · 이어서 풀 채점 세트: <code>14-rbac</code></p>
+<p>영상: <strong>15강 인증 · RBAC · ServiceAccount</strong> · 이어서 풀 채점 세트: <code>15-rbac</code></p>
 </blockquote>
 <h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3020,7 +3020,7 @@ ClusterRole + ClusterRoleBinding 으로만 줄 수 있습니다.</p>
 <hr />
 <h2 id="_16">다음 단계 — 채점 실습<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-96-1"><a id="__codelineno-96-1" name="__codelineno-96-1" href="#__codelineno-96-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/14-rbac
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-96-1"><a id="__codelineno-96-1" name="__codelineno-96-1" href="#__codelineno-96-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/15-rbac
 </span><span id="__span-96-2"><a id="__codelineno-96-2" name="__codelineno-96-2" href="#__codelineno-96-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
 </span></code></pre></div>
 <table>
@@ -3084,7 +3084,7 @@ ClusterRole + ClusterRoleBinding 으로만 줄 수 있습니다.</p>
       <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
         
           
-          <a href="../13-cluster-setup/" class="md-footer__link md-footer__link--prev" aria-label="이전: 13강 · 클러스터 구축">
+          <a href="../10-networkpolicy/" class="md-footer__link md-footer__link--prev" aria-label="이전: 14강 · NetworkPolicy">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3094,20 +3094,20 @@ ClusterRole + ClusterRoleBinding 으로만 줄 수 있습니다.</p>
                 이전
               </span>
               <div class="md-ellipsis">
-                13강 · 클러스터 구축
+                14강 · NetworkPolicy
               </div>
             </div>
           </a>
         
         
           
-          <a href="../15-maintenance/" class="md-footer__link md-footer__link--next" aria-label="다음: 15강 · 유지보수">
+          <a href="../17-helm/" class="md-footer__link md-footer__link--next" aria-label="다음: 16·17강 · Helm · Kustomize · CRD">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 다음
               </span>
               <div class="md-ellipsis">
-                15강 · 유지보수
+                16·17강 · Helm · Kustomize · CRD
               </div>
             </div>
             <div class="md-footer__button md-icon">

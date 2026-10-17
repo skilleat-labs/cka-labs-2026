@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://skilleat-labs.github.io/cka-labs-2026/labs/16-node-ops/">
       
       
-        <link rel="prev" href="../15-maintenance/">
+        <link rel="prev" href="../03-architecture/">
       
       
-        <link rel="next" href="../17-helm/">
+        <link rel="next" href="../15-maintenance/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>16강 · 노드 운영 - CKA 실습 가이드</title>
+        <title>19강 · 노드 운영 (static pod · kubelet · drain · etcdctl) - CKA 실습 가이드</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#16" class="md-skip">
+        <a href="#19-static-pod-kubelet-drain-etcdctl" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              16강 · 노드 운영
+              19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
             
           </span>
         </div>
@@ -267,7 +267,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../03-architecture/" class="md-tabs__link">
+        <a href="../04-cluster-build/" class="md-tabs__link">
           
   
   
@@ -442,34 +442,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../03-architecture/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    3강 · 아키텍처
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../04-cluster-build/" class="md-nav__link">
         
   
@@ -477,175 +449,7 @@
   <span class="md-ellipsis">
     
   
-    4강 · 클러스터 구축 (VirtualBox)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../06-workloads/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    6강 · 워크로드
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-scheduling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    7강 · 스케줄링
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../08-storage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    8강 · 스토리지
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../09-networking/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    9강 · 서비스와 내부 통신
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../10-networkpolicy/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    10강 · NetworkPolicy
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../11-ingress/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    11강 · Ingress
+    3강 · 내 클러스터 만들기 (VirtualBox)
   
 
     
@@ -673,7 +477,175 @@
   <span class="md-ellipsis">
     
   
-    13강 · 클러스터 구축
+    3·19강 · 노드 조인 · CNI · CRI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-workloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5강 · 서비스와 내부 통신
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7·11·12강 · 자원 · 스케줄링 · HPA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8강 · Ingress → Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13강 · 스토리지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-networkpolicy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14강 · NetworkPolicy
   
 
     
@@ -701,7 +673,7 @@
   <span class="md-ellipsis">
     
   
-    14강 · RBAC
+    15강 · RBAC
   
 
     
@@ -722,14 +694,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../15-maintenance/" class="md-nav__link">
+      <a href="../17-helm/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    15강 · 유지보수
+    16·17강 · Helm · Kustomize · CRD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18강 · 아키텍처 (컨트롤플레인)
   
 
     
@@ -766,7 +766,7 @@
   <span class="md-ellipsis">
     
   
-    16강 · 노드 운영
+    19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
   
 
     
@@ -784,7 +784,7 @@
   <span class="md-ellipsis">
     
   
-    16강 · 노드 운영
+    19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
   
 
     
@@ -1191,14 +1191,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../17-helm/" class="md-nav__link">
+      <a href="../15-maintenance/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    17강 · Helm과 Kustomize
+    20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)
   
 
     
@@ -1226,7 +1226,7 @@
   <span class="md-ellipsis">
     
   
-    19강 · 트러블슈팅
+    22·23강 · 트러블슈팅
   
 
     
@@ -1659,9 +1659,9 @@
   
 
 
-<h1 id="16">16강 · 노드 운영<a class="headerlink" href="#16" title="Permanent link">&para;</a></h1>
+<h1 id="19-static-pod-kubelet-drain-etcdctl">19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)<a class="headerlink" href="#19-static-pod-kubelet-drain-etcdctl" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>영상: <strong>16강-노드운영3종</strong> · 이어서 풀 채점 세트: <code>16-node-ops</code></p>
+<p>영상: <strong>19강 노드 안을 열어 보기</strong> (drain · etcd · 업그레이드 부분은 20·21강과 이어짐) · 이어서 풀 채점 세트: <code>19-node-ops</code></p>
 </blockquote>
 <h2 id="_1">실습 목표<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1672,7 +1672,7 @@
 <li>etcdctl 을 <strong>호스트에서 쓸 때와 etcd 파드 안에서 쓸 때</strong>의 차이, 그리고 흔한 에러 메시지를 직접 재현한다.</li>
 <li>업그레이드하면 <strong>무엇이 바뀌고 무엇이 그대로인지</strong> 버전이 적힌 곳을 전부 찾아 확인한다.</li>
 </ul>
-<p>이 페이지는 <a href="../15-maintenance/">15강 · 유지보수</a> 의 짝입니다. 15강이 "정석 흐름"(drain · PDB · etcd 복원 · 업그레이드 절차 · 인증서)이라면, 16강은 <strong>노드 안에서 손으로 부딪히는 경우들</strong>을 다룹니다.</p>
+<p>이 페이지는 <a href="../15-maintenance/">20·21강 · 유지보수</a> 의 짝입니다. 유지보수 페이지가 "정석 흐름"(drain · PDB · etcd 복원 · 업그레이드 절차 · 인증서)이라면, 이 페이지는 <strong>노드 안에서 손으로 부딪히는 경우들</strong>을 다룹니다.</p>
 <hr />
 <h2 id="0">0) 준비<a class="headerlink" href="#0" title="Permanent link">&para;</a></h2>
 <table>
@@ -1803,7 +1803,7 @@
 </div>
 <hr />
 <h2 id="2-static-pod-staticpodpath">2) static pod 만들기 — 워커에서 staticPodPath 찾기<a class="headerlink" href="#2-static-pod-staticpodpath" title="Permanent link">&para;</a></h2>
-<p>kubelet 은 <strong>정해진 디렉터리의 YAML</strong> 을 보고 API 서버 · 스케줄러 없이 파드를 띄웁니다. 컨트롤플레인 구성 요소가 이렇게 뜹니다(<a href="../03-architecture/">3강 · 아키텍처</a>).
+<p>kubelet 은 <strong>정해진 디렉터리의 YAML</strong> 을 보고 API 서버 · 스케줄러 없이 파드를 띄웁니다. 컨트롤플레인 구성 요소가 이렇게 뜹니다(<a href="../03-architecture/">18강 · 아키텍처</a>).
 그 디렉터리가 어디인지는 노드마다 kubelet 설정에 있으므로, <strong>추측하지 말고 찾습니다.</strong></p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># worker-1 에서</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'[/]usr/bin/kubelet'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span>--<span class="w"> </span><span class="s1">'--config=[^ ]*'</span>
@@ -1924,7 +1924,7 @@ namespace 는 지정할 수 있지만, 그 namespace 가 없으면 <strong>거�
 </span></code></pre></div>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>nginx:1.27-alpine
 </span></code></pre></div>
-<p><strong>관찰 포인트:</strong> POD ID 까지 바뀌었습니다. 매니페스트 해시가 달라지면 kubelet 은 파드를 <strong>통째로 새로</strong> 만듭니다. etcd 복원 때 <code>etcd.yaml</code> 을 고치면 etcd 가 재시작되는 것도 같은 원리입니다(<a href="../15-maintenance/">15강 · 4)</a>).</p>
+<p><strong>관찰 포인트:</strong> POD ID 까지 바뀌었습니다. 매니페스트 해시가 달라지면 kubelet 은 파드를 <strong>통째로 새로</strong> 만듭니다. etcd 복원 때 <code>etcd.yaml</code> 을 고치면 etcd 가 재시작되는 것도 같은 원리입니다(<a href="../15-maintenance/">21강 · 4)</a>).</p>
 <h3 id="_4">지우려면 파일을 치운다<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># worker-1 에서</span>
 </span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>sudo<span class="w"> </span>mv<span class="w"> </span>/etc/kubernetes/manifests/guide-static.yaml<span class="w"> </span>/root/guide-static.yaml
@@ -2085,7 +2085,7 @@ namespace 는 지정할 수 있지만, 그 namespace 가 없으면 <strong>거�
 </tr>
 </tbody>
 </table>
-<p>kubelet 설정 파일들의 전체 구조는 <a href="../13-cluster-setup/">13강 · kubelet</a> 에 있습니다.</p>
+<p>kubelet 설정 파일들의 전체 구조는 <a href="../13-cluster-setup/">19강 · kubelet</a> 에 있습니다.</p>
 <div class="admonition tip">
 <p class="admonition-title">시험 팁</p>
 <p>지문에 <strong>"permanently" · "재부팅 후에도"</strong> 가 있으면 <code>enable</code> 이 채점 항목입니다. 습관적으로 <code>sudo systemctl enable --now kubelet</code> 으로 칩니다.
@@ -2199,7 +2199,7 @@ namespace 는 지정할 수 있지만, 그 namespace 가 없으면 <strong>거�
 <tr>
 <td>PodDisruptionBudget</td>
 <td>(플래그로 넘지 않는다)</td>
-<td>재시도하며 기다린다 → <a href="../15-maintenance/">15강 · 2)</a></td>
+<td>재시도하며 기다린다 → <a href="../15-maintenance/">20강 · 2)</a></td>
 </tr>
 </tbody>
 </table>
@@ -2363,7 +2363,7 @@ namespace 는 지정할 수 있지만, 그 namespace 가 없으면 <strong>거�
 <p class="admonition-title">뒤에 나오는 플래그가 이긴다</p>
 <p>③ 에서 <code>$ETCD_FLAGS</code> 안의 <code>--endpoints</code> 뒤에 다시 <code>--endpoints</code> 를 주면 <strong>마지막 값</strong>이 쓰입니다. 셸 변수로 묶어 쓸 때 한 가지만 바꿔 실험하기 좋습니다.</p>
 </div>
-<p>복원(restore → etcd.yaml hostPath → 대기 → 되돌리기)은 <a href="../15-maintenance/">15강 · 4) etcd 복원</a> 에서 카나리 오브젝트로 확인합니다.</p>
+<p>복원(restore → etcd.yaml hostPath → 대기 → 되돌리기)은 <a href="../15-maintenance/">21강 · 4) etcd 복원</a> 에서 카나리 오브젝트로 확인합니다.</p>
 <hr />
 <h2 id="7">7) 업그레이드하면 무엇이 바뀌나 — 버전이 적힌 곳 전부<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <p>"클러스터 버전" 이라는 숫자는 한 곳에 있지 않습니다. 업그레이드는 이것들을 <strong>정해진 순서로 하나씩</strong> 바꾸는 일입니다. 실제로 올리지 않고, 지금 어디에 무엇이 적혀 있는지 봅니다.</p>
@@ -2483,7 +2483,7 @@ namespace 는 지정할 수 있지만, 그 namespace 가 없으면 <strong>거�
 </span><span id="__span-63-6"><a id="__codelineno-63-6" name="__codelineno-63-6" href="#__codelineno-63-6"></a>worker-1        v1.32.x
 </span><span id="__span-63-7"><a id="__codelineno-63-7" name="__codelineno-63-7" href="#__codelineno-63-7"></a>worker-2        v1.32.x
 </span></code></pre></div>
-<p>실제 업그레이드 절차(레포 전환 → kubeadm → apply/node → kubelet · kubectl → uncordon)는 <a href="../15-maintenance/">15강 · 6) 전체 절차</a> 에 참고용으로 있습니다.</p>
+<p>실제 업그레이드 절차(레포 전환 → kubeadm → apply/node → kubelet · kubectl → uncordon)는 <a href="../15-maintenance/">20강 · 6) 전체 절차</a> 에 참고용으로 있습니다.</p>
 <pre class="mermaid"><code>flowchart TB
     A["apt: kubeadm"] --&gt; B["kubeadm upgrade apply&lt;br/&gt;(매니페스트 image · kubeadm-config · kube-proxy · CoreDNS · 인증서)"]
     B --&gt; C["apt: kubelet · kubectl&lt;br/&gt;daemon-reload · restart kubelet"]
@@ -2577,7 +2577,7 @@ namespace 는 지정할 수 있지만, 그 namespace 가 없으면 <strong>거�
 <hr />
 <h2 id="_14">다음 단계 — 채점 실습<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <p>개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 <strong>답이 없습니다.</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/16-node-ops
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a><span class="nb">cd</span><span class="w"> </span>~/cka-lab/19-node-ops
 </span><span id="__span-68-2"><a id="__codelineno-68-2" name="__codelineno-68-2" href="#__codelineno-68-2"></a>bash<span class="w"> </span>exam.sh<span class="w"> </span>start
 </span></code></pre></div>
 <table>
@@ -2594,7 +2594,7 @@ namespace 는 지정할 수 있지만, 그 namespace 가 없으면 <strong>거�
 </tr>
 <tr>
 <td>Q2 etcd 백업</td>
-<td>6) etcdctl 호스트 vs 파드 · 에러 재현 (+ <a href="../15-maintenance/">15강 · 3)</a>)</td>
+<td>6) etcdctl 호스트 vs 파드 · 에러 재현 (+ <a href="../15-maintenance/">21강 · 3)</a>)</td>
 </tr>
 <tr>
 <td>Q3 업그레이드하면 무엇이 바뀌는지 확인</td>
@@ -2642,7 +2642,7 @@ namespace 는 지정할 수 있지만, 그 namespace 가 없으면 <strong>거�
       <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
         
           
-          <a href="../15-maintenance/" class="md-footer__link md-footer__link--prev" aria-label="이전: 15강 · 유지보수">
+          <a href="../03-architecture/" class="md-footer__link md-footer__link--prev" aria-label="이전: 18강 · 아키텍처 (컨트롤플레인)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2652,20 +2652,20 @@ namespace 는 지정할 수 있지만, 그 namespace 가 없으면 <strong>거�
                 이전
               </span>
               <div class="md-ellipsis">
-                15강 · 유지보수
+                18강 · 아키텍처 (컨트롤플레인)
               </div>
             </div>
           </a>
         
         
           
-          <a href="../17-helm/" class="md-footer__link md-footer__link--next" aria-label="다음: 17강 · Helm과 Kustomize">
+          <a href="../15-maintenance/" class="md-footer__link md-footer__link--next" aria-label="다음: 20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 다음
               </span>
               <div class="md-ellipsis">
-                17강 · Helm과 Kustomize
+                20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)
               </div>
             </div>
             <div class="md-footer__button md-icon">
