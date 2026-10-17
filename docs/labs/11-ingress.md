@@ -1,6 +1,6 @@
-# 11강 · Ingress
+# 8강 · Ingress → Gateway API
 
-> 영상: **11강-외부노출Ingress** · 이어서 풀 채점 세트: `11-ingress`
+> 영상: **8강 밖에서 이름으로 들어오기 — Ingress → Gateway API** · 이어서 풀 채점 세트: `08-ingress`
 
 ## 실습 목표
 
@@ -44,7 +44,7 @@ ingress-nginx-controller             NodePort    10.99.215.40   80:31692/TCP,443
 ingress-nginx-controller-admission   ClusterIP   10.108.33.12   443/TCP                      3d
 ```
 
-관찰 포인트: 컨트롤러 자체도 **NodePort Service** 뒤에 있습니다. 베어메탈이라 LoadBalancer 가 없으니, 밖에서는 `<노드IP>:<NodePort>` 로 들어옵니다([9강 의 NodePort](09-networking.md#4-nodeport)).
+관찰 포인트: 컨트롤러 자체도 **NodePort Service** 뒤에 있습니다. 베어메탈이라 LoadBalancer 가 없으니, 밖에서는 `<노드IP>:<NodePort>` 로 들어옵니다([5강 의 NodePort](09-networking.md#4-nodeport)).
 포트 번호는 설치할 때 정해지므로 **내 클러스터의 값**을 씁니다.
 
 ??? note "컨트롤러가 없다면 — 설치 (베어메탈용 매니페스트)"
@@ -684,7 +684,7 @@ for p in /v1 /v1/items /v1/items/7; do hit $p -H 'Host: api.guide.local'; done
 
 ## 7) NetworkPolicy 와 함께 — 컨트롤러만 들여보내기
 
-"밖은 Ingress 로 열고, 안은 NetworkPolicy 로 잠근다" 는 조합입니다. 원리는 [10강 · NetworkPolicy](10-networkpolicy.md) 에서 다뤘으니 여기서는 결과만 확인합니다.
+"밖은 Ingress 로 열고, 안은 NetworkPolicy 로 잠근다" 는 조합입니다. 원리는 [14강 · NetworkPolicy](10-networkpolicy.md) 에서 다루니 여기서는 결과만 확인합니다.
 
 `deny-in-all.yaml`:
 
@@ -834,7 +834,7 @@ kubectl scale deployment board -n guide-ingress --replicas=1
 
 ## 9) Ingress 를 Gateway API 로 옮기기
 
-Gateway API 는 Ingress 의 뒤를 잇는 표준입니다(구조 전체는 12강에서 다룹니다). 시험에는 **이미 있는 Ingress 를 읽고, 같은 동작을 하는 Gateway + HTTPRoute 를 만든 뒤, Ingress 를 지우는** 문제가 나옵니다. **HTTPS 리스너**까지 옮겨야 합니다.
+Gateway API 는 Ingress 의 뒤를 잇는 표준입니다(구조 전체는 8강 후반의 Gateway API 부분에서 다룹니다). 시험에는 **이미 있는 Ingress 를 읽고, 같은 동작을 하는 Gateway + HTTPRoute 를 만든 뒤, Ingress 를 지우는** 문제가 나옵니다. **HTTPS 리스너**까지 옮겨야 합니다.
 
 여기서는 5) 에서 만든 `shop-tls`(호스트 `secure.guide.local` · Secret `guide-tls` · `catalog-svc:80`)를 옮깁니다.
 
@@ -860,7 +860,7 @@ referencegrants   refgrant     gateway.networking.k8s.io/v1beta1    true        
 관찰 포인트: Ingress 에서 `get ingressclass` 로 클래스 이름을 확인했듯, 여기서는 **`get gatewayclass` 의 NAME** 이 Gateway 의 `gatewayClassName` 에 들어갑니다. `ACCEPTED` 가 `True` 여야 컨트롤러가 살아 있는 것입니다.
 
 ??? note "GatewayClass 가 없다면 — 설치 (NGINX Gateway Fabric)"
-    Gateway API 는 **CRD + 구현(컨트롤러)** 을 따로 설치합니다. 채점 세트 `11-ingress` 의 `start` 가 아래와 같은 버전으로 자동 설치하므로, 채점 세트를 한 번 시작했다면 이미 있습니다.
+    Gateway API 는 **CRD + 구현(컨트롤러)** 을 따로 설치합니다. 채점 세트 `08-ingress` 의 `start` 가 아래와 같은 버전으로 자동 설치하므로, 채점 세트를 한 번 시작했다면 이미 있습니다.
     ```bash
     NGF_VERSION=v2.7.0
     kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=${NGF_VERSION}" | kubectl apply -f -
@@ -1224,7 +1224,7 @@ unset -f hit
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.** 컨트롤러가 설치돼 있어야 실제 접속까지 확인할 수 있습니다. Q5 에 필요한 Gateway API(NGINX Gateway Fabric)는 클러스터에 없으면 `start` 가 자동으로 설치합니다.
 
 ```bash
-cd ~/cka-lab/11-ingress
+cd ~/cka-lab/08-ingress
 bash exam.sh start
 ```
 
@@ -1233,5 +1233,5 @@ bash exam.sh start
 | Q1 경로 기반 Ingress | 1) 2) 3) — Service 확인, ingressClassName, Prefix |
 | Q2 호스트 기반 Ingress | 4) — rules.host, `-H 'Host: ...'` 로 확인 |
 | Q3 자체 서명 인증서로 TLS Ingress | 5) — openssl → `create secret tls` → `spec.tls` |
-| Q4 NetworkPolicy 로 네임스페이스 격리 | 7) (원리는 [10강](10-networkpolicy.md) 의 2) · 3)) |
+| Q4 NetworkPolicy 로 네임스페이스 격리 | 7) (원리는 [14강](10-networkpolicy.md) 의 2) · 3)) |
 | Q5 Ingress 를 Gateway API 로 옮기기 (HTTPS) | 9) — 필드 대응표, HTTPS 리스너 · certificateRefs, HTTPRoute, Ingress 삭제 |

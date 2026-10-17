@@ -1,6 +1,6 @@
-# 16강 · 노드 운영
+# 19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)
 
-> 영상: **16강-노드운영3종** · 이어서 풀 채점 세트: `16-node-ops`
+> 영상: **19강 노드 안을 열어 보기** (drain · etcd · 업그레이드 부분은 20·21강과 이어짐) · 이어서 풀 채점 세트: `19-node-ops`
 
 ## 실습 목표
 
@@ -11,7 +11,7 @@
 - etcdctl 을 **호스트에서 쓸 때와 etcd 파드 안에서 쓸 때**의 차이, 그리고 흔한 에러 메시지를 직접 재현한다.
 - 업그레이드하면 **무엇이 바뀌고 무엇이 그대로인지** 버전이 적힌 곳을 전부 찾아 확인한다.
 
-이 페이지는 [15강 · 유지보수](15-maintenance.md) 의 짝입니다. 15강이 "정석 흐름"(drain · PDB · etcd 복원 · 업그레이드 절차 · 인증서)이라면, 16강은 **노드 안에서 손으로 부딪히는 경우들**을 다룹니다.
+이 페이지는 [20·21강 · 유지보수](15-maintenance.md) 의 짝입니다. 유지보수 페이지가 "정석 흐름"(drain · PDB · etcd 복원 · 업그레이드 절차 · 인증서)이라면, 이 페이지는 **노드 안에서 손으로 부딪히는 경우들**을 다룹니다.
 
 ---
 
@@ -92,7 +92,7 @@ kubectl get nodes
 
 ## 2) static pod 만들기 — 워커에서 staticPodPath 찾기
 
-kubelet 은 **정해진 디렉터리의 YAML** 을 보고 API 서버 · 스케줄러 없이 파드를 띄웁니다. 컨트롤플레인 구성 요소가 이렇게 뜹니다([3강 · 아키텍처](03-architecture.md)).
+kubelet 은 **정해진 디렉터리의 YAML** 을 보고 API 서버 · 스케줄러 없이 파드를 띄웁니다. 컨트롤플레인 구성 요소가 이렇게 뜹니다([18강 · 아키텍처](03-architecture.md)).
 그 디렉터리가 어디인지는 노드마다 kubelet 설정에 있으므로, **추측하지 말고 찾습니다.**
 
 ```bash
@@ -221,7 +221,7 @@ kubectl get pod guide-static-worker-1 -n guide-node -o jsonpath='{.spec.containe
 nginx:1.27-alpine
 ```
 
-**관찰 포인트:** POD ID 까지 바뀌었습니다. 매니페스트 해시가 달라지면 kubelet 은 파드를 **통째로 새로** 만듭니다. etcd 복원 때 `etcd.yaml` 을 고치면 etcd 가 재시작되는 것도 같은 원리입니다([15강 · 4)](15-maintenance.md)).
+**관찰 포인트:** POD ID 까지 바뀌었습니다. 매니페스트 해시가 달라지면 kubelet 은 파드를 **통째로 새로** 만듭니다. etcd 복원 때 `etcd.yaml` 을 고치면 etcd 가 재시작되는 것도 같은 원리입니다([21강 · 4)](15-maintenance.md)).
 
 ### 지우려면 파일을 치운다
 
@@ -383,7 +383,7 @@ kubectl get nodes -w                                # worker-2 Ready (Ctrl+C)
 | `unable to load client CA file` | `config.yaml` 의 `clientCAFile` | restart |
 | `...containerd.sock: connect: no such file` | containerd 가 죽음 → `systemctl start containerd` | restart kubelet |
 
-kubelet 설정 파일들의 전체 구조는 [13강 · kubelet](13-cluster-setup.md) 에 있습니다.
+kubelet 설정 파일들의 전체 구조는 [19강 · kubelet](13-cluster-setup.md) 에 있습니다.
 
 !!! tip "시험 팁"
     지문에 **"permanently" · "재부팅 후에도"** 가 있으면 `enable` 이 채점 항목입니다. 습관적으로 `sudo systemctl enable --now kubelet` 으로 칩니다.
@@ -501,7 +501,7 @@ scratch-5f7d9c8b6-q7r2d    1/1     Running   worker-1     ← 새로 만들어�
 | DaemonSet 파드 | `--ignore-daemonsets` | 그 파드는 **남겨 두고** 나머지만 비운다 |
 | emptyDir 을 쓰는 파드 | `--delete-emptydir-data` | 파드는 다른 노드에 새로 뜨지만 **emptyDir 내용은 사라진다** |
 | 컨트롤러 없는 파드 | `--force` | 그 파드는 **삭제되고 되살아나지 않는다** |
-| PodDisruptionBudget | (플래그로 넘지 않는다) | 재시도하며 기다린다 → [15강 · 2)](15-maintenance.md) |
+| PodDisruptionBudget | (플래그로 넘지 않는다) | 재시도하며 기다린다 → [20강 · 2)](15-maintenance.md) |
 
 ```bash
 # control-plane 에서
@@ -630,7 +630,7 @@ sudo etcdctl $ETCD_FLAGS --endpoints=https://127.0.0.1:2380 --dial-timeout=3s en
 !!! note "뒤에 나오는 플래그가 이긴다"
     ③ 에서 `$ETCD_FLAGS` 안의 `--endpoints` 뒤에 다시 `--endpoints` 를 주면 **마지막 값**이 쓰입니다. 셸 변수로 묶어 쓸 때 한 가지만 바꿔 실험하기 좋습니다.
 
-복원(restore → etcd.yaml hostPath → 대기 → 되돌리기)은 [15강 · 4) etcd 복원](15-maintenance.md) 에서 카나리 오브젝트로 확인합니다.
+복원(restore → etcd.yaml hostPath → 대기 → 되돌리기)은 [21강 · 4) etcd 복원](15-maintenance.md) 에서 카나리 오브젝트로 확인합니다.
 
 ---
 
@@ -743,7 +743,7 @@ worker-1        v1.32.x
 worker-2        v1.32.x
 ```
 
-실제 업그레이드 절차(레포 전환 → kubeadm → apply/node → kubelet · kubectl → uncordon)는 [15강 · 6) 전체 절차](15-maintenance.md) 에 참고용으로 있습니다.
+실제 업그레이드 절차(레포 전환 → kubeadm → apply/node → kubelet · kubectl → uncordon)는 [20강 · 6) 전체 절차](15-maintenance.md) 에 참고용으로 있습니다.
 
 ```mermaid
 flowchart TB
@@ -851,14 +851,14 @@ unset ETCD_FLAGS
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.**
 
 ```bash
-cd ~/cka-lab/16-node-ops
+cd ~/cka-lab/19-node-ops
 bash exam.sh start
 ```
 
 | 문제 | 이 페이지에서 연습한 것 |
 |------|------------------------|
 | Q1 노드를 비우고 되돌리기 | 5) drain 걸림돌 세 가지 · uncordon |
-| Q2 etcd 백업 | 6) etcdctl 호스트 vs 파드 · 에러 재현 (+ [15강 · 3)](15-maintenance.md)) |
+| Q2 etcd 백업 | 6) etcdctl 호스트 vs 파드 · 에러 재현 (+ [21강 · 3)](15-maintenance.md)) |
 | Q3 업그레이드하면 무엇이 바뀌는지 확인 | 7) 버전이 적힌 곳 · plan 을 파일로 |
 | Q4 static pod 만들어 보기 | 2) 3) staticPodPath · 거울 파드 · 파일로 다루기 |
 

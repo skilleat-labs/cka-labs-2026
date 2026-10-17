@@ -24,24 +24,28 @@
 
 ## 강의별 실습
 
-**페이지 번호 = 강의 번호 = 채점 세트 폴더 번호**입니다. 6강을 봤다면 6강 페이지를 열고, 끝나면 `06-workloads` 를 풉니다.
-번호가 비는 강의(1·2·5·12·18강)는 따라 하기 실습이 없고, 20강(모의고사)은 `mock-1` ~ `mock-6` 을 풉니다.
+!!! note "2026-10 온라인 강의 번호로 바꿨습니다 — 페이지 주소(파일 이름)는 예전 번호 그대로"
+    페이지 순서와 제목의 번호는 **온라인 강의(24강) 순서**를 따릅니다. 즐겨찾기가 깨지지 않도록 페이지 주소는 예전 번호를 그대로 둡니다.
+    예: 4·6·10강 워크로드 페이지의 주소는 `labs/06-workloads/` 입니다.
+
+**페이지의 강 번호 = 온라인 강의 번호 = 채점 세트 폴더 번호**입니다. 4강을 봤다면 4강이 붙은 페이지를 열고, 끝나면 `04-pods` 를 풉니다. 여러 강의에 걸친 페이지는 강의마다 이어서 풀 세트가 따로 있습니다.
+따라 하기 페이지가 없는 강의(1·2·9강)는 영상과 채점 세트로 공부하고, 24강(모의고사)은 `mock-1` ~ `mock-6` 과 `final-test` 를 풉니다.
 
 | 강 | 주제 | 핵심 키워드 | 이어서 풀 채점 세트 |
 |------|------|------------|------------------|
-| [3강](labs/03-architecture.md) | 아키텍처 | 컨트롤플레인, etcd, kubelet, 선언적 모델 | `03-architecture` |
-| [4강](labs/04-cluster-build.md) | 클러스터 구축 (VirtualBox) | 3노드 구축, containerd, kubeadm init/join, Cilium | — (이후 모든 실습의 전제) |
-| [6강](labs/06-workloads.md) | 워크로드 | Deployment, 롤백, ConfigMap, CronJob, DaemonSet, 네이티브 사이드카 | `06-workloads` |
-| [7강](labs/07-scheduling.md) | 스케줄링 | Requests/Limits, Affinity, Taint, HPA, PriorityClass | `07-scheduling` |
-| [8강](labs/08-storage.md) | 스토리지 | PV/PVC, StorageClass, StatefulSet, emptyDir | `08-storage` |
-| [9강](labs/09-networking.md) | 서비스와 내부 통신 | ClusterIP, NodePort, DNS | `09-networking` |
-| [10강](labs/10-networkpolicy.md) | NetworkPolicy | 기본 거부, 선택 허용, Egress | `10-networkpolicy` |
-| [11강](labs/11-ingress.md) | Ingress | 경로·호스트 라우팅, TLS | `11-ingress` |
-| [13강](labs/13-cluster-setup.md) | 클러스터 구축 | kubeadm join, crictl, CNI | `13-cluster-setup` |
-| [14강](labs/14-rbac.md) | RBAC | ServiceAccount, Role, ClusterRole | `14-rbac` |
-| [15강](labs/15-maintenance.md) | 유지보수 | drain, etcd 백업, 업그레이드, 인증서 | `15-maintenance` |
-| [16강](labs/16-node-ops.md) | 노드 운영 | drain/uncordon, etcd, static pod | `16-node-ops` |
-| [17강](labs/17-helm.md) | Helm과 Kustomize | install/upgrade/rollback, template, overlay | `17-helm` |
-| [19강](labs/19-troubleshooting.md) | 트러블슈팅 | CrashLoopBackOff, ImagePull, Endpoints, 노드 | `19-troubleshooting` |
+| [3강](labs/04-cluster-build.md) | 내 클러스터 만들기 (VirtualBox) | 3노드 구축, containerd, kubeadm init/join, Cilium | — (이후 모든 실습의 전제) |
+| [3·19강](labs/13-cluster-setup.md) | 노드 조인 · CNI · CRI | kubeadm join, crictl, CNI, kubelet, cri-dockerd | `03-cluster-setup` |
+| [4·6·10강](labs/06-workloads.md) | 워크로드 | Deployment, 롤백, ConfigMap, Secret, CronJob, DaemonSet, 네이티브 사이드카 | `04-pods` · `06-config` · `10-workloads` |
+| [5강](labs/09-networking.md) | 서비스와 내부 통신 | ClusterIP, NodePort, DNS | `05-networking` |
+| [7·11·12강](labs/07-scheduling.md) | 자원 · 스케줄링 · HPA | Requests/Limits, QoS, LimitRange, Quota, Affinity, Taint, HPA, PriorityClass | `07-resources` · `11-scheduling` |
+| [8강](labs/11-ingress.md) | Ingress → Gateway API | 경로·호스트 라우팅, TLS, Gateway 이전 | `08-ingress` |
+| [13강](labs/08-storage.md) | 스토리지 | PV/PVC, StorageClass, StatefulSet, emptyDir | `13-storage` |
+| [14강](labs/10-networkpolicy.md) | NetworkPolicy | 기본 거부, 선택 허용, Egress | `14-networkpolicy` |
+| [15강](labs/14-rbac.md) | RBAC | ServiceAccount, Role, ClusterRole | `15-rbac` |
+| [16·17강](labs/17-helm.md) | Helm · Kustomize · CRD | install/upgrade/rollback, template, overlay, CRD | `16-helm` |
+| [18강](labs/03-architecture.md) | 아키텍처 (컨트롤플레인) | 컨트롤플레인, etcd, kubelet, 선언적 모델 | `18-architecture` |
+| [19강](labs/16-node-ops.md) | 노드 운영 | static pod, kubelet NotReady, drain 걸림돌, etcdctl | `19-node-ops` |
+| [20·21강](labs/15-maintenance.md) | 유지보수 | drain, PDB, etcd 백업·복원, 업그레이드, 인증서 | `20-maintenance` |
+| [22·23강](labs/19-troubleshooting.md) | 트러블슈팅 | CrashLoopBackOff, ImagePull, Endpoints, 노드, 컨트롤플레인 | `22-troubleshooting` |
 
-처음이라면 [4강 · 클러스터 구축](labs/04-cluster-build.md)으로 클러스터를 만들고 [시작하기](start.md)를 보세요.
+처음이라면 [3강 · 내 클러스터 만들기](labs/04-cluster-build.md)로 클러스터를 만들고 [시작하기](start.md)를 보세요.

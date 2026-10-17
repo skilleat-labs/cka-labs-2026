@@ -1,6 +1,6 @@
-# 13강 · 클러스터 구축
+# 3·19강 · 노드 조인 · CNI · CRI
 
-> 영상: **13강-클러스터구축** · 이어서 풀 채점 세트: `13-cluster-setup`
+> 영상: **3강 내 클러스터 만들기** (kubeadm init/join · CNI) · **19강 노드 안을 열어 보기** (crictl · kubelet · CRI 설치) · 이어서 풀 채점 세트: `03-cluster-setup`
 
 ## 실습 목표
 
@@ -204,9 +204,9 @@ etcd.yaml  kube-apiserver.yaml  kube-controller-manager.yaml  kube-scheduler.yam
 
 | 단계 | 남긴 것 | 이 가이드에서 다시 쓰는 곳 |
 |------|---------|---------------------------|
-| certs | `/etc/kubernetes/pki/` (CA 10년 · 나머지 1년) | [15강 · 인증서](15-maintenance.md) |
+| certs | `/etc/kubernetes/pki/` (CA 10년 · 나머지 1년) | [20강 · 인증서](15-maintenance.md) |
 | kubeconfig | `admin.conf` · `super-admin.conf` · `kubelet.conf` … | 3) |
-| etcd · control-plane | `/etc/kubernetes/manifests/*.yaml` (스태틱 파드) | [16강 · static pod](16-node-ops.md) |
+| etcd · control-plane | `/etc/kubernetes/manifests/*.yaml` (스태틱 파드) | [19강 · static pod](16-node-ops.md) |
 | kubelet-start | `/var/lib/kubelet/config.yaml` · `kubeadm-flags.env` | 8) |
 | upload-config | `kube-system/kubeadm-config` ConfigMap | 아래 |
 | bootstrap-token | `kube-system/bootstrap-token-*` Secret | 4) |
@@ -229,7 +229,7 @@ kubernetesVersion: v1.32.x
 ```
 
 !!! note "podSubnet 은 10.244.0.0/16 인데 파드 IP 는 10.0.x.x"
-    `cilium install` 기본 모드는 Cilium 자체 IPAM(cluster-pool, 10.0.0.0/8)으로 파드 IP 를 나눠 줍니다. kubeadm 에 준 `--pod-network-cidr` 은 기록만 되고 Cilium 은 쓰지 않습니다. 자세한 배경은 [4강 · 실습 클러스터 구축](04-cluster-build.md)의 8) 을 보세요.
+    `cilium install` 기본 모드는 Cilium 자체 IPAM(cluster-pool, 10.0.0.0/8)으로 파드 IP 를 나눠 줍니다. kubeadm 에 준 `--pod-network-cidr` 은 기록만 되고 Cilium 은 쓰지 않습니다. 자세한 배경은 [3강 · 내 클러스터 만들기](04-cluster-build.md)의 8) 을 보세요.
 
 !!! note "기본값과 비교해 보기"
     `kubeadm config print init-defaults` 는 **아무 옵션도 안 줬을 때의 설정**을 YAML 로 보여 줍니다. 클러스터를 바꾸지 않습니다.
@@ -283,7 +283,7 @@ subject=O = system:masters, CN = kubernetes-super-admin
 | `admin.conf` | `kubeadm:cluster-admins` | RBAC 로 cluster-admin 을 받은 그룹 — **RBAC 를 지우면 권한도 사라진다** |
 | `super-admin.conf` | `system:masters` | RBAC 를 건너뛰는 비상용 — 평소에는 쓰지 않는다 |
 
-**관찰 포인트:** 일상 작업은 `admin.conf` 로, RBAC 를 망가뜨려 잠겼을 때만 `super-admin.conf` 를 씁니다. 권한 구조는 [14강 · RBAC](14-rbac.md) 에서 이어집니다.
+**관찰 포인트:** 일상 작업은 `admin.conf` 로, RBAC 를 망가뜨려 잠겼을 때만 `super-admin.conf` 를 씁니다. 권한 구조는 [15강 · RBAC](14-rbac.md) 에서 이어집니다.
 
 ---
 
@@ -401,7 +401,7 @@ control-plane   Ready    control-plane   3d    v1.32.x
 worker-2        Ready    <none>          3d    v1.32.x
 ```
 
-drain 플래그의 의미는 [15강 · drain](15-maintenance.md) 과 [16강 · drain 의 걸림돌](16-node-ops.md) 에서 자세히 봅니다.
+drain 플래그의 의미는 [20강 · drain](15-maintenance.md) 과 [19강 · drain 의 걸림돌](16-node-ops.md) 에서 자세히 봅니다.
 
 ### ② 노드 쪽 흔적 지우기
 
@@ -483,7 +483,7 @@ ls /etc/cni/net.d/
 
 !!! warning "INTERNAL-IP 가 10.0.2.15 로 나오면"
     VirtualBox 는 NAT 어댑터(10.0.2.x)가 기본 경로라서, kubelet 이 그 주소를 노드 IP 로 고를 수 있습니다.
-    이 과정의 클러스터는 `/etc/hosts` 에 `192.168.56.11 worker-1` 이 있어서 kubelet 이 hostname 을 해석해 192.168.56.x 를 고릅니다([4강](04-cluster-build.md) 1-5). hosts 가 맞는데도 10.0.2.15 가 나오면 `/etc/default/kubelet` 에 `KUBELET_EXTRA_ARGS=--node-ip=...` 를 넣습니다. `kubeadm reset` 은 이 파일을 지우지 않습니다. 8) 에서 이 파일을 확인합니다.
+    이 과정의 클러스터는 `/etc/hosts` 에 `192.168.56.11 worker-1` 이 있어서 kubelet 이 hostname 을 해석해 192.168.56.x 를 고릅니다([3강](04-cluster-build.md) 1-5). hosts 가 맞는데도 10.0.2.15 가 나오면 `/etc/default/kubelet` 에 `KUBELET_EXTRA_ARGS=--node-ip=...` 를 넣습니다. `kubeadm reset` 은 이 파일을 지우지 않습니다. 8) 에서 이 파일을 확인합니다.
 
 !!! question "노드 오브젝트를 안 지우고 reset → join 하면?"
     같은 이름으로 다시 등록되므로 대부분 동작합니다. 하지만 옛 노드의 레이블 · taint · 상태가 섞여 헷갈리기 쉬워서, 실무에서는 `kubectl delete node` 를 먼저 합니다.
@@ -913,7 +913,7 @@ no-cni   1/1     Running   0          2m
     | 메시지 | 방향 |
     |--------|------|
     | `NetworkPluginNotReady` · `cni plugin not initialized` | CNI 가 없거나 설정이 없다 → CNI 설치 또는 `/etc/cni/net.d` 확인 |
-    | `Kubelet stopped posting node status` | kubelet 이 멈췄다 → 노드에 들어가 `systemctl status kubelet` ([16강](16-node-ops.md)) |
+    | `Kubelet stopped posting node status` | kubelet 이 멈췄다 → 노드에 들어가 `systemctl status kubelet` ([19강](16-node-ops.md)) |
 
 ---
 
@@ -1021,7 +1021,7 @@ Sep 29 06:12:41 worker-2 kubelet[812]: I0929 06:12:41.118263     812 kubelet_nod
 | `--since "10 min ago"` | 시간 범위 |
 | `--no-pager` | less 없이 바로 출력 (파이프 · 파일로 보낼 때) |
 
-kubelet 을 멈추고 고치는 실험은 [16강 · NotReady 복구](16-node-ops.md) 에서 합니다.
+kubelet 을 멈추고 고치는 실험은 [19강 · NotReady 복구](16-node-ops.md) 에서 합니다.
 
 ---
 
@@ -1342,7 +1342,7 @@ ls /etc/sysctl.d/90-guide-cri.conf 2>/dev/null || echo "실습 sysctl 파일 없
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.**
 
 ```bash
-cd ~/cka-lab/13-cluster-setup
+cd ~/cka-lab/03-cluster-setup
 bash exam.sh start
 ```
 

@@ -1,6 +1,6 @@
-# 19강 · 트러블슈팅
+# 22·23강 · 트러블슈팅
 
-> 영상: **19강-트러블슈팅** · 이어서 풀 채점 세트: `19-troubleshooting`
+> 영상: **22강 앱이 안 뜰 때** (1~8) · **23강 클러스터가 아플 때** (9~12) · 이어서 풀 채점 세트: `22-troubleshooting`
 
 ## 실습 목표
 
@@ -212,7 +212,7 @@ Pending 파드는 조건이 맞는 순간 **스케줄러가 알아서 다시 시
 | `Insufficient cpu` / `memory` | requests 가 남은 자원보다 크다 | requests 줄이기 · 다른 파드 정리 |
 | `had untolerated taint {…}` | 노드의 taint | toleration 추가 또는 taint 제거 |
 | `didn't match Pod's node affinity/selector` | nodeSelector · affinity | 노드 레이블 추가 또는 조건 수정 |
-| `pod has unbound immediate PersistentVolumeClaims` | PVC 가 Pending | 8강 스토리지 — PV · StorageClass 확인 |
+| `pod has unbound immediate PersistentVolumeClaims` | PVC 가 Pending | 13강 스토리지 — PV · StorageClass 확인 |
 | `node(s) were unschedulable` | `kubectl cordon` 된 노드 | `kubectl uncordon` |
 | 이벤트가 아예 없음 | 스케줄러가 죽었다 | 10) 컨트롤플레인 확인 |
 
@@ -949,7 +949,7 @@ taint 도 자동으로 사라졌습니다.
 
 ### 왜
 
-컨트롤플레인 구성 요소는 **스태틱 파드**입니다(3강). API 서버가 살아 있으면 `kubectl logs` 로 보면 되지만,
+컨트롤플레인 구성 요소는 **스태틱 파드**입니다(18강). API 서버가 살아 있으면 `kubectl logs` 로 보면 되지만,
 API 서버가 죽으면 kubectl 이 아예 동작하지 않습니다. 그때는 **노드의 컨테이너 런타임에게 직접** 묻습니다.
 
 ### API 서버가 살아 있을 때
@@ -1479,7 +1479,7 @@ cd ~ && rm -rf ~/guide-trouble
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.** 시작하면 고장 난 리소스가 미리 만들어집니다.
 
 ```bash
-cd ~/cka-lab/19-troubleshooting
+cd ~/cka-lab/22-troubleshooting
 bash exam.sh start
 ```
 

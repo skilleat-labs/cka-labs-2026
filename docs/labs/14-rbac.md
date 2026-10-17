@@ -1,6 +1,6 @@
-# 14강 · RBAC
+# 15강 · RBAC
 
-> 영상: **14강-RBAC** · 이어서 풀 채점 세트: `14-rbac`
+> 영상: **15강 인증 · RBAC · ServiceAccount** · 이어서 풀 채점 세트: `15-rbac`
 
 ## 실습 목표
 
@@ -1121,7 +1121,7 @@ cd ~ && rm -rf ~/guide-rbac
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.**
 
 ```bash
-cd ~/cka-lab/14-rbac
+cd ~/cka-lab/15-rbac
 bash exam.sh start
 ```
 

@@ -1,6 +1,6 @@
-# 8강 · 스토리지
+# 13강 · 스토리지
 
-> 영상: **08강-스토리지** · 이어서 풀 채점 세트: `08-storage`
+> 영상: **13강 스토리지** · 이어서 풀 채점 세트: `13-storage`
 
 ## 실습 목표
 
@@ -1647,7 +1647,7 @@ rm -f scratchpad-vol.yaml relay.yaml relay-typo.yaml node-peek.yaml hp-pair.yaml
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.**
 
 ```bash
-cd ~/cka-lab/08-storage
+cd ~/cka-lab/13-storage
 bash exam.sh start
 ```
 

@@ -38,20 +38,20 @@ nav:
   - 홈: index.md
   - 시작하기: start.md
   - 강의별 실습:
-      - 3강 · 아키텍처: labs/03-architecture.md
-      - 4강 · 클러스터 구축 (VirtualBox): labs/04-cluster-build.md
-      - 6강 · 워크로드: labs/06-workloads.md
-      - 7강 · 스케줄링: labs/07-scheduling.md
-      - 8강 · 스토리지: labs/08-storage.md
-      - 9강 · 서비스와 내부 통신: labs/09-networking.md
-      - 10강 · NetworkPolicy: labs/10-networkpolicy.md
-      - 11강 · Ingress: labs/11-ingress.md
-      - 13강 · 클러스터 구축: labs/13-cluster-setup.md
-      - 14강 · RBAC: labs/14-rbac.md
-      - 15강 · 유지보수: labs/15-maintenance.md
-      - 16강 · 노드 운영: labs/16-node-ops.md
-      - 17강 · Helm과 Kustomize: labs/17-helm.md
-      - 19강 · 트러블슈팅: labs/19-troubleshooting.md
+      - "3강 · 내 클러스터 만들기 (VirtualBox)": labs/04-cluster-build.md
+      - "3·19강 · 노드 조인 · CNI · CRI": labs/13-cluster-setup.md
+      - "4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)": labs/06-workloads.md
+      - "5강 · 서비스와 내부 통신": labs/09-networking.md
+      - "7·11·12강 · 자원 · 스케줄링 · HPA": labs/07-scheduling.md
+      - "8강 · Ingress → Gateway API": labs/11-ingress.md
+      - "13강 · 스토리지": labs/08-storage.md
+      - "14강 · NetworkPolicy": labs/10-networkpolicy.md
+      - "15강 · RBAC": labs/14-rbac.md
+      - "16·17강 · Helm · Kustomize · CRD": labs/17-helm.md
+      - "18강 · 아키텍처 (컨트롤플레인)": labs/03-architecture.md
+      - "19강 · 노드 운영 (static pod · kubelet · drain · etcdctl)": labs/16-node-ops.md
+      - "20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)": labs/15-maintenance.md
+      - "22·23강 · 트러블슈팅": labs/19-troubleshooting.md
 
 markdown_extensions:
   - admonition

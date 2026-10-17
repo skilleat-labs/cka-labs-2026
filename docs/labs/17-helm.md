@@ -1,6 +1,6 @@
-# 17강 · Helm과 Kustomize
+# 16·17강 · Helm · Kustomize · CRD
 
-> 영상: **17강-Helm과Kustomize** · 이어서 풀 채점 세트: `17-helm`
+> 영상: **16강 Helm · Kustomize** (CRD 확인 부분은 **17강 CRD · 오퍼레이터**) · 이어서 풀 채점 세트: `16-helm`
 
 ## 실습 목표
 
@@ -958,7 +958,7 @@ CRD 가 어디 있는지는 `helm pull --untar` 후 `ls crds/ templates/ | grep 
 끄는 값의 이름은 `helm show values <차트> | grep -i -A3 crd` 로 찾습니다.
 
 !!! note "CRD 자체가 궁금하다면"
-    CRD 와 오퍼레이터가 무엇인지는 **18강 (CRD 와 오퍼레이터)** 에서 다룹니다. 여기서는 "차트가 CRD 를 함께 가져올 수 있다" 까지만 알면 충분합니다.
+    CRD 와 오퍼레이터가 무엇인지는 **17강 (CRD 와 오퍼레이터)** 에서 다룹니다. 여기서는 "차트가 CRD 를 함께 가져올 수 있다" 까지만 알면 충분합니다.
 
 ### ③ CRD 목록과 필드 설명을 파일로 — `kubectl get crd` · `kubectl explain`
 
@@ -1653,7 +1653,7 @@ release "demo" uninstalled
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.** 차트를 내려받으므로 인터넷이 필요합니다.
 
 ```bash
-cd ~/cka-lab/17-helm
+cd ~/cka-lab/16-helm
 bash exam.sh start
 ```
 

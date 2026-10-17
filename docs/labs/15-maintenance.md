@@ -1,6 +1,6 @@
-# 15강 · 유지보수
+# 20·21강 · 유지보수 (drain · 업그레이드 · 인증서 · etcd)
 
-> 영상: **15강-유지보수** · 이어서 풀 채점 세트: `15-maintenance`
+> 영상: **20강 노드 비우기 · 업그레이드 · 인증서** (1~2 · 5~7) · **21강 etcd 백업 · 복원** (3~4) · 이어서 풀 채점 세트: `20-maintenance`
 
 ## 실습 목표
 
@@ -57,7 +57,7 @@ kubeadm 클러스터는 etcd 가 **컨테이너 안에만** 있어서 호스트�
     etcdctl version: 3.5.x
     API version: 3.5
     ```
-    파드 안에서는 **컨테이너의 경로**만 보입니다. 호스트와 공유되는 곳은 `/var/lib/etcd` 와 `/etc/kubernetes/pki/etcd` 두 곳뿐입니다. 자세한 비교는 [16강 · etcdctl 호스트 vs 파드](16-node-ops.md) 에 있습니다.
+    파드 안에서는 **컨테이너의 경로**만 보입니다. 호스트와 공유되는 곳은 `/var/lib/etcd` 와 `/etc/kubernetes/pki/etcd` 두 곳뿐입니다. 자세한 비교는 [19강 · etcdctl 호스트 vs 파드](16-node-ops.md) 에 있습니다.
 
 이 페이지는 **호스트에 설치한 etcdctl** 을 기준으로 씁니다.
 
@@ -765,7 +765,7 @@ apt-mark showhold                                 # kubeadm kubectl kubelet 그�
     ```
     worker-2 도 같은 순서로 **한 대씩** 올립니다.
 
-`upgrade apply` 가 정확히 무엇을 바꾸는지(매니페스트 이미지 · kubeadm-config · 백업 디렉터리)는 [16강 · 업그레이드하면 무엇이 바뀌나](16-node-ops.md) 에서 봅니다.
+`upgrade apply` 가 정확히 무엇을 바꾸는지(매니페스트 이미지 · kubeadm-config · 백업 디렉터리)는 [19강 · 업그레이드하면 무엇이 바뀌나](16-node-ops.md) 에서 봅니다.
 
 ---
 
@@ -979,7 +979,7 @@ unset ETCD_FLAGS
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.**
 
 ```bash
-cd ~/cka-lab/15-maintenance
+cd ~/cka-lab/20-maintenance
 bash exam.sh start
 ```
 

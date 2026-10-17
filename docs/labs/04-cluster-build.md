@@ -1,6 +1,6 @@
-# 4강 · 클러스터 구축 (VirtualBox)
+# 3강 · 내 클러스터 만들기 (VirtualBox)
 
-> 영상: **04강-VirtualBox클러스터구축** · 채점 세트 없음 — 이 클러스터 위에서 나머지 모든 실습을 합니다
+> 영상: **3강 내 클러스터 만들기** · 채점 세트 없음 — 이 클러스터 위에서 나머지 모든 실습을 합니다
 
 VirtualBox 로 **control-plane 1대 + worker 2대** 클러스터를 직접 만듭니다.
 이 페이지를 끝내면 [시작하기](../start.md)의 환경이 준비되고, 이후 모든 페이지와 채점 실습(`cka-lab`)을 이 클러스터에서 진행합니다.
@@ -395,7 +395,7 @@ activating        ← 정상입니다
 **관찰 포인트:** kubelet 이 `activating`(재시작 반복) 인 것은 **아직 설정 파일(`/var/lib/kubelet/config.yaml`)이 없어서**입니다. `kubeadm init`/`join` 이 이 파일을 만들어 주면 그때 `active` 가 됩니다.
 
 !!! note "저장소 주소의 `v1.32` 가 설치할 **마이너 버전**을 정합니다"
-    pkgs.k8s.io 는 마이너 버전마다 저장소가 따로 있습니다. 나중에 1.33 으로 업그레이드할 때는 이 파일의 `v1.32` 를 `v1.33` 으로 바꾸는 것부터 시작합니다 ([15강 유지보수](15-maintenance.md) 참고).
+    pkgs.k8s.io 는 마이너 버전마다 저장소가 따로 있습니다. 나중에 1.33 으로 업그레이드할 때는 이 파일의 `v1.32` 를 `v1.33` 으로 바꾸는 것부터 시작합니다 ([20강 유지보수](15-maintenance.md) 참고).
     `apt-mark hold` 는 `apt upgrade` 가 실수로 버전을 올리지 못하게 막습니다.
 
 !!! tip "복제 전 체크리스트"
@@ -564,7 +564,7 @@ kubectl describe node control-plane | grep -E 'Ready|NetworkReady'
         podSubnet: 10.244.0.0/16
         serviceSubnet: 10.96.0.0/12
     ```
-    각 파일의 의미는 [3강 아키텍처](03-architecture.md)와 [13강 클러스터 구축](13-cluster-setup.md)에서 자세히 봅니다.
+    각 파일의 의미는 [18강 아키텍처](03-architecture.md)와 [3·19강 노드 조인 · CNI · CRI](13-cluster-setup.md)에서 자세히 봅니다.
 
 ---
 
@@ -580,7 +580,7 @@ kubectl describe node control-plane | grep -E 'Ready|NetworkReady'
 | Calico | BGP / 오버레이 | NetworkPolicy 지원, 기업 환경에서 많이 씀 |
 | **Cilium** | **eBPF** | 커널에서 직접 패킷 처리, NetworkPolicy · L7 정책 · Hubble 관찰 도구 |
 
-이 과정이 Cilium 을 쓰는 이유는 **NetworkPolicy 가 실제로 동작**해야 하기 때문입니다([10강 NetworkPolicy](10-networkpolicy.md)). Flannel 은 정책을 만들어도 아무 효과가 없습니다.
+이 과정이 Cilium 을 쓰는 이유는 **NetworkPolicy 가 실제로 동작**해야 하기 때문입니다([14강 NetworkPolicy](10-networkpolicy.md)). Flannel 은 정책을 만들어도 아무 효과가 없습니다.
 
 ### cilium CLI 설치 → Cilium 설치
 
@@ -798,7 +798,7 @@ sudo poweroff
 | 시점 | 스냅샷 이름 | 쓸 때 |
 |------|-------------|-------|
 | 구축 직후 · 검증 통과 | `clean-cluster` | 실습을 망쳤을 때 돌아올 기준점 |
-| 업그레이드 직전 | `before-upgrade` | [15강 유지보수](15-maintenance.md) 업그레이드를 반복 연습할 때 |
+| 업그레이드 직전 | `before-upgrade` | [20강 유지보수](15-maintenance.md) 업그레이드를 반복 연습할 때 |
 | etcd 백업을 만든 뒤 | `before-etcd-restore` | 복원 연습은 되돌릴 수 없으므로 필수 |
 
 !!! warning "세 대를 함께 찍고, 함께 되돌립니다"
@@ -994,8 +994,8 @@ sudo iptables -F && sudo iptables -t nat -F && sudo iptables -X
 
 ## 다음 단계
 
-- 클러스터가 준비됐습니다. [시작하기](../start.md)의 셸 설정을 확인하고 [3강 · 아키텍처](03-architecture.md)부터 시작하세요.
-- `kubeadm init` · `join` · CNI 를 **더 깊이** 다루는 것은 [13강 · 클러스터 구축](13-cluster-setup.md)입니다 (채점 세트 `13-cluster-setup`).
+- 클러스터가 준비됐습니다. [시작하기](../start.md)의 셸 설정을 확인하고 강의 순서대로 [4·6·10강 · 워크로드](06-workloads.md)부터 이어 가세요.
+- `kubeadm init` · `join` · CNI 를 **더 깊이** 다루는 것은 [3·19강 · 노드 조인 · CNI · CRI](13-cluster-setup.md)입니다 (채점 세트 `03-cluster-setup`).
 - 채점 실습 저장소를 받습니다.
 
 ```bash

@@ -1,6 +1,6 @@
-# 10강 · NetworkPolicy
+# 14강 · NetworkPolicy
 
-> 영상: **10강-NetworkPolicy** · 이어서 풀 채점 세트: `10-networkpolicy`
+> 영상: **14강 NetworkPolicy** · 이어서 풀 채점 세트: `14-networkpolicy`
 
 ## 실습 목표
 
@@ -70,7 +70,7 @@ matrix() {
 }
 ```
 
-대상 이름을 `ledger.guide-netpol` 처럼 **네임스페이스까지** 적는 이유는 다른 네임스페이스의 클라이언트도 같은 이름으로 부르기 위해서입니다([9강 의 DNS](09-networking.md#6-dns)).
+대상 이름을 `ledger.guide-netpol` 처럼 **네임스페이스까지** 적는 이유는 다른 네임스페이스의 클라이언트도 같은 이름으로 부르기 위해서입니다([5강 의 DNS](09-networking.md#6-dns)).
 
 ### 다 만들고 나면 이런 그림이 됩니다
 
@@ -1046,7 +1046,7 @@ unset -f probe matrix
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.** 준비 스크립트가 서버와 클라이언트 파드를 미리 만들어 둡니다.
 
 ```bash
-cd ~/cka-lab/10-networkpolicy
+cd ~/cka-lab/14-networkpolicy
 bash exam.sh start
 ```
 

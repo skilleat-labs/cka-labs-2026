@@ -1,6 +1,6 @@
-# 9강 · 서비스와 내부 통신
+# 5강 · 서비스와 내부 통신
 
-> 영상: **09강-서비스와내부통신** · 이어서 풀 채점 세트: `09-networking`
+> 영상: **5강 서비스** · 이어서 풀 채점 세트: `05-networking`
 
 ## 실습 목표
 
@@ -10,7 +10,7 @@
 - 기존 Deployment 에 **이름 붙은 포트**를 추가하고, Service 의 `targetPort` 를 **이름으로** 지정해 NodePort 로 연다.
 - 파드 안에서 **DNS 이름 규칙**(짧은 이름 · 네임스페이스 · FQDN · Headless)을 확인한다.
 - 실제 전달을 맡는 **kube-proxy / Cilium** 의 흔적을 노드에서 찾아본다.
-- NetworkPolicy 를 **맛보기로** 한 번 걸어 보고, 10강으로 넘어갈 준비를 한다.
+- NetworkPolicy 를 **맛보기로** 한 번 걸어 보고, 14강(NetworkPolicy)으로 넘어갈 준비를 한다.
 
 ---
 
@@ -717,7 +717,7 @@ Forwarding from 127.0.0.1:18080 -> 80
 
 ## 8) NetworkPolicy 미리 보기 — 한 번만 막아 본다
 
-지금까지는 **모든 파드가 menu 에 닿습니다.** 두 클라이언트를 만들고, 한쪽만 허용해 봅니다. 원리와 함정은 [10강 · NetworkPolicy](10-networkpolicy.md) 에서 자세히 다룹니다.
+지금까지는 **모든 파드가 menu 에 닿습니다.** 두 클라이언트를 만들고, 한쪽만 허용해 봅니다. 원리와 함정은 [14강 · NetworkPolicy](10-networkpolicy.md) 에서 자세히 다룹니다.
 
 ```bash
 kubectl run cashier -n guide-net --image=busybox:1.36 --labels=role=cashier --command -- sleep 3600
@@ -858,7 +858,7 @@ kubectl get deployment coredns -n kube-system      # READY 가 원래 수(보통
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.** 채점은 실제로 임시 파드와 노드 IP 로 접속까지 확인합니다.
 
 ```bash
-cd ~/cka-lab/09-networking
+cd ~/cka-lab/05-networking
 bash exam.sh start
 ```
 
@@ -866,6 +866,7 @@ bash exam.sh start
 |------|------------------------|
 | Q1 Deployment + ClusterIP Service | 1) 2) — expose, Endpoints 확인, 임시 파드로 접속 |
 | Q2 NodePort Service (포트 고정) | 3) 4) — `$do` 로 뽑아 nodePort 추가 |
-| Q3 NetworkPolicy — frontend 에서만 backend 로 | 8) (자세한 원리는 [10강](10-networkpolicy.md)) |
-| Q4 파드 안에서 클러스터 DNS 확인 | 6) — resolv.conf, 짧은 이름과 FQDN |
-| Q5 이름 붙은 컨테이너 포트 추가 + NodePort 로 노출 | 4) "기존 Deployment 에 이름 붙은 포트를 추가하고 NodePort 로 열기" — edit/patch, `--target-port=<이름>` |
+| Q3 파드 안에서 클러스터 DNS 확인 | 6) — resolv.conf, 짧은 이름과 FQDN |
+| Q4 이름 붙은 컨테이너 포트 추가 + NodePort 로 노출 | 4) "기존 Deployment 에 이름 붙은 포트를 추가하고 NodePort 로 열기" — edit/patch, `--target-port=<이름>` |
+
+8) 의 NetworkPolicy 맛보기는 이 세트에 없습니다. 같은 유형은 14강 채점 세트 `14-networkpolicy` 의 Q2(한 레이블만 허용)에서 풉니다 — 원리는 [14강 · NetworkPolicy](10-networkpolicy.md).

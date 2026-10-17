@@ -1,6 +1,6 @@
-# 6강 · 워크로드
+# 4·6·10강 · 워크로드 (Deployment · ConfigMap · Job · DaemonSet · 사이드카)
 
-> 영상: **06강-워크로드** · 이어서 풀 채점 세트: `06-workloads`
+> 영상: **4강 파드에서 Deployment 까지** (1~3) · **6강 설정을 이미지 밖으로** (4~5) · **10강 Deployment 로는 안 되는 일** (6~8) · 이어서 풀 채점 세트: `04-pods` · `06-config` · `10-workloads`
 
 ## 실습 목표
 
@@ -890,7 +890,7 @@ s3cr3t!                    ← 누구나 되돌릴 수 있다
 ```
 
 !!! warning "base64 는 인코딩이지 암호화가 아닙니다"
-    Secret 을 `get` 할 수 있는 사람은 값을 읽을 수 있습니다. 실제 보호는 **RBAC 으로 Secret 읽기 권한을 제한**하는 것(14강)과 etcd 저장 암호화 설정입니다.
+    Secret 을 `get` 할 수 있는 사람은 값을 읽을 수 있습니다. 실제 보호는 **RBAC 으로 Secret 읽기 권한을 제한**하는 것(15강)과 etcd 저장 암호화 설정입니다.
     `--from-literal` 에 쓴 값은 셸 히스토리에도 남습니다.
 
 YAML 로 직접 쓸 때는 `stringData` 를 쓰면 평문으로 적어도 됩니다.
@@ -944,7 +944,7 @@ demo-tls        kubernetes.io/tls   2      2s
 | 만드는 명령 | 타입 | 키 | 쓰는 곳 |
 |-------------|------|----|---------|
 | `create secret generic` | `Opaque` | 마음대로 | 앱 설정 · 비밀번호 |
-| `create secret tls` | `kubernetes.io/tls` | `tls.crt`, `tls.key` | Ingress TLS (11강) |
+| `create secret tls` | `kubernetes.io/tls` | `tls.crt`, `tls.key` | Ingress TLS (8강) |
 | `create secret docker-registry` | `kubernetes.io/dockerconfigjson` | `.dockerconfigjson` | 파드의 `imagePullSecrets` |
 
 ### 파드에 넣기
@@ -1635,16 +1635,47 @@ cd ~ && rm -rf ~/guide-wl
 
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.**
 
+이 페이지는 세 강의에 걸쳐 있어 채점 세트도 세 개입니다. 강의를 본 순서대로 푸세요.
+
+**4강 → `04-pods`** (1) ~ 3))
+
 ```bash
-cd ~/cka-lab/06-workloads
+cd ~/cka-lab/04-pods
 bash exam.sh start
 ```
 
 | 문제 | 이 페이지에서 연습한 것 |
 |------|------------------------|
-| Q1 Deployment 생성 · 스케일 · 업데이트 · 롤백 | 2) 3) |
-| Q2 ConfigMap 을 envFrom 으로 주입 | 1) 뼈대 뽑기 · 4) |
-| Q3 CronJob | 6) |
-| Q4 DaemonSet (hostNetwork · hostPID) | 1) 7) — 필드 위치는 `kubectl explain pod.spec` 으로 |
-| Q5 네이티브 사이드카 | 8) |
-| Q6 ConfigMap 수정 → 재배포 → immutable | 4) Deployment 에 반영하기 · 잠그기 |
+| Q6 Deployment 만들고 버전 바꾸기 | 2) 3) |
+| Q7 멈춘 롤아웃 되돌리기 | 2) 롤백 · `rollout undo` |
+
+Q1 ~ Q5(파드 · 라벨 · ReplicaSet)는 4강 영상 범위입니다. 이 페이지에는 따로 단계가 없습니다.
+
+**6강 → `06-config`** (4) · 5))
+
+```bash
+cd ~/cka-lab/06-config
+bash exam.sh start
+```
+
+| 문제 | 이 페이지에서 연습한 것 |
+|------|------------------------|
+| Q1 ConfigMap 생성 + 파드에 환경변수로 주입 | 1) 뼈대 뽑기 · 4) |
+| Q2 키 하나만 골라 다른 이름의 환경변수로 | 4) |
+| Q3 파일로 만든 ConfigMap 을 볼륨으로 마운트 | 4) 볼륨으로 넣기 |
+| Q4 Secret — 풀어 읽기 · 만들기 · 환경변수로 넣기 | 5) |
+| Q5 ConfigMap 수정 → 재배포 → immutable | 4) Deployment 에 반영하기 · 잠그기 |
+
+**10강 → `10-workloads`** (6) ~ 8))
+
+```bash
+cd ~/cka-lab/10-workloads
+bash exam.sh start
+```
+
+| 문제 | 이 페이지에서 연습한 것 |
+|------|------------------------|
+| Q1 Deployment 생성 · 스케일 · 롤링 업데이트 · 롤백 | 2) 3) (4강 복습) |
+| Q2 CronJob | 6) |
+| Q3 DaemonSet (hostNetwork · hostPID) | 1) 7) — 필드 위치는 `kubectl explain pod.spec` 으로 |
+| Q4 네이티브 사이드카 | 8) |

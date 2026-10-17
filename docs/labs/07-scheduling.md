@@ -1,6 +1,6 @@
-# 7강 · 스케줄링
+# 7·11·12강 · 자원 · 스케줄링 · HPA
 
-> 영상: **07강-스케줄링** · 이어서 풀 채점 세트: `07-scheduling`
+> 영상: **7강 네임스페이스와 자원** (2~4 · 10) · **11강 어디에 둘지 정하기** (1 · 5~7 · 9) · **12강 HPA** (8) · 이어서 풀 채점 세트: `07-resources` · `11-scheduling`
 
 ## 실습 목표
 
@@ -1033,7 +1033,7 @@ kubectl delete pod cache -n guide-sched
     kubectl delete pod direct -n guide-sched
     ```
 === "Static Pod"
-    kubelet 이 감시하는 디렉터리에 파일을 두면 API 서버·스케줄러 없이 kubelet 이 바로 띄웁니다(3강 아키텍처 참고). control-plane 노드에서 합니다.
+    kubelet 이 감시하는 디렉터리에 파일을 두면 API 서버·스케줄러 없이 kubelet 이 바로 띄웁니다(18강 아키텍처 참고). control-plane 노드에서 합니다.
     ```bash
     sudo grep staticPodPath /var/lib/kubelet/config.yaml
     kubectl run guide-static -n guide-sched --image=nginx:1.27 $do | sudo tee /etc/kubernetes/manifests/guide-static.yaml > /dev/null
@@ -1738,7 +1738,7 @@ Taints:             <none>
 Taints:             <none>
 ```
 
-metrics-server 는 다른 실습(19강 트러블슈팅의 `kubectl top` 등)에서도 쓰므로 **남겨 둡니다.**
+metrics-server 는 다른 실습(22·23강 트러블슈팅의 `kubectl top` 등)에서도 쓰므로 **남겨 둡니다.**
 
 ---
 
@@ -1782,16 +1782,36 @@ metrics-server 는 다른 실습(19강 트러블슈팅의 `kubectl top` 등)에�
 
 개념이 잡혔으면 시험 형식으로 풀어 봅니다. 이번에는 **답이 없습니다.** 세트가 노드에 레이블·taint 를 미리 걸어 두므로 문제 설명을 먼저 읽으세요.
 
+이 페이지는 세 강의에 걸쳐 있어 채점 세트가 두 개입니다(12강 HPA 문제는 `11-scheduling` 에 들어 있습니다).
+
+**7강 → `07-resources`** (2) ~ 4) · 10))
+
 ```bash
-cd ~/cka-lab/07-scheduling
+cd ~/cka-lab/07-resources
 bash exam.sh start
 ```
 
 | 문제 | 이 페이지에서 연습한 것 |
 |------|------------------------|
-| Q1 Requests / Limits 가 설정된 파드 | 2) — `$do` 로 뽑고 resources 추가, `explain` |
-| Q2 Node Affinity 로 파드 배치 | 5) — required · `In` · `get pod -o wide` 로 확인 |
-| Q3 Taint 를 허용하는 Toleration | 6) — Equal toleration, "허용일 뿐" |
-| Q4 HPA (자동 스케일) + 스케일 다운 안정화 | 8) — `kubectl autoscale` 후 `edit` 로 `behavior.scaleDown` |
-| Q5 PriorityClass 와 우선순위 | 9) — 기존 값 먼저 보기, 템플릿에 `patch` |
-| Q6 자원 부족 — 노드 자원을 나눠 레플리카 모두 띄우기 | 10) — 0 으로 줄이기, Allocated resources 계산, init·메인 같은 requests |
+| Q2 Requests / Limits 가 설정된 파드 | 2) — `$do` 로 뽑고 resources 추가, `explain` |
+| Q3 메모리 limit 을 넘기면 — OOMKilled | 2) 실험 — 메모리 limit 을 넘기면 |
+| Q4 QoS 등급 — 읽기와 만들기 | 3) |
+| Q5 LimitRange — 하나당 기본값과 최대값 | 4) LimitRange · max 를 넘는 파드 |
+| Q6 ResourceQuota — 쿼터에 막혀 일부만 뜬다 | 4) ResourceQuota |
+| Q7 자원 부족 — 노드 자원을 나눠 레플리카 모두 띄우기 | 10) — 0 으로 줄이기, Allocated resources 계산, init·메인 같은 requests |
+
+Q1(네임스페이스 찾기 · 만들기)은 7강 영상 범위입니다. 이 페이지에는 따로 단계가 없습니다.
+
+**11강 · 12강 → `11-scheduling`** (5) 6) 8) 9))
+
+```bash
+cd ~/cka-lab/11-scheduling
+bash exam.sh start
+```
+
+| 문제 | 이 페이지에서 연습한 것 |
+|------|------------------------|
+| Q1 Node Affinity 로 파드 배치 | 5) — required · `In` · `get pod -o wide` 로 확인 |
+| Q2 Taint 를 허용하는 Toleration | 6) — Equal toleration, "허용일 뿐" |
+| Q3 HPA (자동 스케일) + 스케일 다운 안정화 (12강) | 8) — `kubectl autoscale` 후 `edit` 로 `behavior.scaleDown` |
+| Q4 PriorityClass 와 우선순위 | 9) — 기존 값 먼저 보기, 템플릿에 `patch` |

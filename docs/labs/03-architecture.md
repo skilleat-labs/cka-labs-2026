@@ -1,6 +1,6 @@
-# 3강 · 아키텍처
+# 18강 · 아키텍처 (컨트롤플레인)
 
-> 영상: **03강-아키텍처** · 이어서 풀 채점 세트: `03-architecture`
+> 영상: **18강 컨트롤플레인 안을 열어 보기** (구조 개요는 1강) · 이어서 풀 채점 세트: `18-architecture`
 
 ## 실습 목표
 
@@ -432,7 +432,7 @@ Error from server (BadRequest): error when creating "STDIN": Pod in version "v1"
 | 에러 첫머리 | 막힌 관문 | 먼저 볼 것 |
 |-------------|-----------|------------|
 | `Unauthorized` | ① 인증 | kubeconfig · 인증서 만료 |
-| `Forbidden: User "..." cannot ...` | ② 인가 | RBAC (14강) — `kubectl auth can-i` |
+| `Forbidden: User "..." cannot ...` | ② 인가 | RBAC (15강) — `kubectl auth can-i` |
 | `NotFound: namespaces ...`, `exceeded quota`, `forbidden: ...` | ③ 어드미션 | 네임스페이스 · ResourceQuota · LimitRange |
 | `BadRequest ... unknown field`, `Invalid value` | ④ 형식 검사 | YAML 필드 이름 — `kubectl explain` |
 
@@ -795,7 +795,7 @@ worker-2	Ubuntu 24.04 LTS	6.8.0-xx-generic
 
 ## 7) kube-proxy 와 CoreDNS — 노드 위의 네트워크 부품
 
-**왜** — "파드는 Running 인데 Service 로 접속이 안 된다" 는 1)~6) 의 부품이 아니라 이 둘의 문제일 때가 많습니다. 9강에서 깊게 다루고, 여기서는 **어디에 무엇이 있는지만** 확인합니다.
+**왜** — "파드는 Running 인데 Service 로 접속이 안 된다" 는 1)~6) 의 부품이 아니라 이 둘의 문제일 때가 많습니다. 5강에서 깊게 다뤘고, 여기서는 **어디에 무엇이 있는지만** 확인합니다.
 
 ```bash
 kubectl get ds,deploy -n kube-system
@@ -1054,7 +1054,7 @@ kubectl get deploy coredns -n kube-system         # 2/2 로 돌아와 있는지 
 ## 다음 단계 — 채점 실습
 
 ```bash
-cd ~/cka-lab/03-architecture
+cd ~/cka-lab/18-architecture
 bash exam.sh start
 ```
 
